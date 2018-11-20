@@ -1,0 +1,14 @@
+#!/bin/bash
+
+IFS=$'\n'
+for i in $(find . -name '*_unittest*' ); 
+do
+    echo "running $i:"
+    matlab -nodisplay -nosplash -nodesktop -r "try, run('$i'), catch me, fprintf('\t!!! %s / %s\n', me.identifier, me.message), end,  exit" > unittest_tmp
+    cat unittest_tmp | grep '!!!'
+    echo ""
+
+done
+unset IFS
+
+rm unittest_tmp
