@@ -1,0 +1,13 @@
+
+aalto anechoic recordings database
+Pätynen, J., Pulkki, V., and Lokki, T., "Anechoic recording system for symphony orchestra," Acta Acustica united with Acustica, vol. 94, nr. 6, pp. 856-865, November/December 2008.
+
+TRIOS dataset
+Joachim Fritsch. High Quality Musical Audio Source Separation. Master’s thesis, UPMC / IRCAM / Telecom Paristech, 2012
+
+PHENICX
+[1] M. Miron, J. Carabias-Orti, J. J. Bosch, E. Gómez and J. Janer, "Score-informed source separation for multi-channel orchestral recordings", Journal of Electrical and Computer Engineering (2016)
+[2] Pätynen, J., Pulkki, V., and Lokki, T., "Anechoic recording system for symphony orchestra," Acta Acustica united with Acustica, vol. 94, nr. 6, pp. 856-865, November/December 2008.
+[3] Campbell, D., K. Palomaki, and G. Brown. "A Matlab simulation of" shoebox" room acoustics for use in research and teaching." Computing and Information Systems 9.3 (2005): 48.
+lol see https://zenodo.org/record/1289821#.WzNuXRyxXMU
+
