@@ -42,6 +42,9 @@ Other args will be ignored (silently!)
     
     % repeatedly apply the update rules  until we have a good enough
     % approximation or we run out of iterstions 
+    % TODO precompute the matrix multiplications, duh. 
+    % TODO think about what happens if we hit a stationary point while
+    % still above threshold
     i = 0;
     while square_euclidian_distance (V, W*H) > threshold && i < max_iter
         H = H.*((W.' * V)./(W.' * W * H));

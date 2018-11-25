@@ -1,0 +1,3 @@
+- build NMF_init_rand
+- do some visual "benchmarking"
+- dust folder structure for the project

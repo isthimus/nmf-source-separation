@@ -1,7 +1,7 @@
 #!/bin/bash
 
 IFS=$'\n'
-for i in $(find . -name '*_unittest.m' ); 
+for i in $(find $1 -name '*_unittest.m' ); 
 do
     echo "running $i..."
     matlab -nodisplay -nosplash -nodesktop -r "try, run('$i'), catch me, fprintf('\t!!! %s / %s\n', me.identifier, me.message), end,  exit" > unittest_tmp
