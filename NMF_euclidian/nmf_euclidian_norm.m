@@ -44,17 +44,36 @@ Other args will be ignored (silently!)
     % approximation or we run out of iterations 
     % !!! ask mark about handling NaN
     i = 0;
+    lastDistCheckpoint = norm_square_euclidian_distance (V, W*H);
+    doneConverging=0;
     while norm_square_euclidian_distance (V, W*H) > threshold && i < max_iter
         H = H.*((W.' * V)./(W.' * W * H));
         H(isnan(H)) = 0;
         W = W.*((V * H.')./(W * H * H.'));
         W(isnan(W)) = 0;
         i = i + 1;
+        
+
+        if isequal(mod(i, 1000), 0)
+             currDistCheckpoint = norm_square_euclidian_distance (V, W*H);
+             delta = currDistCheckpoint-lastDistCheckpoint;
+             if (delta * 10000) < currDistCheckpoint
+                % if we got less than 0.01% improvement in the last 1000 iterations, give up 
+                % !!! think about how to return this info to user (or
+                % whether to)
+                doneConverging = 1;
+                break
+             end
+             disp(currDistCheckpoint)
+             disp(delta)
+             lastDistCheckpoint = currDistCheckpoint;
+        end
     end
+    disp('..')
     
     % check whether the attempt was sucessful, or whether we ran out of iterations 
     % in the fullness of time we may need to return W and H somehow
-    if norm_square_euclidian_distance (V, W*H) > threshold
+    if norm_square_euclidian_distance (V, W*H) > threshold && doneConverging == 0
         ME = MException ("nmf_euclidian_norm:failed_to_converge", "hit max iterations and still not within threshold");
         throw(ME)
     end
