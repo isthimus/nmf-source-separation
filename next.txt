@@ -1,10 +1,7 @@
-- do some visual "benchmarking"
-- comment up the visualiser
-- little mini timeline writeup - "where are we up to"
-	and what to present to mark tomo
-- GET PROJECT APPEARING ON LAPTOP
 - dust folder structure for the project
 	code paths (ie how to set MATLAB path var)
 	dataset paths
-- make all nmf functions match nmf_euclidian_norm
+- use your swanky new source separation function to hear some contributuions.
+- rejig visualiser just a touch to accept partially applied functions (?)
+- make all nmf functions match nmf_euclidian_norm/ each other 
 - full harness

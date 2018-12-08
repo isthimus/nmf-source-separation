@@ -64,8 +64,6 @@ Other args will be ignored (silently!)
                 doneConverging = 1;
                 break
              end
-             disp(currDistCheckpoint)
-             disp(delta)
              lastDistCheckpoint = currDistCheckpoint;
         end
     end

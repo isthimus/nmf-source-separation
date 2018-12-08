@@ -9,7 +9,7 @@ function nmf_visualiser(audioFile, nmf_func, nmf_init_func, nmf_init_params)
     "nmf_init_params" is the set of parameters to pass to nmf_init_func. use a cell array if ther's multiple parameters
     %}
 
-    colormap summer 
+    colormap bone
     % rng(6399795) % not seeding randomness for now 
     
     % get audio file as vector
@@ -18,20 +18,27 @@ function nmf_visualiser(audioFile, nmf_func, nmf_init_func, nmf_init_params)
     % plot the audio
     n= [1: length(audio_vec)];
     plot(n,audio_vec)
+    
+    title('audio time domain')
     waitforbuttonpress
    
     % get spectrogram  and plot
     % !!! discuss overlap etc
     % !!! magic numbers
+    % !!! nfft
     % spectrogram wrapper in subfunction?
-    audio_spect = spectrogram(audio_vec, ceil(Fs/50), ceil(Fs/200), 'MinThreshold',-100);
+    
+    audio_spect = spectrogram(audio_vec, ceil(Fs/50), ceil(Fs/200), 'MinThreshold',-110);
+    audio_spect = audio_spect(1:257, :);
     audio_spect_mag = abs(audio_spect);
-    spectrogram(audio_vec, ceil(Fs/50), ceil(Fs/200), 'MinThreshold',-100, 'yaxis')
+    spectrogram(audio_vec, ceil(Fs/50), ceil(Fs/200), 'MinThreshold',-110, 'yaxis')
    
+    title('audio spectrum')
     waitforbuttonpress
 
     % display the actual spectrogram matrix (its orientation is different)
     imagesc(audio_spect_mag);
+    title('magnitude spectrum')
     waitforbuttonpress
 
     % initialise W and H and perform the actual nmf process
@@ -47,17 +54,26 @@ function nmf_visualiser(audioFile, nmf_func, nmf_init_func, nmf_init_params)
         disp(size(H_out(i,:)))
         M = H_out(i,:).*W_out(:,i);
         imagesc(M);
+        
+        title(['contribution #', num2str(i)])
         waitforbuttonpress
     end
 
     % display the target spectrum (dB for fine detail)
-    imagesc(20*log10(audio_spect_mag))
+    % imagesc(20*log10(audio_spect_mag))
+    imagesc(audio_spect_mag)
+    title ('target spectrum')
     waitforbuttonpress
+    
     % display the NMF approximation (dB for fine detail)
-    imagesc(20*log10(W_out * H_out))
+    % imagesc(20*log10(W_out * H_out))
+    imagesc(W_out * H_out)
+    title ('NMF approximation')
     waitforbuttonpress
+    
     % display the difference (dB for fine detail)
-    imagesc(20*log10(abs(audio_spect_mag - W_out * H_out)));
+    imagesc(abs(audio_spect_mag - W_out * H_out));
+    title ('difference')
     waitforbuttonpress
 
     %close figures and exit
