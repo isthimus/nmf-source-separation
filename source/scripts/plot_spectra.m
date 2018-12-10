@@ -1,4 +1,4 @@
-PROJECT_PATH = fullfile('../');
+PROJECT_PATH = fullfile('../../');
 TRIOS_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/TRIOS');
 DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');
 
@@ -6,8 +6,7 @@ DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');
 
 hn_brahms = hn_brahms(1:1.487e6);
 n = [1 : length(hn_brahms)];
-%
-audiowrite(fullfile(DEV_DATA_PATH, 'TRIOS_hn_6note.wav'), hn_brahms, Fs);
+%audiowrite(fullfile(DEV_DATA_PATH, 'TRIOS_hn_6note.wav'), hn_brahms, Fs);
 
 
 plot (n,hn_brahms);

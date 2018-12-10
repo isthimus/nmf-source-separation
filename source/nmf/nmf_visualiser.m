@@ -28,8 +28,16 @@ function nmf_visualiser(audioFile, nmf_func, nmf_init_func, nmf_init_params)
     % !!! nfft
     % spectrogram wrapper in subfunction?
     
-    audio_spect = spectrogram(audio_vec, ceil(Fs/50), ceil(Fs/200), 'MinThreshold',-110);
-    audio_spect = audio_spect(1:257, :);
+    
+    % define the analysis and synthesis parameters !!! JUST FROM EXAMPLE
+    wlen = 128; hop = wlen/8; nfft = 4*wlen; 
+    anal_win = blackmanharris(wlen, 'periodic'); synth_win = hamming(wlen, 'periodic');
+    
+    %audio_spect = spectrogram(audio_vec, ceil(Fs/50), ceil(Fs/200), 'MinThreshold',-110);
+    audio_spect = stft(audio_vec, anal_win, hop, nfft, Fs);
+    
+    %audio_spect = audio_spect(1:256, :);
+    audio_spect = audio_spect(1:nfft/2, :);
     audio_spect_mag = abs(audio_spect);
     spectrogram(audio_vec, ceil(Fs/50), ceil(Fs/200), 'MinThreshold',-110, 'yaxis')
    
@@ -43,7 +51,7 @@ function nmf_visualiser(audioFile, nmf_func, nmf_init_func, nmf_init_params)
 
     % initialise W and H and perform the actual nmf process
     [num_freq_bins, num_time_bins] = size(audio_spect);
-    [W_init, H_init] = nmf_init_func(num_freq_bins, num_time_bins, nmf_init_params);
+    [W_init, H_init] = nmf_init_func(num_freq_bins, num_time_bins, nmf_init_params{:});
     [W_out, H_out]   = nmf_func (audio_spect_mag, W_init, H_init, 0.00001);
     
     K = size(W_init, 2);
@@ -74,8 +82,9 @@ function nmf_visualiser(audioFile, nmf_func, nmf_init_func, nmf_init_params)
     % display the difference (dB for fine detail)
     imagesc(abs(audio_spect_mag - W_out * H_out));
     title ('difference')
-    waitforbuttonpress
 
-    %close figures and exit
+
+    % wait and close figures
+    waitforbuttonpress
     close all
 end

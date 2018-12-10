@@ -10,13 +10,13 @@ function sources_out = nmf_separate_sources (nmf_func, nmf_init_func, spectrogra
     % [W_out, H_out] = nmf_func(V, W, H)
     % [W_init, H_init] = nmf_init_func(num_freq_bins, num_time_bins)
     % spectrogram = spectrogram_func(vector)
-    %       NB: so the above will usually be a big partial application of "spectrogram(_)"
-    % sources_out = reconstruction_func(W, H)
+    % sources_out = reconstruction_func(orig_audio_spectrogram, W, H)
+    %   NB! reconstruction func to return a matrix whose rows are the sources
     
     % eg - to make nmf_euclidian_norm match nmf_func:
     % myThreshold = 10; myMaxIter = 10000;
-    % p = @(V, W, H) nmf_euclidian_norm(V, W, H, myThreshold, myMaxIter)
-    % nmf_separate_sources(p, <some>, <other>, <args>, ...)
+    % nmf_en_partial = @(V, W, H) nmf_euclidian_norm(V, W, H, myThreshold, myMaxIter)
+    % nmf_separate_sources(nmf_en_partial, <some>, <other>, <args>, ...)
 
     currFig = 1;
     
@@ -40,13 +40,13 @@ function sources_out = nmf_separate_sources (nmf_func, nmf_init_func, spectrogra
     % plot if plotFlag is non zero
     if plot_level >= 1
         
-        % W
+        % init W
         figure(currFig);
         imagesc(W_init);
         title ('init W');
         currFig = currFig + 1;
         
-        % H
+        % init H
         figure(currFig);
         imagesc(H_init);
         title ('init H');
@@ -59,7 +59,8 @@ function sources_out = nmf_separate_sources (nmf_func, nmf_init_func, spectrogra
     end
     
     % perform NMF
-    [W_out, H_out] = nmf_func (V, W, H);
+    spect_mag = abs(spect);
+    [W_out, H_out] = nmf_func (spect_mag, W_init, H_init);
     
     % plot if plotFlag is non zero 
     if plot_level >= 1
@@ -89,6 +90,6 @@ function sources_out = nmf_separate_sources (nmf_func, nmf_init_func, spectrogra
     end
     
     % call reconstruction_func and return the original sources
-    sources_out = reconstruction_func (W_out, H_out);
+    sources_out = reconstruction_func (spect, W_out, H_out);
     
 end

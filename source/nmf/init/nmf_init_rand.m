@@ -1,9 +1,6 @@
-function [W_out, H_out] = nmf_init_rand (num_freq_bins, num_time_bins, params)
+function [W_out, H_out] = nmf_init_rand (num_freq_bins, num_time_bins, k, avg)
     % given the shape of V and a value for K (ie number of basis vectors),
     % build a random pair of matrices to act as the initial W and H
-
-    k = params{1};
-    avg = params{2};
     
     % make sure the "avg" argument is right
     if size(avg) == [1,1]

@@ -1,7 +1,8 @@
-- dust folder structure for the project
-	code paths (ie how to set MATLAB path var)
-	dataset paths
-- use your swanky new source separation function to hear some contributuions.
+- figure out stft vs spectrogram ARGH :(
+- test reconstruction in isolation with lots of prints and such
+- finish source sep POC script
 - rejig visualiser just a touch to accept partially applied functions (?)
-- make all nmf functions match nmf_euclidian_norm/ each other 
 - full harness
+- make all nmf functions match nmf_euclidian_norm/ each other 
+- run around fixing throw -> assert everywhere
+- add a plot helper function to nmf_separate_sources bc then it will be clean af :3
