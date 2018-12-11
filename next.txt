@@ -1,8 +1,9 @@
-- figure out stft vs spectrogram ARGH :(
-- test reconstruction in isolation with lots of prints and such
-- finish source sep POC script
-- rejig visualiser just a touch to accept partially applied functions (?)
-- full harness
+- make source sep POC neat and make it match visualiser (and make it work)
+- rejig visualiser just a touch to accept partially applied functions (?) (erm, lol?)
+- harness coded up but just running plotting funcs
+- nmf_init_chroma
+
+
 - make all nmf functions match nmf_euclidian_norm/ each other 
 - run around fixing throw -> assert everywhere
 - add a plot helper function to nmf_separate_sources bc then it will be clean af :3
