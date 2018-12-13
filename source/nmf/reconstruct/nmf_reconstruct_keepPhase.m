@@ -2,10 +2,11 @@ function sources_out = nmf_reconstruct_keepPhase (audio_spect, W, H, varargin)
     % NB varargin will be passed directly as an argument list to istft from the
     % Zhivomirov toolbox
     % other params self explanatory
+    % returns a matrix where each column is one separated  out source
 
-    assert (~isempty(audio_spect), 'assertion failed - audio_spect is empty!');
-    assert (~isempty(W), 'assertion failed - W is empty!');
-    assert (~isempty(H), 'assertion failed - H is empty!');
+    assert (~isempty(audio_spect), 'assertion failure - audio_spect is empty!');
+    assert (~isempty(W), 'assertion failure - W is empty!');
+    assert (~isempty(H), 'assertion failure - H is empty!');
     
     sources_out = [];
     

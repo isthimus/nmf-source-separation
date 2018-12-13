@@ -13,7 +13,7 @@ plot (n,hn_brahms);
 
 
 %%{
-waitforbuttonpress
+wait_returnKey
 
 
 colormap bone
@@ -23,11 +23,11 @@ spectrogram(hn_brahms, ceil(Fs/50), 'yaxis');
 view(-30,65)
 xlabel('time (samples)')
 colorbar off 
-waitforbuttonpress
+wait_returnKey
 
 spectrogram(hn_brahms, ceil(Fs/50), ceil(Fs/100), 'MinThreshold',-100,  'yaxis');
 xlabel('time (seconds)')
-waitforbuttonpress
+wait_returnKey
 
 
 %close all

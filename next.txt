@@ -1,9 +1,12 @@
-- make source sep POC neat and make it match visualiser (and make it work)
-- rejig visualiser just a touch to accept partially applied functions (?) (erm, lol?)
+- get nmf_separate_sources to fly
 - harness coded up but just running plotting funcs
-- nmf_init_chroma
-
 
 - make all nmf functions match nmf_euclidian_norm/ each other 
-- run around fixing throw -> assert everywhere
-- add a plot helper function to nmf_separate_sources bc then it will be clean af :3
+- other nmf update steps
+- nicer testcases in datasets/development
+- add asserts to everything
+
+- nmf_init_chroma + nmf_init_onset
+- nmf_reconstruct_pitchtrack improvement
+
+- hook up benchmarks

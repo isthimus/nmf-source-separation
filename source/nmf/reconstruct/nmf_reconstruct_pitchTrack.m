@@ -2,6 +2,7 @@ function sources_out = nmf_reconstruct_pitchTrack (audio_spect, W, H, ptRange, v
     % NB varargin will be passed directly as an argument list to istft from the
     % Zhivomirov toolbox
     % other params self explanatory
+    % returns a matrix where each column is one separated  out source
 
     assert (~isempty(audio_spect), 'assertion failed - audio_spect is empty!');
     assert (~isempty(W), 'assertion failed - W is empty!');
