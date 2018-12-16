@@ -1,4 +1,9 @@
-﻿
+﻿TODO
+MAKE THIS NOT SHIT
+
+
+https://qmro.qmul.ac.uk/xmlui/bitstream/handle/123456789/2621/PLUMBLEYSparseRepresentations2010POST.pdf?sequence=9
+
 aalto anechoic recordings database
 Pätynen, J., Pulkki, V., and Lokki, T., "Anechoic recording system for symphony orchestra," Acta Acustica united with Acustica, vol. 94, nr. 6, pp. 856-865, November/December 2008.
 
