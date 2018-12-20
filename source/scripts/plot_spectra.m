@@ -1,3 +1,10 @@
+% cd to the folder this script is in
+script_path = mfilename('fullpath');
+script_path = script_path(1: find(script_path == '\', 1, 'last'));
+cd(script_path)
+
+% set matlab path and pick up some other useful paths
+run('./setpaths.m')
 PROJECT_PATH = fullfile('../../');
 TRIOS_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/TRIOS');
 DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');

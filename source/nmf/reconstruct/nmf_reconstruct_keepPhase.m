@@ -27,9 +27,7 @@ function sources_out = nmf_reconstruct_keepPhase (audio_spect, W, H, varargin)
         source_i_timedomain = istft(source_i_fullspect, varargin{:});
         
         s_i_t_size = size(source_i_timedomain);
-        disp('*')
-        disp(s_i_t_size)
-        assert(s_i_t_size(1) == 1, 'internal assertion failed - size of source_i_timedomain is not (1, X)')
+        assert(s_i_t_size(1) == 1, 'internal assertion failure - size of source_i_timedomain is not (1, X)!')
         
         if isempty(sources_out)
            sources_out = source_i_timedomain;

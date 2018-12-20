@@ -7,12 +7,12 @@
 - make sure it still works in visualiser       X
 - fix colorbar everywhere                      X
 - get something small converging in eNorm_POC  X 
-- scope out prototype/partial changes
-- redo prototypes 
-- think about bench (?harness)
-- graph units
+- scope out prototype/partial changes          X 
+- redo prototypes 							   X 
+- think about bench (?harness)				   X
+- graph units BUT FREEZE ALGO.
+- code up bench (?harness) + ?recordkeeping
 - good spectrogram, etc. 
-- code up bench (?harness)
 - other NMF functions
 
            ######################
@@ -23,8 +23,10 @@
 - harness coded up but just running plotting funcs
 
 - nicer testcases in datasets/development
+- preallocate matrix for nmf_reconstruct_keepPhase
 
 - nmf_init_chroma + nmf_init_onset
+- nmf_reconstruct_ignorePhases for comparison 
 - nmf_reconstruct_pitchtrack improvement (normalise to 1? FM?)
 
 - hook up benchmarks + think bout docs

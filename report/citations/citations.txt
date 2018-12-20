@@ -1,7 +1,12 @@
 ﻿TODO
 MAKE THIS NOT SHIT
+WHEN THO
+NEVER THO
 
+HOW TO EVALUATE NMF
+https://stats.stackexchange.com/questions/200699/evaluate-performance-of-non-negative-matrix-factorization-nmf/203672
 
+SPARSE REPRESENTATION TO SOURCE CODING
 https://qmro.qmul.ac.uk/xmlui/bitstream/handle/123456789/2621/PLUMBLEYSparseRepresentations2010POST.pdf?sequence=9
 
 aalto anechoic recordings database

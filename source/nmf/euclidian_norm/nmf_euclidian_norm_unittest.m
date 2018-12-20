@@ -85,7 +85,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % check NMF results 
 
-[W,H,~] = nmf_euclidian_norm(V, rand20_A, ones20, 0.001, 99999);
+[W,H,~] = nmf_euclidian_norm(V, rand20_A, ones20, 0.001);
 if (rand20_A ~= rand20_A_cpy)
     throw (MException("unittest:nmf_euclidian_norm", "NMF mutates W,H"))
 end
@@ -94,7 +94,7 @@ if norm_square_euclidian_distance(W*H, V) > 0.01
     throw (MException("unittest:nmf_euclidian_norm", "NMF gives invalid answers"))
 end
 
-[W,H,~] = nmf_euclidian_norm(V, rand20_A, rand20_B, 0.001, 99999);
+[W,H,~] = nmf_euclidian_norm(V, rand20_A, rand20_B, 0.001);
 if norm_square_euclidian_distance(W*H, V) > 0.01
     throw (MException("unittest:nmf_euclidian_norm", "NMF gives invalid answers"))
 end
@@ -103,7 +103,7 @@ end
 % make sure it doesnt hang when given an impossible problem
 ME = [];
 try
-    [W,H,~] = nmf_euclidian_norm(V, rand20_A, zeros(20), 0.001, 9999);
+    [W,H,~] = nmf_euclidian_norm(V, rand20_A, zeros(20), 0.001);
 catch ME
 end
 
@@ -114,7 +114,7 @@ end
 
 ME = [];
 try
-    [W,H,~] = nmf_euclidian_norm(V, zeros(20), rand20_B, 0.001, 9999);
+    [W,H,~] = nmf_euclidian_norm(V, zeros(20), rand20_B, 0.001);
 catch ME
 end
 

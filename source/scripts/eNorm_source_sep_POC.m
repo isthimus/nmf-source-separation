@@ -16,8 +16,11 @@ DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');
 [audio_vec, Fs] = audioread(fullfile(DEV_DATA_PATH, 'TRIOS_vln_Db6_B6.wav'));
 
 % build nmf function
-nmf_threshold = 0; % rely on convergence detection 
-p_nmf = @(V,W,H) nmf_euclidian_norm(V, W, H, nmf_threshold);
+nmf_statPoint_thresh = 0.00001; % detect stationary point at 0.001% per 1000 iterations
+nmf_max_iter = 1000000;         % max iterations 1'000'000
+nmf_done_thresh = 0;            % use only stationary point detection 
+p_nmf = @(V,W,H) ...
+    nmf_euclidian_norm(V, W, H, nmf_statPoint_thresh, nmf_max_iter, nmf_done_thresh);
 
 % build init function
 init_K = 2; init_avg = 10;

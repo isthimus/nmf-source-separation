@@ -55,7 +55,7 @@ function nmf_visualiser(audioFile, nmf_func, nmf_init_func, nmf_init_params)
     % initialise W and H and perform the actual nmf process
     [num_freq_bins, num_time_bins] = size(audio_spect);
     [W_init, H_init] = nmf_init_func(num_freq_bins, num_time_bins, nmf_init_params{:});
-    [W_out, H_out, final_err, iterations]   = nmf_func (audio_spect_mag, W_init, H_init, 0);
+    [W_out, H_out, final_err, iterations]   = nmf_func (audio_spect_mag, W_init, H_init);
     
     fprintf (" final_err = %d\n", final_err);
     fprintf ("iterations = %d\n", iterations);

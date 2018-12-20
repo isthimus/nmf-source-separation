@@ -1,6 +1,7 @@
 #!/bin/bash
 
 IFS=$'\n'
+touch unittest_tmp
 for i in $(find $1 -name '*_unittest.m' ); 
 do
     echo "running $i..."
