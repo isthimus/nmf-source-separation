@@ -1,4 +1,4 @@
-function [W_out, H_out, iterations] = nmf_euclidian_norm (V, W, H, threshold, varargin)
+function [W_out, H_out, final_error, iterations] = nmf_euclidian_norm (V, W, H, threshold, varargin)
 %{    
 non-negative matrix factorization algorithm - repeatedly updates W and H
 using a pair of update rules until the square euclidian distance between V
@@ -15,64 +15,72 @@ Other args will be ignored (silently!)
         max_iter = varargin{1};
     end
 
-    % check W, V, H nonempty
-    if isempty(W) || isempty(V) || isempty(H)
-        ME = MException ("nmf_euclidian_norm:bad_input", "one or more of V, W, H is empty");
-        throw(ME)
-    end
+    %%%% check preconditions
+    % emptiness
+    assert (~isempty(V), "V is empty")
+    assert (~isempty(W), "W is empty")
+    assert (~isempty(H), "H is empty")
     
-    % check threshold is sensible
-    if threshold < 0
-        ME = MException ("nmf_euclidian_norm:bad_input", "threshold must be non negative");
-        throw (ME)
-    end
+    % threshold
+    assert (threshold >= 0, "threshold must be non-negative")
+
+    % positive semidefiniteness
+    assert (isempty(V(V<0)), "V contains negative elements")
+    assert (isempty(W(W<0)), "W contains negative elements")
+    assert (isempty(H(H<0)), "H contains negative elements")
     
-    % check for negative values in input
-    if ~isempty(V(V < 0)) || ~isempty(W(W < 0)) || ~isempty(H(H < 0))
-        ME = MException ("nmf_euclidian_norm:bad_input", "W,V,H must have all elements >= 0");
-        throw(ME)
-    end
+    % matrix shape
+    assert (size(V, 1) == size(W, 1), "W*H must have the same shape as V")
+    assert (size(V, 2) == size(H, 2), "W*H must have the same shape as V")
     
-    % check matrix dimensions
-    s_V = size(V); s_W = size(W); s_H = size(H);
-    if s_V(1) ~= s_W(1) || s_V(2) ~= s_H(2)
-        ME = MException ("nmf_euclidian_norm:bad_input", "W * H must have the same shape as V");
-        throw (ME)
-    end
-    
-    % repeatedly apply the update rules  until we have a good enough
-    % approximation or we run out of iterations 
-    % !!! ask mark about handling NaN
+    %%%% apply the update rules until we have a good enough
+    %%%% approximation or we run out of iterations 
+
+    % loop variables
+    % could do "i" more neatly using for and break but its a bit misleading  
     i = 0;
     lastDistCheckpoint = norm_square_euclidian_distance (V, W*H);
-    doneConverging=0;
+    stationaryPoint = 0; % flag showing if we've hit a stationary point 
+    
     while norm_square_euclidian_distance (V, W*H) > threshold && i < max_iter
-        H = H.*((W.' * V)./(W.' * W * H));
-        H(isnan(H)) = 0;
-        W = W.*((V * H.')./(W * H * H.'));
-        W(isnan(W)) = 0;
+        % update rules. see lee and seung: "algorithms for non-negative matrix factorisation"
+        % NB - using the normalised distance gives the same update rules as regular euclidian distance. it just allows us to give a different threshold.
+        H = H.*((W.' * V)./(W.' * W * H + eps));
+        W = W.*((V * H.')./(W * H * H.' + eps));
         i = i + 1;
-        
 
-        if isequal(mod(i, 1000), 0)
-             currDistCheckpoint = norm_square_euclidian_distance (V, W*H);
-             delta = currDistCheckpoint-lastDistCheckpoint;
-             if (delta * 10000) < currDistCheckpoint
-                % if we got less than 0.01% improvement in the last 1000 iterations, give up 
-                % !!! think about how to return this info to user (or
-                % whether to)
-                doneConverging = 1;
+        % every 1000 iterations, check if we're at a stationary point
+        if mod(i, 1000) == 0 
+            disp('.');
+            
+            % remember our distance now and compare to last time
+            currDistCheckpoint = norm_square_euclidian_distance (V, W*H);
+            delta = currDistCheckpoint-lastDistCheckpoint;
+            if (delta * 100000) < currDistCheckpoint
+                % if we got less than 0.001% improvement in the last 1000 iterations, we're at a local minimum. break loop.
+                stationaryPoint = 1;
+                fprintf("stationary at %d\n", currDistCheckpoint);
                 break
-             end
-             lastDistCheckpoint = currDistCheckpoint;
+            end
+
+            % set lastDistCheckpoint ready for the next comparison
+            lastDistCheckpoint = currDistCheckpoint;
         end
     end
     disp('..')
-    
-    % check whether the attempt was sucessful, or whether we ran out of iterations 
-    % in the fullness of time we may need to return W and H somehow
-    if norm_square_euclidian_distance (V, W*H) > threshold && doneConverging == 0
-        ME = MException ("nmf_euclidian_norm:failed_to_converge", "hit max iterations and still not within threshold");
+
+    %%%% figure out if we converged sucessfully and set return values
+
+    % set final_error return value
+    final_error = norm_square_euclidian_distance (V, W*H);
+
+    % check whether we ran out of iterations 
+    % !!! should this be a warning not an error, allowing recovery of W, H?
+    if final_error > threshold && stationaryPoint == 0
+        ME = MException (                                       ...
+            "nmf_euclidian_norm:failed_to_converge",            ...
+            "hit max iterations and still not within threshold" ...
+        );
         throw(ME)
     end
     
@@ -80,5 +88,5 @@ Other args will be ignored (silently!)
     W_out = W;
     H_out = H;
     iterations = i;
-    
+    % "final_error" already assigned
 end    

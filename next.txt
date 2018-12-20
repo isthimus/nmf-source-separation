@@ -1,12 +1,30 @@
-- get nmf_separate_sources to fly
+           ###################
+-----------#*~THEG AMEPLA N~*#---------------
+           ###################
+
+- cleanup on nmf_euclidian and euclidian_norm  X
+- fix throw/assert everywhere                  X
+- make sure it still works in visualiser       X
+- fix colorbar everywhere                      X
+- get something small converging in eNorm_POC  X 
+- scope out prototype/partial changes
+- redo prototypes 
+- think about bench (?harness)
+- graph units
+- good spectrogram, etc. 
+- code up bench (?harness)
+- other NMF functions
+
+           ######################
+-----------#*~ THX 4 WATCHING ~*#------------
+           ######################
+
+- header comment on nmf separate sources about function partials
 - harness coded up but just running plotting funcs
 
-- make all nmf functions match nmf_euclidian_norm/ each other 
-- other nmf update steps
 - nicer testcases in datasets/development
-- add asserts to everything
 
 - nmf_init_chroma + nmf_init_onset
-- nmf_reconstruct_pitchtrack improvement
+- nmf_reconstruct_pitchtrack improvement (normalise to 1? FM?)
 
-- hook up benchmarks
+- hook up benchmarks + think bout docs

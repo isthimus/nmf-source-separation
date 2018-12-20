@@ -3,7 +3,12 @@ function wait_returnKey ()
     % replacement for waitforbuttonpress since that makes interacting with
     % the plots impossible 
     pause;   
-    while ~strcmp(get(gcf, 'CurrentKey'),  'return')
-       pause; 
+    key = get(gcf, 'CurrentKey');
+    while ~strcmp(key,  'return')
+        if strcmp(key, 'q')
+            close all
+            error("utils:UserQuit", "user quit from wait_returnKey");
+        end
+        pause; 
     end
 end

@@ -1,7 +1,12 @@
 % proof of concept to source separate and play audio
 % when i have all the bits working i'll generic-ify
 
-% make sure the matab path is correct, and pick up some useful path strings
+% cd to the folder this script is in
+script_path = mfilename('fullpath');
+script_path = script_path(1: find(script_path == '\', 1, 'last'));
+cd(script_path)
+
+% setup matlab path and pick up some useful path strings
 run('./setpaths.m')
 PROJECT_PATH = fullfile('../../');
 TRIOS_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/TRIOS');
@@ -11,7 +16,7 @@ DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');
 [audio_vec, Fs] = audioread(fullfile(DEV_DATA_PATH, 'TRIOS_vln_Db6_B6.wav'));
 
 % build nmf function
-nmf_threshold = 0.0001;
+nmf_threshold = 0; % rely on convergence detection 
 p_nmf = @(V,W,H) nmf_euclidian_norm(V, W, H, nmf_threshold);
 
 % build init function

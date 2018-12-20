@@ -34,7 +34,7 @@ function sources_out = nmf_separate_sources (nmf_func, nmf_init_func, spect_func
     plot_if_plotLvl(plot_level, 1, 'W\_out', false, @imagesc, W_out)
     plot_if_plotLvl(plot_level, 1, 'H\_out', true,  @imagesc, H_out)
     if plot_level >= 2
-       K = size(Winit, 2);
+       K = size(W_init, 2);
        for i = 1:K
            M = H_out(i,:).*W_out(:,i);
            plot_if_plotLvl (plot_level, 2, ['contribution #', num2str(i)], (i == K), @imagesc, M)
@@ -52,7 +52,6 @@ function sources_out = nmf_separate_sources (nmf_func, nmf_init_func, spect_func
             n= [1: length(source_vec)];
             plot(n,source_vec)
             title('source time domain')
-            sound(source_vec, Fs)
             wait_returnKey
         end
     end
