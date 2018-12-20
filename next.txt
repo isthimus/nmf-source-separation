@@ -28,5 +28,5 @@
 - nmf_init_chroma + nmf_init_onset
 - nmf_reconstruct_ignorePhases for comparison 
 - nmf_reconstruct_pitchtrack improvement (normalise to 1? FM?)
-
+- spect func which detects noisefloor
 - hook up benchmarks + think bout docs
