@@ -9,17 +9,25 @@ PROJECT_PATH = fullfile('../../');
 TRIOS_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/TRIOS');
 DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');
 
-[hn_brahms, Fs] = audioread(fullfile(TRIOS_DATA_PATH, 'brahms/horn.wav'));
+audiopath = 'C:\Users\Helen\third-year-project\score-aware-source-separation\datasets\PHENICX\audio\beethoven\bassoon1.wav';
+% audiopath = fullfile(TRIOS_DATA_PATH, 'brahms/horn.wav');
+[hn_brahms, Fs] = audioread(audiopath);
+disp(audioinfo(audiopath));
 
 hn_brahms = hn_brahms(1:1.487e6);
 n = [1 : length(hn_brahms)];
 %audiowrite(fullfile(DEV_DATA_PATH, 'TRIOS_hn_6note.wav'), hn_brahms, Fs);
+t = 0:1/4.4e4:5;
+y = chirp(t,0,2.5,4000); 
+
+%audiowrite(fullfile(DEV_DATA_PATH, 'chirp.wav'), y, 4.4e4)
 
 
 plot (n,hn_brahms);
+disp (max(hn_brahms(:)))
 
 
-%%{
+%{
 wait_returnKey
 
 
@@ -38,4 +46,4 @@ wait_returnKey
 
 
 %close all
-%%}
+%}
