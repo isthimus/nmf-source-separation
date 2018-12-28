@@ -1,3 +1,3 @@
-function out = matrix_divergence (A,B)
+function out = KL_divergence (A,B)
     freakout
 end

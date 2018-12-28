@@ -2,7 +2,7 @@ function [W_out, H_out, final_error, iterations] = nmf_euclidian (V, W, H, varar
 %{    
 non-negative matrix factorization algorithm - repeatedly updates "W" and "H"
 using a pair of update rules until the square euclidian distance between "V"
-and W * H is below "threshold", then returns them as "W_out", "H_out". note
+and W * H is small enough (see args below), then returns them as "W_out", "H_out". note
 that the update is multiplicative - elements of "W" and "H" which start at zero
 will remain so.
 
@@ -58,23 +58,22 @@ return values:
     % positive semidefiniteness
     assert (isempty(V(V<0)), "V contains negative elements")
     assert (isempty(W(W<0)), "W contains negative elements")
-    assert (isempty(H(H<0)), "H contains negative elements")    
+    assert (isempty(H(H<0)), "H contains negative elements")  
+
     % matrix shape
+    assert (size(W, 2) == size(H, 1), "size mismatch in W and H")
     assert (size(V, 1) == size(W, 1), "W*H must have the same shape as V")
     assert (size(V, 2) == size(H, 2), "W*H must have the same shape as V")
     
     %%%% apply the update rules until we have a good enough
     %%%% approximation or we run out of iterations 
-
-
+    
     % loop variables
     % could do "i" more neatly using for and break but its a bit misleading
     i = 0;
     lastDistCheckpoint = square_euclidian_distance(V, W*H);
-    stationaryPoint = 0; % flag showing if we've hit a stationary point
-
-
-    while square_euclidian_distance (V, W*H) > done_thresh && i < max_iter
+    atStationaryPoint = 0; 
+    while i < max_iter && square_euclidian_distance (V, W*H) > done_thresh
         % update rules. see lee and seung: "algorithms for non-negative matrix factorisation"
         H = H.*((W.' * V)./(W.' * W * H + eps));
         W = W.*((V * H.')./(W * H * H.' + eps));
@@ -87,9 +86,10 @@ return values:
             % remember our distance now and compare to last time
             currDistCheckpoint = square_euclidian_distance (V, W*H);
             delta = currDistCheckpoint-lastDistCheckpoint;
-            if (delta * 100000) < currDistCheckpoint
-                % if we got less than 0.001% improvement in the last 1000 iterations, we're at a local minimum. break loop.
-                stationaryPoint = 1;
+            if delta < currDistCheckpoint * statPoint_thresh
+                % if we got less than the required improvement in the last 1000 iterations, 
+                % we're at a local minimum. break loop.
+                atStationaryPoint = 1;
                 fprintf("stationary at %d\n", currDistCheckpoint);
                 break
             end
@@ -107,7 +107,7 @@ return values:
 
     % check whether we ran out of iterations 
     % !!! should this be a warning not an error, allowing recovery of W, H?
-    if square_euclidian_distance (V, W*H) > done_thresh && stationaryPoint == 0
+    if final_error > done_thresh && ~atStationaryPoint
         ME = MException (                                       ...
             "nmf_euclidian:failed_to_converge",                 ...
             "hit max iterations and still not within done_thresh" ...

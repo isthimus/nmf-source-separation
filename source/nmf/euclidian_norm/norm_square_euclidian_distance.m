@@ -1,26 +1,18 @@
 function out = norm_square_euclidian_distance (A, B)
 
-    % !!! talk about potentail asymmetry and how avoided
-    % !!! talk about loss of precision from norm, and potential other
-    % normFactors?
-    if any(size(A) ~= size(B))
-        ME = MException ("norm_square_euclidian_distance:bad_input", "A and B must have the same shape");
-        throw (ME)
-    end
-    
-    if sum(isnan(A(:))) > 0
-       ME = MException ("norm_square_euclidian_distance:bad_input", "A contains NaN!");
-       throw (ME) 
-    end
-    
-    if sum(isnan(B(:))) > 0
-       ME = MException ("norm_square_euclidian_distance:bad_input", "B contains NaN!");
-       throw (ME) 
-    end
+    % !!! talk about potentail asymmetry and how avoided (ie could have just normed one)
+    % !!! benchmark loss of precision from norm
+
+    % check preconditions
+    assert( isequal(size(A), size(B), "A and B must have the same shape")
+    assert( sum(isnan(A(:))) == 0, "A contains NaN!")
+    assert( sum(isnan(B(:))) == 0, "B contains NaN!")
       
+    % normalise such that sum of the two matrices = 2
     normFactor = (sum(A(:)) + sum(B(:))) / 2;
     normA = A./normFactor; normB = B./normFactor;
     
+    % find euclidian distance - take element-wise distances, square them, and sum. 
     diffs = normA - normB;
     diff_squared = diffs.*diffs;
     out = sum(diff_squared(:));

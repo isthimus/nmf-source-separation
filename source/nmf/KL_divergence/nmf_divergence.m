@@ -42,7 +42,7 @@ Other args will be ignored (silently!)
     % repeatedly apply the update rules  until we have a good enough
     % approximation or we run out of iterstions 
     iterations = 0;
-    while matrix_divergence (V, W*H) > threshold && iterations < max_iter
+    while KL_divergence (V, W*H) > threshold && iterations < max_iter
         freakout
         iterations += 1;
     end
