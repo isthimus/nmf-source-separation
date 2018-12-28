@@ -9,8 +9,7 @@ PROJECT_PATH = fullfile('../../');
 TRIOS_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/TRIOS');
 DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');
 
-audiopath = 'C:\Users\Helen\third-year-project\score-aware-source-separation\datasets\PHENICX\audio\beethoven\bassoon1.wav';
-% audiopath = fullfile(TRIOS_DATA_PATH, 'brahms/horn.wav');
+audiopath = fullfile(TRIOS_DATA_PATH, 'brahms/horn.wav');
 [hn_brahms, Fs] = audioread(audiopath);
 disp(audioinfo(audiopath));
 
