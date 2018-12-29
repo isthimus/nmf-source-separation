@@ -1,4 +1,5 @@
 % benchmark of various stft window choices, assessing quality of reconstruction. 
+
 PLOT_FIGS = 0; % zero for just logs
 
 % cd to the folder this script is in
@@ -93,8 +94,7 @@ for i = 1:size(param_lists, 1)
     fprintf('----------------------------------------\n')
     fprintf('Test Name: %s\n', test_name)
     fprintf('----------------------------------------\n')
-    fprintf('Params: test_name = %s\n', test_name);
-    fprintf('        hop       = %d\n', hop);
+    fprintf('Params: hop       = %d\n', hop);
     fprintf('        nfft      = %d\n\n', nfft);
 
     fprintf('        anal_win length  = %d\n', length(anal_win));

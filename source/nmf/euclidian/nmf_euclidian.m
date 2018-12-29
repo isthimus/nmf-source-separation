@@ -26,6 +26,9 @@ return values:
     "iterations"  gives the number of update steps
 
 %}
+
+    SUPPRESS_PRINT=1;
+
     % set defaults for varargs
     statPoint_thresh = 0.00001;
     max_iter = 1000000;
@@ -81,7 +84,7 @@ return values:
 
         % every 1000 iterations, check if we're at a stationary point
         if mod(i, 1000) == 0 
-            disp('.');
+            if ~SUPPRESS_PRINT; disp('.'); end;
             
             % remember our distance now and compare to last time
             currDistCheckpoint = square_euclidian_distance (V, W*H);
@@ -90,7 +93,7 @@ return values:
                 % if we got less than the required improvement in the last 1000 iterations, 
                 % we're at a local minimum. break loop.
                 atStationaryPoint = 1;
-                fprintf("stationary at %d\n", currDistCheckpoint);
+                if ~SUPPRESS_PRINT; fprintf('stationary at %d\n', currDistCheckpoint); end;
                 break
             end
 
@@ -98,7 +101,7 @@ return values:
             lastDistCheckpoint = currDistCheckpoint;
         end
     end
-    disp ('..');
+    if ~SUPPRESS_PRINT; disp ('..'); end;
     
     %%%% figure out if we converged sucessfully and set return values
 
@@ -119,6 +122,5 @@ return values:
     W_out = W;
     H_out = H;
     iterations = i;
-    % final_error already assigned
-    
+    % "final_error" already assigned
 end    

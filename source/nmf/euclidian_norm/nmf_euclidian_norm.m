@@ -16,7 +16,7 @@ The fifth arg, if supplied, is a max number of iterations.
 The sixth arg, if supplied, is a completion threshold - if the function gets 
 within this threshold it will immediately return the values it has for W,H.
     - normally not useful because stationary point detection covers most things
-    - default 0 - ie default is to only use convergence detection
+    - default 0 - i.e. default is to only use convergence detection
 
 Other args will be ignored (silently!)
 
@@ -26,11 +26,10 @@ return values:
     "iterations"  gives the number of update steps
 
 %}
-    freakout
-    diff me with nmf_euclidian and make me all nice you lil shit
-    !!!
 
-        % set defaults for varargs
+    SUPPRESS_PRINT=1;
+
+    % set defaults for varargs
     statPoint_thresh = 0.00001;
     max_iter = 1000000;
     done_thresh = 0;
@@ -65,6 +64,7 @@ return values:
     assert (isempty(H(H<0)), "H contains negative elements")
     
     % matrix shape
+    assert (size(W, 2) == size(H, 1), "size mismatch in W and H")
     assert (size(V, 1) == size(W, 1), "W*H must have the same shape as V")
     assert (size(V, 2) == size(H, 2), "W*H must have the same shape as V")
     
@@ -75,7 +75,7 @@ return values:
     % could do "i" more neatly using for and break but its a bit misleading  
     i = 0;
     lastDistCheckpoint = norm_square_euclidian_distance (V, W*H);
-    stationaryPoint = 0; % flag showing if we've hit a stationary point 
+    atStationaryPoint = 0;
         
     while norm_square_euclidian_distance (V, W*H) > done_thresh && i < max_iter
         % update rules. see lee and seung: "algorithms for non-negative matrix factorisation"
@@ -86,15 +86,16 @@ return values:
 
         % every 1000 iterations, check if we're at a stationary point
         if mod(i, 1000) == 0 
-            disp('.')
-                        
+            if ~SUPPRESS_PRINT; disp('.'); end;
+            
             % remember our distance now and compare to last time
             currDistCheckpoint = norm_square_euclidian_distance (V, W*H);
             delta = currDistCheckpoint-lastDistCheckpoint;
-            if (delta * 100000) < currDistCheckpoint
-                % if we got less than 0.001% improvement in the last 1000 iterations, we're at a local minimum. break loop.
-                stationaryPoint = 1;
-                fprintf("stationary at %d\n", currDistCheckpoint);
+            if delta < currDistCheckpoint * statPoint_thresh
+                % if we got less than the required improvement in the last 1000 iterations, 
+                % we're at a local minimum. break loop.
+                atStationaryPoint = 1;
+                if ~SUPPRESS_PRINT; fprintf('stationary at %d\n', currDistCheckpoint); end;
                 break
             end
 
@@ -102,7 +103,7 @@ return values:
             lastDistCheckpoint = currDistCheckpoint;
         end
     end
-    disp('..')
+    if ~SUPPRESS_PRINT; disp ('..'); end;
     
     %%%% figure out if we converged sucessfully and set return values
 
@@ -111,7 +112,7 @@ return values:
 
     % check whether we ran out of iterations 
     % !!! should this be a warning not an error, allowing recovery of W, H?
-    if final_error > done_thresh && ~stationaryPoint
+    if final_error > done_thresh && ~atStationaryPoint
         ME = MException (                                       ...
             "nmf_euclidian_norm:failed_to_converge",            ...
             "hit max iterations and still not within done_thresh" ...
@@ -119,7 +120,7 @@ return values:
         throw(ME)
     end
     
-        % return values
+    % return values
     W_out = W;
     H_out = H;
     iterations = i;
