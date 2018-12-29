@@ -8,6 +8,6 @@ function out = KL_divergence (A,B)
     assert( sum(isnan(B(:))) == 0, "B contains NaN!")
 
     % find individual divergences and sum, then return as "out"
-    divs = A.*log10(A./B) - A + B;
+    divs = A.*log(A./B) - A + B;
     out = sum(divs(:));
 end

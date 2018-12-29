@@ -8,6 +8,7 @@ function out = IS_divergence (A,B)
     assert( sum(isnan(A(:))) == 0, "A contains NaN!")
     assert( sum(isnan(B(:))) == 0, "B contains NaN!")
 
-    % find the IS_divergence
-    divergences = A./B - log(A./B) - 1;
-    out = sum(divergences(:));
+    % find the IS_divergence by finding individual divergences and summing
+    divs = A./B - log(A./B) - 1;
+    out = sum(divs(:));
+end

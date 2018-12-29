@@ -1,7 +1,7 @@
-function [W_out, H_out, final_error, iterations] = nmf_is (V, W, H, varargin)
+function [W_out, H_out, final_error, iterations] = nmf_kl (V, W, H, varargin)
 %{    
 non-negative matrix factorization algorithm - repeatedly updates "W" and "H"
-using a pair of update rules until the IS divergence between "V"
+using a pair of update rules until the KL divergence between "V"
 and W * H is small enough (see args below), then returns them as "W_out", "H_out". note
 that the update is multiplicative - elements of "W" and "H" which start at zero
 will remain so.
@@ -22,7 +22,7 @@ Other args will be ignored (silently!)
 
 return values:
     "W_out", "H_out" are the results of the NMF calculation.
-    "final_error" gives the IS divergence between V and (W_out * H_out)
+    "final_error" gives the KL divergence between V and (W_out * H_out)
     "iterations"  gives the number of update steps
 
 %}
@@ -71,24 +71,45 @@ return values:
     % loop variables
     % could do "i" more neatly using "for" and "break" but it's a bit misleading
     i = 0;
-    lastDistCheckpoint = IS_divergence(V, W*H);
+    lastDistCheckpoint = KL_divergence(V, W*H);
+    ld = lastDistCheckpoint;
     atStationaryPoint = 0;
-    while i < max_iter && IS_divergence(V, W*H) > done_thresh
+    while i < max_iter && KL_divergence(V, W*H) > done_thresh
         
-        % apply update rules
-        % see Fevotte et al, 
-        % "Nonnegative Matrix Factorisation with the Itakura-Seito Divergence"
-        H = H .* ( (W' * (((W*H) .^ -2) .* V)) ./ (W' * ((W*H) .^ -1) + eps) );
-        W = W .* ( ((((W*H).^-2) .* V) * H') ./   (((W*H) .^ -1) * H' + eps) );
+        %% apply update rules
+        %% see lee and seung "algorithms for non negative matrix factorisation"
 
-        i = i + 1;
+        % update H
+        WH = W * H;
+        for a = 1:size(H,1)
+            for m = 1:size(H,2)
+                Ham_factor = sum(W(:,a) .* V(:,m) ./ WH(:,m)) ...
+                   ./ sum(W(:, a));
+                H(a,m) = H(a,m) * Ham_factor;
+            end
+        end
 
-        % every 1000 iterations, check if we're at a stationary point
+        % recalculate WH, then update W
+        WH = W * H;
+        for j = 1:size(W,1)
+            for a = 1:size(W,2)
+                Wja_factor = sum(H(a,:) .* V(j,:) ./ WH(j,:)) ...
+                   ./ sum(H(a,:));
+                W(j,a) = W(j,a) * Wja_factor;
+            end
+        end
+
+        if KL_divergence (V, W*H) > ld
+            assert (0==1, "bad update rule")
+        end
+        ld = KL_divergence(V, W*H);
+
+        %% every 1000 iterations, check if we're at a stationary point
         if mod(i, 1000) == 0 
             disp('.');
             
             % remember our distance now and compare to last time
-            currDistCheckpoint = IS_divergence(V, W*H);
+            currDistCheckpoint = KL_divergence(V, W*H);
             delta = currDistCheckpoint-lastDistCheckpoint;
             if delta < currDistCheckpoint * statPoint_thresh
                 % if we got less than required improvement in the last 1000 iterations,
@@ -101,13 +122,16 @@ return values:
             % set lastDistCheckpoint ready for the next comparison
             lastDistCheckpoint = currDistCheckpoint;
         end
+
+        %increment iterator and end while
+        i = i + 1;
     end
     disp ('..');
     
     %%%% figure out if we converged sucessfully and set return values
 
     % set final_error return value
-    final_error = IS_divergence (V, W*H);
+    final_error = KL_divergence (V, W*H);
 
     % check whether we ran out of iterations 
     % !!! should this be a warning not an error, allowing recovery of W, H?
