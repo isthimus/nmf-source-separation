@@ -1,0 +1,35 @@
+K>> nmf_i
+
+nmf_i =
+
+     2
+
+K>> init_i
+
+init_i =
+
+     7
+
+K>> V_i
+
+V_i =
+
+     2
+
+K>> fuzz_i
+
+fuzz_i =
+
+     4
+
+K>> k
+
+k =
+
+    50
+
+K>> testnum
+
+testnum =
+
+   159
