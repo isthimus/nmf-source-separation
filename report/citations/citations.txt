@@ -23,3 +23,10 @@ lol see https://zenodo.org/record/1289821#.WzNuXRyxXMU
 
 Zhivomirov stft lell
 
+BSS_Eval
+% If you find it useful, please cite the following reference:
+% Emmanuel Vincent, Rémi Gribonval, and Cédric Févotte, "Performance
+% measurement in blind audio source separation," IEEE Trans. on Audio,
+% Speech and Language Processing, 14(4):1462-1469, 2006.
+
+

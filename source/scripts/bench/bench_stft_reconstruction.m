@@ -23,7 +23,7 @@ rect_3072_unity   = ones(3072,1);
 
 N = 3072;
 n = (0:N-1).';
-shiftedSin_3072 = sin ( (pi/N) * (n + 0.5));
+shiftedSin_3072 = sin((pi/N) * (n + 0.5));
 
 % list some audio filenames
 file_paths = {
@@ -37,7 +37,7 @@ file_paths = {
 % i theorise that nfft doesnt matter (in this case) as long as nfft > max window length. 
 
 % !!! add the first one i used:
-%    wlen = ceil(Fs/50); hop = ceil(3*wlen / 4); nfft = 1024; minThresh_dB = -110;
+%    wlen = ceil(Fs/50)%%% = 880 %%%; hop = ceil(3*wlen / 4); nfft = 1024; minThresh_dB = -110;
 %    anal_win = blackmanharris(wlen, 'periodic'); synth_win = hamming(wlen, 'periodic');
 
 rng(0);

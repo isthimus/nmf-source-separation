@@ -9,21 +9,20 @@ PROJECT_PATH = fullfile('../../');
 TRIOS_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/TRIOS');
 DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');
 
-audiopath = fullfile(TRIOS_DATA_PATH, 'brahms/horn.wav');
-[hn_brahms, Fs] = audioread(audiopath);
+audiopath = fullfile(DEV_DATA_PATH, 'TRIOS_vln_Db6_B6_1.wav');
+[audio, Fs] = audioread(audiopath);
 disp(audioinfo(audiopath));
 
-hn_brahms = hn_brahms(1:1.487e6);
-n = [1 : length(hn_brahms)];
-%audiowrite(fullfile(DEV_DATA_PATH, 'TRIOS_hn_6note.wav'), hn_brahms, Fs);
-t = 0:1/4.4e4:5;
-y = chirp(t,0,2.5,4000); 
 
-%audiowrite(fullfile(DEV_DATA_PATH, 'chirp.wav'), y, 4.4e4)
+%doorbell = doorbell(1:1.487e6);
+n = [1 : length(audio)];
+%audiowrite(fullfile(DEV_DATA_PATH, 'TRIOS_vln_Db6_B6_1.wav'), vlnA, Fs);
+%audiowrite(fullfile(DEV_DATA_PATH, 'TRIOS_vln_Db6_B6_2.wav'), vlnB, Fs);
 
+audio = audio(:,1);
 
-plot (n,hn_brahms);
-disp (max(hn_brahms(:)))
+plot (n,audio);
+waitforbuttonpress;
 
 
 %{

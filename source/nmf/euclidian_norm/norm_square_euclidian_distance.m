@@ -4,7 +4,7 @@ function out = norm_square_euclidian_distance (A, B)
     % !!! benchmark loss of precision from norm
 
     % check preconditions
-    assert( isequal(size(A), size(B), "A and B must have the same shape")
+    assert( isequal(size(A), size(B)), "A and B must have the same shape")
     assert( sum(isnan(A(:))) == 0, "A contains NaN!")
     assert( sum(isnan(B(:))) == 0, "B contains NaN!")
       
