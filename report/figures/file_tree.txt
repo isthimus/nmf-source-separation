@@ -1,0 +1,56 @@
+
+        ÀÄÄÄsource
+            ÃÄÄÄnmf
+            ³   ³  nmf_separate_sources.m
+            ³   ³  nmf_visualiser.m
+            ³   ³   
+            ³   ÃÄÄÄeuclidian
+            ³   ³       nmf_euclidian.m
+            ³   ³       nmf_euclidian_benchmark.m
+            ³   ³       nmf_euclidian_unittest.m
+            ³   ³       square_euclidian_distance.m
+            ³   ³       
+            ³   ÃÄÄÄeuclidian_norm
+            ³   ³       nmf_euclidian_norm.m
+            ³   ³       nmf_euclidian_norm_unittest.m
+            ³   ³       norm_square_euclidian_distance.m
+            ³   ³       
+            ³   ÃÄÄÄinit
+            ³   ³       nmf_init_rand.m
+            ³   ³       
+            ³   ÃÄÄÄIS_divergence
+            ³   ³       IS_divergence.m
+            ³   ³       nmf_is.m
+            ³   ³       
+            ³   ÃÄÄÄKL_divergence
+            ³   ³       KL_divergence.m
+            ³   ³       KL_divergence_ln.m
+            ³   ³       KL_divergence_log10.m
+            ³   ³       nmf_divergence_unittest.m
+            ³   ³       nmf_kl.m
+            ³   ³       
+            ³   ÀÄÄÄreconstruct
+            ³           nmf_reconstruct_keepPhase.m
+            ³           nmf_reconstruct_pitchTrack.m
+            ³           
+            ÃÄÄscripts
+            ³   ³   eNorm_source_sep_POC.m
+            ³   ³   plot_spectra.m
+            ³   ³   setpaths.m
+            ³   ³   tst.m
+            ³   ³   unittest.sh
+            ³   ³   
+            ³   ÀÄÄÄbench
+            ³           bench_nmf_fuzz.m
+            ³           bench_source_sep.m
+            ³           bench_stft_reconstruction.m
+            ³           
+            ÀÄÄÄutil
+                   find_window_hop.m
+                   find_window_hop_multi.m
+                   floor_to_multiple.m
+                   hop_add_win.m
+                   matfuzz_additive.m
+                   plot_if_plotLvl.m
+                   wait_returnKey.m
+                        

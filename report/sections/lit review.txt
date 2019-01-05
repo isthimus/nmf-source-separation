@@ -1,19 +1,48 @@
-
-what is this section for?
-
 LR 1 "approaches to source sep"
 
 can talk about when first studied
-can give mixture model
-Beam forming
-independent component analysis
-ML
-NMF
+can give mixture model 
+Beam forming (5 SENTENCE)
+independent component analysis (5 SENTENCE)
+NMF (what it does - rank reduction etc. ehy its cool) + lee + seung
 
-LR2 " intro to NMF"
+LR2 "NMF"
 
-what it does - rank reduction etc. ehy its cool + lee + seung
-interpretation of the matrices wrt audio
-update rules, distance measures.
+interpretation of the matrices wrt audio + how to recover (phases not given! see LR4)
+"sources" under NMF are really "notes". problems with how to unify by instrument.
+update rules, distance measures. sum dat latex
 
-LR3
+LR3 "overcoming the drawbacks of nmf with SASS"
+
+Why Nmf often fucks up in practice
+SASS with a prealigned score. chroma, spectrum painting
+SA:
+	DTW - algorithm, feature spaces 
+
+LR4 - "reconstruction and stft processing considerations"
+Ensuring PR in straight stft. COLA, hop size, min freq representable. distinguish spectrogram (one way) from stft 
+(theoretically reversible)
+Reconstruction in actual source sep problems. phase issues - so paint phase? but phase addition issue. vib and phase pickup.
+stft processing filters - why PR isnt enough for time -> freq -> time. pad vs convolve in small-gain vs binary filters. 
+
+LR5 - "extensions to NMF"
+
+SOMEWHERE IN W2D NEED TO TALK ABOUT EXTENSIBILITY TO NMF-SLIDEY etc etc
+HTC
+NMF slidey, apparently (x2)
+CSMF
+
+LR6 - "(existing toolboxes) and datasets"
+TRiOS, PHENICX and underlying anechoic recordings
+bosh around for existing NMF toolboxes, cite, make up some guff about how yours is different.
+
+LR7 - benchmarks for source separation
+
+SNR and why its a bit blunt, MSE 
+SIR,SAR, etc - the theory
+BSS_EVAL + permutation uncertainty
+PEASS + perceptual benchmarking
+
+
+
+
