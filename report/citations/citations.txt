@@ -30,3 +30,12 @@ BSS_Eval
 % Speech and Language Processing, 14(4):1462-1469, 2006.
 
 
+Vincent, Emmanuel
+Gribonval, Rémi 
+Févotte, Cédric
+
+Miron, M
+Carabias-Orti, J
+Bosch, J, J 
+Gómez, E
+Janer, J

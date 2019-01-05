@@ -1,0 +1,19 @@
+
+what is this section for?
+
+LR 1 "approaches to source sep"
+
+can talk about when first studied
+can give mixture model
+Beam forming
+independent component analysis
+ML
+NMF
+
+LR2 " intro to NMF"
+
+what it does - rank reduction etc. ehy its cool + lee + seung
+interpretation of the matrices wrt audio
+update rules, distance measures.
+
+LR3
