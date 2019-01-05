@@ -141,7 +141,7 @@ for test_i = 1:size(testdefs,1)
         catch ME
             
             % separation did not run to completion - store false in ran-to-completion field
-            results{test_i,audio_i,1} = {false}; %#ok<NASGU>
+            results{test_i,audio_i,1} = {false}; %#ok<NASGU> 
             skip_bench = true;                   %#ok<NASGU>
             rethrow(ME); % can comment this for large batches
         end

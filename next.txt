@@ -10,10 +10,12 @@
 - scope out prototype/partial changes          X 
 - redo prototypes 							   X 
 - think about bench (?harness)				   X
-- graph units BUT FREEZE ALGO.
-- code up bench (?harness) + ?recordkeeping
-- good spectrogram, etc. 
-- other NMF functions
+- graph units BUT FREEZE ALGO.				   X
+- code up bench (?harness) + ?recordkeeping	   X
+- good spectrogram, etc. 					   X
+- other NMF functions    					   X
+
+DONE
 
            ######################
 -----------#*~ THX 4 WATCHING ~*#------------
