@@ -1,6 +1,6 @@
 % benchmark of various stft window choices, assessing quality of reconstruction. 
 
-PLOT_FIGS = 0; % zero for just logs
+PLOT_FIGS = 1; % zero for just logs
 
 % cd to the folder this script is in
 script_path = mfilename('fullpath');
