@@ -1,6 +1,22 @@
 % benchmark the whole source separation procedure with a wide range of parameters
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PARAMETERS                                                                 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PLOT_FIGS = 0;                   % zero for just logs, 1 to follow testdefs.
+
+SUPRESS_NMF_EXCEPTIONS = false;  % if truthy, bench will not stop at an nmf 
+                                 % exception, but will skip to the next test
+
+RESULTS_SAVE_PATH = [];          % set to a string and results array will be
+                                 % saved to a .mat file at that path
+
+% constrain PLOT_FIGS to 0 or 1
+if PLOT_FIGS ~= 0
+    PLOT_FIGS = 1;
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % SCRIPT SETUP                                                               %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % cd to the folder this script is in
@@ -14,14 +30,20 @@ PROJECT_PATH = fullfile('../../..');
 TRIOS_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/TRIOS');
 DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');
 
-% log to terminal. last fprintf statement til logging stage at bottom.
+rng(27011996); % seed randomness 
+
+% log to terminal. last fprintf statement til DISPLAY RESULTS stage.
 fprintf('########################################\n')
 fprintf('TEST TYPE - %s\n', mfilename())
 fprintf('########################################\n')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% TEST DEFINITIONS                                                           %
+% TEST DEFINITIONS & TABLES                                                 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% paths to both mixture audio and ground truth
+% first item in a row is a path to the mixture (mono, for now)
+% rest of row is taken up with ground truth source paths. 
 audio_filepaths = {
     fullfile(DEV_DATA_PATH, 'TRIOS_vln_Db6_B6.wav'),       ...
         fullfile(DEV_DATA_PATH, 'TRIOS_vln_Db6_B6_1.wav'), ...
@@ -32,8 +54,6 @@ audio_filepaths = {
         fullfile(DEV_DATA_PATH, 'TRIOS_vln_Db6_B6_2.wav');
 %}
 };
-% !!!
-assert (~isempty(audio_filepaths), "matt you suuuuuuuck")
 
 % create audio_vectors with same dimension as audio_filepaths, plus 2 extra columns
 % one for name and one for Fs
@@ -64,40 +84,44 @@ stft_analwin  = blackmanharris(stft_wlen, 'periodic');
 stft_synthwin = hamming(stft_wlen, 'periodic');
 
 % format:
-% name, nmf_init_func, nmf_func, spect_func, recons_func;
-% nmf_init_func prototype: (freqBins, timeBins) -> (W_init, H_init)
-% nmf_func prototype (V,W,H) -> (W_out, H_out, final_err, iterations)
-% spect_func prototype: (audio_vec, Fs) -> (spectrogram)
-% recons_func prototype: (orig_spect, W, H, Fs) -> (nsrc x nsamples array of sources)
-testdefs = { ...
+% name, nmf_init_func, nmf_func, spect_func, recons_func, plot_level;
+%   nmf_init_func prototype: (freqBins, timeBins) -> (W_init, H_init)
+%   nmf_func prototype (V,W,H) -> (W_out, H_out, final_err, iterations)
+%   spect_func prototype: (audio_vec, Fs) -> (spectrogram)
+%   recons_func prototype: (orig_spect, W, H, Fs) -> (nsrc x nsamples array of sources)
+testdefs = {
     "eNorm_source_sep_orig",                                                          ...
         @(freqBins, timeBins) nmf_init_rand(freqBins, timeBins, 2, 10),               ...
-        @(V,W,H) nmf_euclidian_norm(V,W,H, 0.001, 1000000, 0),                      ...
+        @(V,W,H) nmf_euclidian_norm(V,W,H, 0.001, 1000000, 0),                        ...
         @(audio_vec, Fs) stft(audio_vec, stft_analwin, stft_wlen/8, stft_wlen*1, Fs), ...
         @(orig_spect, W, H, Fs) nmf_reconstruct_keepPhase(orig_spect, W, H,           ...
-            stft_analwin, stft_synthwin, stft_wlen/8, stft_wlen/4, Fs);
+            stft_analwin, stft_synthwin, stft_wlen/8, stft_wlen/4, Fs),               ...
+        99;
 
-    "eNorm_source_sep_statPoint1%",                                                                      ...
+    "eNorm_source_sep_statPoint1%",                                                   ...
         @(freqBins, timeBins) nmf_init_rand(freqBins, timeBins, 2, 10),               ...
-        @(V,W,H) nmf_euclidian_norm(V,W,H, 0.01, 1000000, 0),                      ...
+        @(V,W,H) nmf_euclidian_norm(V,W,H, 0.01, 1000000, 0),                         ...
         @(audio_vec, Fs) stft(audio_vec, stft_analwin, stft_wlen/8, stft_wlen*1, Fs), ...
         @(orig_spect, W, H, Fs) nmf_reconstruct_keepPhase(orig_spect, W, H,           ...
-            stft_analwin, stft_synthwin, stft_wlen/8, stft_wlen/4, Fs);
+            stft_analwin, stft_synthwin, stft_wlen/8, stft_wlen/4, Fs),               ...
+        99;
 
 };
 
 % list of benchmark functions 
 % NB would like to only include estimated and ground truth sources
-% can use other benchmarks for eg final_err etc
+% can use other benchmarks to test final_err etc
 
-% prototype - (se, s) -> anything
+% format:
+% name, bench_func
+
+% bench_func prototype - (se, s) -> any number of scalers
 % where se is a nsrc x nsamples array of estimated sources
 %       s  is a nsrc x nsamples array of ground truths
-% the "anything" will be captured in a cell array using nargout()
+% the output will be captured in a cell array using nargout()
 % thus benchmark funcs must not use varargout
 benchmarks = {
     "avg_bss_eval", @avg_bss_eval;
-%   "subjective_source_eval", @subjective_source_eval; 
 %   "PEASS", @PEASS;
 %   "MSE",   @MSE;
 };
@@ -113,11 +137,13 @@ results = cell(size(testdefs,1), size(audio_vectors,1), size(benchmarks,1) + 1);
 for test_i = 1:size(testdefs,1)
     for audio_i = 1:size(audio_vectors,1)
         
-        % get the functions for init, nmf, spect and reconstruct
+        % get all the values from the testdef
+        % if PLOT_FIGS=0 plot_level will be forced to 0
         init_func   = testdefs{test_i, 2};
         nmf_func    = testdefs{test_i, 3};
         spect_func  = testdefs{test_i, 4};
         recons_func = testdefs{test_i, 5};
+        plot_level  = testdefs{test_i, 6} * PLOT_FIGS; 
 
         % get the mixture, the original sources, and Fs
         Fs = audio_vectors{audio_i, 2};
@@ -132,18 +158,29 @@ for test_i = 1:size(testdefs,1)
 
         try
             % attempt source separation
-            sources_out = nmf_separate_sources(nmf_func, init_func, spect_func_fs, recons_func_fs, audio_mixture, 0);
-            audio_groundtruth = audio_groundtruth(:, 1:size(sources_out, 2));
+            sources_out = nmf_separate_sources(     ...
+                nmf_func,                           ... 
+                init_func,                          ...
+                spect_func_fs,                      ...
+                recons_func_fs,                     ...
+                audio_mixture,                      ...
+                plot_level                          ...
+            );
+            audio_groundtruth = audio_groundtruth(:, 1:size(sources_out, 2)); 
 
             % separation ran to completion - store true in "ran to completion" field
             results{test_i,audio_i,1} = {true};
             skip_bench = false;
+
         catch ME
-            
             % separation did not run to completion - store false in ran-to-completion field
-            results{test_i,audio_i,1} = {false}; %#ok<NASGU> 
-            skip_bench = true;                   %#ok<NASGU>
-            rethrow(ME); % can comment this for large batches
+            results{test_i,audio_i,1} = {false};
+            skip_bench = true;                   
+            
+            % rethrow, or just continue benchmarking if SUPPRESS_NMF_EXCEPTIONS is true
+            if ~SUPRESS_NMF_EXCEPTIONS
+                rethrow(ME);
+            end
         end
 
         % no point running benchmarks if test didnt complete - continue to next test
@@ -160,7 +197,7 @@ for test_i = 1:size(testdefs,1)
         end
 
         % print something each test to show aliveness
-        if audio_i == 1; fprintf('\n'); end;
+        if audio_i == 1; fprintf('\n'); end
         fprintf('.')
     end
 end
@@ -169,7 +206,7 @@ end
 % DISPLAY RESULTS                                                            %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% BENCHMARK DSPLAY MUST BE NULL-AWARE
+% NB: BENCHMARK DSPLAY MUST BE NULL-AWARE
 [T, A, B] = size(results);
 
 for b = 1:B
@@ -205,6 +242,16 @@ for b = 1:B
         end
     end
 end
+
+% if a save location for result is given, save to there
+if ~isempty (RESULTS_SAVE_PATH)
+    save(RESULTS_SAVE_PATH, 'results')
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% END OF SCRIPT    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % STATIC FUNCTIONS
