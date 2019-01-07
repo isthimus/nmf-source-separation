@@ -23,7 +23,7 @@ LR4 - "reconstruction and stft processing considerations"
 Ensuring PR in straight stft. COLA, hop size, min freq representable. distinguish spectrogram (one way) from stft 
 (theoretically reversible)
 Reconstruction in actual source sep problems. phase issues - so paint phase? but phase addition issue. vib and phase pickup.
-stft processing filters - why PR isnt enough for time -> freq -> time. pad vs convolve in small-gain vs binary filters. 
+stft processing filters - why PR isnt enough for time -> freq -> process -> time. pad vs convolve in small-gain vs binary filters. 
 
 LR5 - "extensions to NMF"
 
