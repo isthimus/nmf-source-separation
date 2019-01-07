@@ -20,6 +20,7 @@ hamming_3072 = hamming (3072, 'symmetric');
 hamming_3072_p = hamming (3072, 'periodic');
 rect_3072_selfInverse = ones(3072,1) * (1 / sqrt(2));
 rect_3072_unity   = ones(3072,1);
+kaiser_3072 = kaiser(3072);
 
 N = 3072;
 n = (0:N-1).';
@@ -43,15 +44,20 @@ file_paths = {
 rng(0);
 param_lists = { 
 %     name                        anal_win             synth_win              hop              nfft
+    "kaiser-hop25%",          kaiser_3072,           kaiser_3072,           3072/4,           3072*4;
+
     "default",                blackmanharris_3072_p, hamming_3072_p,        3072/8,           3072*4;
     "first-attempt",          blackmanharris_3072_p, hamming_3072_p,        ceil(3*3072 / 4), 3072*4;
+    
     "bh-hamming-symmetric",   blackmanharris_3072,   hamming_3072,          3072/8,           3072*4;
     "bh-hamming-noPR",        blackmanharris_3072_p, hamming_3072_p,        3072/2,           3072*4;
     "rect-3072-selfInverse",  rect_3072_selfInverse, rect_3072_selfInverse, 3072/2,           3072*4;
     "rect-3072-unity",        rect_3072_unity,       rect_3072_unity,       3072/2,           3072*4;
+    
     "shift-sin-hop50%",       shiftedSin_3072,       shiftedSin_3072,       3072/2,           3072*4;
     "shift-sin-hop25%",       shiftedSin_3072,       shiftedSin_3072,       3072/4,           3072*4;
     "shift-sin-hop33%",       shiftedSin_3072,       shiftedSin_3072,       3072/3,           3072*4;
+
 
     "nfft-pad-1x-PR",         shiftedSin_3072,       shiftedSin_3072,       3072/2,           3072*1;
     "nfft-pad-2x-PR",         shiftedSin_3072,       shiftedSin_3072,       3072/2,           3072*2;

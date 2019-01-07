@@ -8,7 +8,7 @@ will remain so.
 
 The fourth arg, if supplied, is the stationary point detection threshold. 
     - if arg5 = 0.01 we need an improvement of 1% every 1000 iterations.
-    - default 0.00001 ie 0.001% 
+    - default 0.0001 ie 0.01% 
 
 The fifth arg, if supplied, is a max number of iterations.
     - default 1'000'000
@@ -30,7 +30,7 @@ return values:
     SUPPRESS_PRINT=1;
 
     % set defaults for varargs
-    statPoint_thresh = 0.00001;
+    statPoint_thresh = 0.0001;
     max_iter = 1000000;
     done_thresh = 0;
     

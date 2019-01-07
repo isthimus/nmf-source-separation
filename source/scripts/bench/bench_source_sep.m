@@ -3,14 +3,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % PARAMETERS                                                                 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-PLOT_FIGS = 0;                   % zero for just logs, 1 to follow testdefs.
+% zero for just logs and no plotting, 1 to follow preference in testdefs
+PLOT_FIGS = 0;
 
-SUPRESS_NMF_EXCEPTIONS = false;  % if truthy, bench will not stop at an nmf 
-                                 % exception, but will skip to the next test
+% if truthy, bench will not stop at an nmf exception, but will skip to the next test
+SUPRESS_NMF_EXCEPTIONS = false;  
 
-RESULTS_SAVE_PATH = [];          % set to a string and results array will be
-                                 % saved to a .mat file at that path
-
+% set to a string and results array will be saved to a .mat file at that path
+RESULTS_SAVE_PATH = 'bench_source_sep_results.mat';
+                                                            
 % constrain PLOT_FIGS to 0 or 1
 if PLOT_FIGS ~= 0
     PLOT_FIGS = 1;
@@ -38,7 +39,7 @@ fprintf('TEST TYPE - %s\n', mfilename())
 fprintf('########################################\n')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% TEST DEFINITIONS & TABLES                                                 %
+% TEST DEFINITIONS & TABLES                                                  %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % paths to both mixture audio and ground truth
@@ -64,7 +65,7 @@ audio_vectors = cell (size(audio_filepaths, 1), size(audio_filepaths,2) + 2);
 for i = 1:size(audio_filepaths,1)
     Fs = [];
 
-    % get each source
+    % get each file
     for j = 1:size(audio_filepaths,2)
         if ~isempty(audio_filepaths{i,j})
             [audio_vectors{i,j+2}, Fs] = audioread(audio_filepaths{i,j});
@@ -85,21 +86,21 @@ stft_synthwin = hamming(stft_wlen, 'periodic');
 
 % format:
 % name, nmf_init_func, nmf_func, spect_func, recons_func, plot_level;
-%   nmf_init_func prototype: (freqBins, timeBins) -> (W_init, H_init)
+%   nmf_init_func prototype: (freqBins, timeBins, K) -> (W_init, H_init)
 %   nmf_func prototype (V,W,H) -> (W_out, H_out, final_err, iterations)
 %   spect_func prototype: (audio_vec, Fs) -> (spectrogram)
 %   recons_func prototype: (orig_spect, W, H, Fs) -> (nsrc x nsamples array of sources)
 testdefs = {
     "eNorm_source_sep_orig",                                                          ...
-        @(freqBins, timeBins) nmf_init_rand(freqBins, timeBins, 2, 10),               ...
+        @(freqBins, timeBins, K) nmf_init_rand(freqBins, timeBins, K, 10),            ...
         @(V,W,H) nmf_euclidian_norm(V,W,H, 0.001, 1000000, 0),                        ...
         @(audio_vec, Fs) stft(audio_vec, stft_analwin, stft_wlen/8, stft_wlen*1, Fs), ...
         @(orig_spect, W, H, Fs) nmf_reconstruct_keepPhase(orig_spect, W, H,           ...
-            stft_analwin, stft_synthwin, stft_wlen/8, stft_wlen/4, Fs),               ...
+            stft_analwin, stft_synthwin, stft_wlen/8, stft_wlen*1, Fs),               ...
         99;
 
     "eNorm_source_sep_statPoint1%",                                                   ...
-        @(freqBins, timeBins) nmf_init_rand(freqBins, timeBins, 2, 10),               ...
+        @(freqBins, timeBins, K) nmf_init_rand(freqBins, timeBins, K, 10),            ...
         @(V,W,H) nmf_euclidian_norm(V,W,H, 0.01, 1000000, 0),                         ...
         @(audio_vec, Fs) stft(audio_vec, stft_analwin, stft_wlen/8, stft_wlen*1, Fs), ...
         @(orig_spect, W, H, Fs) nmf_reconstruct_keepPhase(orig_spect, W, H,           ...
@@ -151,16 +152,21 @@ for test_i = 1:size(testdefs,1)
         audio_groundtruth = audio_vectors(audio_i, 4:end);
         audio_groundtruth = [audio_groundtruth{:}].'; % unpack cellArr to matrix
 
-        % include Fs in spect and recons funcs now that we know it
-        % couldnt include it in testdef because it might differ between audio vectors
+        % include Fs in spect/recons funcs and K in init func now that we know them
+        % couldnt include in testdef because they differ between audio vectors
         spect_func_fs =  @(audio_vec) spect_func(audio_vec, Fs);
         recons_func_fs = @(original_spect, W,H) recons_func(original_spect, W,H, Fs);
+
+        % include K (ie number of sources) in init_func.
+        % init_func is free to ignore this value if benching SASS, testing wrong K-val, etc. 
+        K = size(audio_groundtruth,1);
+        init_func_k = @(freqBins, timeBins) init_func(freqBins, timeBins, K);
 
         try
             % attempt source separation
             sources_out = nmf_separate_sources(     ...
                 nmf_func,                           ... 
-                init_func,                          ...
+                init_func_k,                          ...
                 spect_func_fs,                      ...
                 recons_func_fs,                     ...
                 audio_mixture,                      ...
@@ -227,7 +233,6 @@ for b = 1:B
         for t = 1:T
             fprintf('\t%s ', testdefs{t,1});
         
-
             result = results{t, a, b};
             for i = 1:size(result,2)
                 if ~isempty(result{i})
@@ -238,6 +243,7 @@ for b = 1:B
                     fprintf('%d ', 0 + 2*eps);
                 end
             end
+
         fprintf('\n');
         end
     end
@@ -259,6 +265,7 @@ end
 
 function [SDR_avg, SIR_avg, SAR_avg] = avg_bss_eval (se, s)
     % average the SDR, SIR and SAR scores from bss_eval
+    % makes the resuts viewable as a single number
 
     [SDR, SIR, SAR, ~] = bss_eval_sources(se, s);
     SDR_avg = mean(SDR);
