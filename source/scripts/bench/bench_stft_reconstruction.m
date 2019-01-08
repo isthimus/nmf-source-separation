@@ -91,7 +91,7 @@ for i = 1:size(param_lists, 1)
     nfft      = param_list{5};
 
     % could do some clever stuff on the audio truncation code to support differing window lengths
-    % out of scope at this stage
+    % probably not worth it
     % !!! "Hitherto shalt thou come, but no further; and here shall thy proud waves be stayed?" Job 38:11
     assert(isequal(length(synth_win), length(anal_win)), "synth and analysis window different lengths");
     wlen = length(anal_win);
