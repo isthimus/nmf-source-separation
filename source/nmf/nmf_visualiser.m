@@ -22,12 +22,6 @@ function nmf_visualiser(audioFile, nmf_func, nmf_init_func, nmf_init_params)
     title('audio time domain')
     sound(audio_vec, Fs)
     wait_returnKey
-   
-    % get spectrogram  and plot
-    % !!! discuss overlap etc
-    % !!! magic numbers
-    % !!! nfft
-    % spectrogram wrapper in subfunction?
     
     % define the analysis and synthesis parameters
     wlen = ceil(Fs/50); hop = ceil(3*wlen / 4); nfft = 1024; minThresh_dB = -110;
