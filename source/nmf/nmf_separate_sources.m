@@ -2,7 +2,7 @@ function sources_out = nmf_separate_sources (nmf_func, nmf_init_func, spect_func
     % performs source separation using one of a range of nmf functions.
     % returns a matrix where each column is one separated out source.
     %
-    % "audio_vec" is a vector containing the audio to be worked on. !!! stereo?
+    % "audio_vec" is a vector containing the audio to be worked on.
     % "plot_level" is a verbosity-like flag stating how much info to plot
     % all other inputs are function handles with prototypes as below
     % use partial application to make them match if necessary
