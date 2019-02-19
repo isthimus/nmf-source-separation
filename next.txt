@@ -1,34 +1,10 @@
-           ###################
------------#*~THEG AMEPLA N~*#---------------
-           ###################
 
-- cleanup on nmf_euclidian and euclidian_norm  X
-- fix throw/assert everywhere                  X
-- make sure it still works in visualiser       X
-- fix colorbar everywhere                      X
-- get something small converging in eNorm_POC  X 
-- scope out prototype/partial changes          X 
-- redo prototypes 							   X 
-- think about bench (?harness)				   X
-- graph units BUT FREEZE ALGO.				   X
-- code up bench (?harness) + ?recordkeeping	   X
-- good spectrogram, etc. 					   X
-- other NMF functions    					   X
+- midi POC
+	- get W_mask looking right and find a way to verify W_mask/H_mask against piano_roll
+	- test nmf_init_zeroMask
+	- make audio_len_samp optional in makeMasks
+	- account for multiple tracks/ multiple instruments
+	- TOLERANCE
 
-DONE
-
-           ######################
------------#*~ THX 4 WATCHING ~*#------------
-           ######################
-
-- header comment on nmf separate sources about function partials
-- harness coded up but just running plotting funcs
-
-- nicer testcases in datasets/development
-- preallocate matrix for nmf_reconstruct_keepPhase
-
-- nmf_init_chroma + nmf_init_onset
-- nmf_reconstruct_ignorePhases for comparison 
-- nmf_reconstruct_pitchtrack improvement (normalise to 1? FM?)
-- spect func which detects noisefloor
-- hook up benchmarks + think bout docs
+- tf is the deal with nfft vs num_freq_bins, vs passing audio spect around directly???
+- code up a lil' hand-aligned source sep dealio (prolly don't test right now)
