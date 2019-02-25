@@ -53,11 +53,13 @@ xlabel ("midi note number");
 ylabel ("freq bin");
 %}
 
+
 % run align_makeMasks_midi and plot along with piano roll for comparison
 [W_mask, H_mask] = align_makeMasks_midi(midi, audio_len_samp, fs, wlen, hop, nfft);
 
 figure (1);
-imagesc(W_mask);
+%imagesc(W_mask);
+contour(W_mask);
 title("W\_mask");
 
 figure (2);
@@ -70,3 +72,25 @@ title("pianoRoll");
 
 wait_returnKey
 close all;
+
+for i = 1:size(W_mask, 2)
+    stem(W_mask(:,i))
+    wait_returnKey
+end
+close all;
+
+
+%{
+% run align_makeMasks_midi, use as input to nmf_init_zeromask, display.
+[W_mask, H_mask] = align_makeMasks_midi(midi, audio_len_samp, fs, wlen, hop, nfft);
+[W_init, H_init] = nmf_init_zeroMask (nfft, align_samps2TimeBin(audio_len_samp, wlen, hop), W_mask, H_mask);
+
+figure (1);
+imagesc(W_init);
+
+figure (2);
+imagesc(H_init);
+
+wait_returnKey
+close all;
+%}

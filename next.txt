@@ -1,10 +1,10 @@
 
 - midi POC
-	- get W_mask looking right and find a way to verify W_mask/H_mask against piano_roll
-	- test nmf_init_zeroMask
-	- make audio_len_samp optional in makeMasks
-	- account for multiple tracks/ multiple instruments
+	- get W_mask looking right and find a way to verify W_mask/H_mask against piano_roll *** DONE YAS *** 
+	- test nmf_init_zeroMask X
+	- make audio_len_samp optional in makeMasks X
+	- account for multiple tracks/ multiple instruments 
 	- TOLERANCE
 
-- tf is the deal with nfft vs num_freq_bins, vs passing audio spect around directly???
+- what is the deal with nfft vs num_freq_bins, vs passing audio spect around directly???
 - code up a lil' hand-aligned source sep dealio (prolly don't test right now)

@@ -1,6 +1,8 @@
 function [W_mask, H_mask] = align_makeMasks_midi (midi, audio_len_samp, fs, wlen, hop, nfft)
     % given a midi representation of the notes in a piece of audio, builds masks for W and H
     % to allow score - aware initialisation.
+    % audio_len_samp can be optionally derived from the midi information - leave as []
+    % NB if there is silence at the end of the audio then audio_len_samp MUST be provided
 
     % precondition checks
     % make sure wlen is a multiple of hop - this allows all time bins to line up exactly with a midi "pixel"
@@ -13,12 +15,18 @@ function [W_mask, H_mask] = align_makeMasks_midi (midi, audio_len_samp, fs, wlen
     [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes, 0, hop/fs);
     pianoRoll_tb = align_secs2TimeBin(pianoRoll_t, fs, wlen, hop);
 
+    % pick up audio_len_samp if its not provided
+    if isempty(audio_len_samp)
+        endTimes = notes(:, 6);
+        audio_len_samp = ceil(fs * max(endTimes(:)));
+    end
+
     % figure out how many note nums actually used, for preallocation.
     num_notes_used = size(pianoRoll,1);
     for i = 1:size(pianoRoll,1) % iterate over note numbers in piano roll
         if all(pianoRoll(i,:) == 0) 
             num_notes_used = num_notes_used - 1;
-        end;
+        end
     end
 
     % preallocate W, H
@@ -32,25 +40,19 @@ function [W_mask, H_mask] = align_makeMasks_midi (midi, audio_len_samp, fs, wlen
 
         % skip empty rows
         % this case increments PR_i but not WH_i, hence the two iterators
-        if all(pianoRoll(i,:) == 0) continue; end; 
+        if all(pianoRoll(PR_i,:) == 0) 
+            continue; 
+        end
 
         % this PR row is not empty - so this note number will have a column in W
-
-        % get note number of fundamental
-        % also get nyquist limit "as a note number" (fractional)
-        ny_nn = align_freq2nn_fractional(fs/2);
-        fund_nn = pianoRoll_nn(PR_i);
-        curr_nn = fund_nn;
-        while (curr_nn < ny_nn)
-            
-            % write into all the harmonics of the fundamental for this column of W.
-            % Since multiple NNs can end up in the same freq bin, its better
-            % to multiply the nn and convert to a freq bin each time, rather than
-            % finding one freq bin and multiplying that. This is why 
-            % we needed nyquist limit "as an NN"
-            W_mask(align_noteNum2FreqBin(curr_nn,nfft,fs), WH_i) = 1;
-            curr_nn = curr_nn + fund_nn;
-        end
+        % build that column ...
+        fund_freq = midi2freq(pianoRoll_nn(PR_i));
+        nyquist_freq = fs/2;
+        harmonics = fund_freq : fund_freq : nyquist_freq;
+        bins = align_freq2FreqBin(harmonics, nfft, fs);
+        
+        % ... and write it into W
+        W_mask(bins, WH_i) = 1;
 
         % fill in corresponding row of H_mask
         for PR_j = 1:size(pianoRoll, 2)
@@ -61,7 +63,5 @@ function [W_mask, H_mask] = align_makeMasks_midi (midi, audio_len_samp, fs, wlen
 
         % we've filled in a row/col - increment WH_i
         WH_i = WH_i + 1;
-
     end
-
 end
