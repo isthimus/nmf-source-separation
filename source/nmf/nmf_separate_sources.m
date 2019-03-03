@@ -55,4 +55,6 @@ function sources_out = nmf_separate_sources (nmf_func, nmf_init_func, spect_func
             wait_returnKey
         end
     end
+
+    close all;
 end

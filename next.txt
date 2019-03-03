@@ -3,8 +3,12 @@
 	- get W_mask looking right and find a way to verify W_mask/H_mask against piano_roll *** DONE YAS *** 
 	- test nmf_init_zeroMask X
 	- make audio_len_samp optional in makeMasks X
-	- account for multiple tracks/ multiple instruments 
-	- TOLERANCE
+	- account for multiple tracks/ multiple instruments X
+	- TOLERANCE X (for now...)
+- code up a lil' hand-aligned source sep dealio (prolly don't test right now) X
+- test HASS
 
-- what is the deal with nfft vs num_freq_bins, vs passing audio spect around directly???
-- code up a lil' hand-aligned source sep dealio (prolly don't test right now)
+- think about source/align folder struct
+- code up sep_sources_aligned
+- proper tolerance functions
+- we should only converge up to nyquist, not all the way to fs. make that happen
