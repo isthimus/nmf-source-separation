@@ -13,7 +13,7 @@ TRIOS_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/TRIOS');
 DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');
 
 % get audio from file
-[audio_vec, Fs] = audioread(fullfile(DEV_DATA_PATH, 'TRIOS_vln_Db6_B6.wav'));
+[audio_vec, Fs] = audioread(fullfile(TRIOS_DATA_PATH, 'lussier/bassoon.wav'));
 
 % build nmf function
 nmf_statPoint_thresh = 0.00001; % detect stationary point at 0.001% per 1000 iterations

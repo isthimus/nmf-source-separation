@@ -11,8 +11,7 @@ DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');
 
 % get audio from file, along with midi score information
 [audio_vec, fs] = audioread(fullfile(TRIOS_DATA_PATH, 'lussier/bassoon.wav'));
-sound(audio_vec, fs);
-wait_returnKey
+%[audio_vec, fs] = audioread(fullfile(DEV_DATA_PATH, 'TRIOS_vln_Db6_B6.wav'));
 midi = readmidi (fullfile(TRIOS_DATA_PATH, 'lussier/bassoon.mid'));
 
 % build nmf function
@@ -24,8 +23,8 @@ p_nmf = @(V,W,H) ...
 
 % define the stft analysis and synthesis parameters
 wlen = 1024; 
-hop = 1024/8; 
-nfft = 1024*4;
+hop = wlen/8; 
+nfft = wlen;
 analwin = blackmanharris(wlen, 'periodic'); 
 synthwin = hamming(wlen, 'periodic');
 
@@ -38,7 +37,9 @@ p_reconstruct = @(audio_spect, W, H) ...
 
 % below will be superceded when we have a proper sep_sources_aligned pipeline
 % make W,H masks from midi
+%                                          
 [W_mask, H_mask] = align_makeMasks_midi (midi, length(audio_vec), fs, wlen, hop, nfft, 0);
+%[W_mask, H_mask] = align_makeMasks_midi (midi, [], fs, wlen, hop, nfft, 0);
 % build init function
 p_init = @(freqBins, timeBins) ...
     nmf_init_zeroMask(freqBins, timeBins, W_mask, H_mask);
