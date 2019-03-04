@@ -27,7 +27,7 @@
     else 
         assert (lastEndTime_samp <= audio_len_samp, "midi events occur after stated end of audio!")
     end
-    num_time_bins = align_samps2TimeBin(audio_len_samp, wlen, hop);
+    num_time_bins = align_samps2TimeBin(audio_len_samp, wlen, hop, audio_len_samp);
 
     % iterate over all channels in the midi file 
     chans = notes(:,2);
@@ -43,7 +43,7 @@
         % pianoRoll_tb(n) gives the fft time bin corresponding to pianoRoll(:, n).
         % derived using pianoRoll_t which gives the time in seconds for pianoRoll(:, n).
         [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes_thisChan, 0, hop/fs);
-        pianoRoll_tb = align_secs2TimeBin(pianoRoll_t, fs, wlen, hop);
+        pianoRoll_tb = align_secs2TimeBin(pianoRoll_t, fs, wlen, hop, audio_len_samp);
             
         % build masks for W and H based on this channel
         [W_mask_curr, H_mask_curr] = mask_from_pRoll (pianoRoll, pianoRoll_nn, pianoRoll_tb, nfft, num_freq_bins, num_time_bins, fs);

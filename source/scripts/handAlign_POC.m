@@ -24,16 +24,15 @@ num_freq_bins = nfft / 2 + 1;
 hop = 1024/8;
 fs = 44000;
 
-% build piano roll. same code as align_makeMasks_midi. keep it that way.
+% build piano roll
 notes = midiInfo(midi, 0);
-[pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes, 0, hop/fs);
-pianoRoll_tb = align_secs2TimeBin (pianoRoll_t, fs, wlen, hop);
-
 % this is a slightly silly test script so we're just gonna make up audio_len_samp
 % something something, "smoke test", something mumble something
 % the "+44000" is just adding a second of silence on the end. makeMasks needs to be able to handle it.
 endTimes = notes (:, 6);
 audio_len_samp = ceil(max(endTimes(:)) * fs) + 44000;
+[pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes, 0, hop/fs);
+pianoRoll_tb = align_secs2TimeBin (pianoRoll_t, fs, wlen, hop, audio_len_samp);
 
 % plot pianoRoll_t and pianoRoll_tb to make sure they correspond
 if 0 
@@ -88,7 +87,7 @@ end
 % run align_makeMasks_midi, use as input to nmf_init_zeromask, display.
 if 0
     [W_mask, H_mask] = align_makeMasks_midi(midi, audio_len_samp, fs, wlen, hop, nfft, num_freq_bins);
-    [W_init, H_init] = nmf_init_zeroMask (nfft, align_samps2TimeBin(audio_len_samp, wlen, hop), W_mask, H_mask);
+    [W_init, H_init] = nmf_init_zeroMask (nfft, align_samps2TimeBin(audio_len_samp, wlen, hop, audio_len_samp), W_mask, H_mask);
 
     figure (1);
     imagesc(W_init);
@@ -143,7 +142,7 @@ if 0
     audio_len_samp = ceil(max(endTimes(:)) * fs) + 44000;
     
     [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes, 0, hop/fs);
-    pianoRoll_tb = align_secs2TimeBin (pianoRoll_t, fs, wlen, hop);
+    pianoRoll_tb = align_secs2TimeBin (pianoRoll_t, fs, wlen, hop, audio_len_samp);
 
     [W_mask, H_mask] = align_makeMasks_midi(midi_multiChan, audio_len_samp, fs, wlen, hop, nfft, num_freq_bins, 1);
 
