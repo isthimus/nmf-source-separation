@@ -20,10 +20,11 @@ DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');
 midi = readmidi ('jesu.mid');
 wlen = 1024;
 nfft = wlen * 4;
+num_freq_bins = nfft / 2 + 1;
 hop = 1024/8;
 fs = 44000;
 
-% build piano roll. same code as align_makeMasks_midi_singleTrack. keep it that way.
+% build piano roll. same code as align_makeMasks_midi. keep it that way.
 notes = midiInfo(midi, 0);
 [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes, 0, hop/fs);
 pianoRoll_tb = align_secs2TimeBin (pianoRoll_t, fs, wlen, hop);
@@ -48,18 +49,18 @@ end
 % houston, do we have a problem here?
 if 0
     figure;hold on
-    p1 = stem (align_noteNum2FreqBin([0:127], nfft/2, fs));
-    p2 = stem (align_noteNum2FreqBin([0:127], nfft, fs));
-    p3 = stem (align_noteNum2FreqBin([0:127], nfft*2, fs));
+    p1 = stem (align_nn2FreqBin([0:127], nfft/2, fs));
+    p2 = stem (align_nn2FreqBin([0:127], nfft, fs));
+    p3 = stem (align_nn2FreqBin([0:127], nfft*2, fs));
     legend ([p1,p2,p3],'nfft = 2048', 'nfft = 4096', 'nfft = 8192')
     title ("midi note num against freq bin for a linear frequency scale, fs =  44k");
     xlabel ("midi note number");
     ylabel ("freq bin");
 end
 
-% run align_makeMasks_midi_singleTrack and plot along with piano roll for comparison
+% run align_makeMasks_midi and plot along with piano roll for comparison
 if 0 
-    [W_mask, H_mask] = align_makeMasks_midi_singleTrack(midi, audio_len_samp, fs, wlen, hop, nfft);
+    [W_mask, H_mask] = align_makeMasks_midi(midi, audio_len_samp, fs, wlen, hop, nfft, num_freq_bins);
 
     figure (1);
     %imagesc(W_mask);
@@ -84,9 +85,9 @@ if 0
     close all;
 end
 
-% run align_makeMasks_midi_singleTrack, use as input to nmf_init_zeromask, display.
+% run align_makeMasks_midi, use as input to nmf_init_zeromask, display.
 if 0
-    [W_mask, H_mask] = align_makeMasks_midi_singleTrack(midi, audio_len_samp, fs, wlen, hop, nfft);
+    [W_mask, H_mask] = align_makeMasks_midi(midi, audio_len_samp, fs, wlen, hop, nfft, num_freq_bins);
     [W_init, H_init] = nmf_init_zeroMask (nfft, align_samps2TimeBin(audio_len_samp, wlen, hop), W_mask, H_mask);
 
     figure (1);
@@ -103,13 +104,14 @@ end
 if 0
     midi = readmidi ('jesu.mid');
 
-    [W_singleTrack, H_singleTrack] = align_makeMasks_midi_singleTrack ( ...
+    [W_singleTrack, H_singleTrack] = align_makeMasks_midi ( ...
         midi, ...
         audio_len_samp, ...
         fs, ... 
         wlen, ... 
         hop, ...
-        nfft  ...
+        nfft,  ...
+        num_freq_bins
     );   
 
     [W_multiTrack, H_multiTrack] = align_makeMasks_midi ( ...
@@ -118,7 +120,8 @@ if 0
         fs, ...
         wlen, ...
         hop, ...
-        nfft ...
+        nfft, ...
+        num_freq_bins
     );   
 
     if any(W_singleTrack(:) ~= W_multiTrack(:)) ...
@@ -142,7 +145,7 @@ if 0
     [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes, 0, hop/fs);
     pianoRoll_tb = align_secs2TimeBin (pianoRoll_t, fs, wlen, hop);
 
-    [W_mask, H_mask] = align_makeMasks_midi(midi_multiChan, audio_len_samp, fs, wlen, hop, nfft, 1);
+    [W_mask, H_mask] = align_makeMasks_midi(midi_multiChan, audio_len_samp, fs, wlen, hop, nfft, num_freq_bins, 1);
 
     figure (1);
     %imagesc(W_mask);

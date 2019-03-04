@@ -1,4 +1,4 @@
-    function [W_mask, H_mask] = align_makeMasks_midi (midi, audio_len_samp, fs, wlen, hop, nfft, tol)
+    function [W_mask, H_mask] = align_makeMasks_midi (midi, audio_len_samp, fs, wlen, hop, nfft, num_freq_bins, tol)
     % given a midi representation of the notes in a piece of audio, builds masks for W and H
     % to allow score - aware initialisation.
     % audio_len_samp can be optionally derived from the midi information - leave as []
@@ -12,7 +12,7 @@
     assert( mod(wlen, hop) == 0, "wlen must be a whole number multiple of hop!");
 
     % if tol is not provided set it to 0
-    if nargin < 7
+    if nargin < 8
         tol = 0;
     end
 
@@ -20,8 +20,8 @@
     notes = midiInfo(midi, 0);
 
     % pick up audio_len_samp if its not provided, and find num_time_bins
-        endTimes = notes(:, 6);
-        lastEndTime_samp = ceil(fs * max(endTimes(:)));
+    endTimes = notes(:, 6);
+    lastEndTime_samp = ceil(fs * max(endTimes(:)));
     if isempty(audio_len_samp)
         audio_len_samp = lastEndTime_samp;
     else 
@@ -46,7 +46,7 @@
         pianoRoll_tb = align_secs2TimeBin(pianoRoll_t, fs, wlen, hop);
             
         % build masks for W and H based on this channel
-        [W_mask_curr, H_mask_curr] = mask_from_pRoll (pianoRoll, pianoRoll_nn, pianoRoll_tb, nfft, num_time_bins, fs);
+        [W_mask_curr, H_mask_curr] = mask_from_pRoll (pianoRoll, pianoRoll_nn, pianoRoll_tb, nfft, num_freq_bins, num_time_bins, fs);
 
         % concatenate the new masks with those obtained from other channels
         % !!! BIG OL' PREALLOCATION PROBLEM HERE. but can't see a neat way round it :(
@@ -55,15 +55,13 @@
         H_mask = [H_mask; H_mask_curr]; % vertical cat
     end
 
-    % add tolerance to W and copy the lower half into the upper
-    % !!! eventually we should only converge up to nyquist
+    % add tolerance to W 
+    % !!! eventually this should live somewhere else
     W_mask = add_tolerance(W_mask, tol);
-    nyquist_index = floor(nfft./2); % if theres a middle row, no need to copy! hence floor not ceil
-    W_mask(end - (nyquist_index - 1):end,:) = flipud(W_mask(1:nyquist_index, :));
 
 end
 
-function [W_mask, H_mask] = mask_from_pRoll (pianoRoll, pianoRoll_nn, pianoRoll_tb, nfft, num_time_bins, fs)
+function [W_mask, H_mask] = mask_from_pRoll (pianoRoll, pianoRoll_nn, pianoRoll_tb, nfft, num_freq_bins, num_time_bins, fs)
     % figure out how many note nums actually used, for preallocation.
     num_notes_used = size(pianoRoll,1);
     for i = 1:size(pianoRoll,1) 
@@ -74,7 +72,7 @@ function [W_mask, H_mask] = mask_from_pRoll (pianoRoll, pianoRoll_nn, pianoRoll_
     end
 
     % preallocate W, H
-    W_mask = zeros(nfft, num_notes_used);
+    W_mask = zeros(num_freq_bins, num_notes_used);
     H_mask = zeros(num_notes_used, num_time_bins); 
 
     % iterate over piano roll and fill out W_mask, H_mask
@@ -93,6 +91,7 @@ function [W_mask, H_mask] = mask_from_pRoll (pianoRoll, pianoRoll_nn, pianoRoll_
         nyquist_freq = fs/2;
         harmonics = fund_freq : fund_freq : nyquist_freq;
         bins = align_freq2FreqBin(harmonics, nfft, fs);
+        bins = bins (bins <= num_freq_bins);
 
         % ... and write it into W
         W_mask(bins, WH_i) = 1;
@@ -112,7 +111,7 @@ end
 function W_out = add_tolerance (W_in, tol)
 % adds  tolerance to W_mask using matlab imdilate
 % !!! this could be muuuuch smarter. eg log tolerance, kernel not all ones, 
-% smart tolerance based on actual freq not quantised freq bin, etc etc et
+% smart tolerance based on actual freq not quantised freq bin, etc etc etc
 
 
 % freak out if given negative tol values

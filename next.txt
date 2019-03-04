@@ -8,6 +8,7 @@
 - code up a lil' hand-aligned source sep dealio (prolly don't test right now) X
 - test HASS
 
+-stft_info struct??
 - think about source/align folder struct
 - code up sep_sources_aligned
 - proper tolerance functions
