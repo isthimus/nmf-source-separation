@@ -27,7 +27,7 @@ return values:
 
 %}
 
-    SUPPRESS_PRINT=1;
+    SUPPRESS_PRINT=0;
 
     % set defaults for varargs
     statPoint_thresh = 0.0001;

@@ -6,11 +6,35 @@
 	- account for multiple tracks/ multiple instruments X
 	- TOLERANCE X (for now...)
 - code up a lil' hand-aligned source sep dealio (prolly don't test right now) X
-- test HASS
+- test HASS X (haha not done yet. will dive deep tomorrow)
+- num_time_bins headaches X
+- architect sep_sources_aligned X
+- think about source/align folder struct X
 
-- num_time_bins headaches
--stft_info struct??
-- think about source/align folder struct
-- code up sep_sources_aligned
+2morrow =====================================
+- HASS deep dive
+
+
+=============================================
+
+Alignment ===================================
+- fix source/align/ folder struct
+- bash toogether stftInfo
+- bash together chroma from score with flag 
+- MiREX score alignment benchmarks
+- visual overlay verification - how?
+
+
+
+==============================================
+
+
+
+==== HASS, general framework code ============
+
+- stft_info struct??
 - proper tolerance functions
+- code up sep_sources_aligned
 - we should only converge up to nyquist, not all the way to fs. make that happen
+	- reeeeeeally we should converge on a tiny lil sliver - currently lots of irrelevant freq info. 
+	- new spect func? (exciting...)

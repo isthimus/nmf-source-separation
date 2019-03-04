@@ -54,6 +54,23 @@ function sources_out = nmf_separate_sources (nmf_func, nmf_init_func, spect_func
             title('source time domain')
             wait_returnKey
         end
+        
+        if plot_level >= 4
+           sources_sum = sum(sources_out);
+           
+           figure (1);
+           plot (sources_sum);
+           title('sum of sources');
+           
+           figure (2);
+           plot (audio_vec);
+           title('original audio');
+           
+           figure(3);
+           plot (sources_sum(:) - audio_vec(1:length(sources_sum)));
+           title('diff with original sound');
+           wait_returnKey
+        end
     end
 
     close all;
