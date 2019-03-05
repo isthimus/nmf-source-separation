@@ -12,16 +12,16 @@
 - think about source/align folder struct X
 
 2morrow =====================================
-- HASS deep dive
+- HASS deep dive X 
 
 
 =============================================
 
 Alignment ===================================
-- fix source/align/ folder struct
-- bash toogether stftInfo
-- bash together chroma from score with flag 
-- MiREX score alignment benchmarks
+- fix source/align/ folder struct X
+- bash toogether stftInfo X
+- bash together chroma from score with flag X 
+- scope MiREX score alignment benchmarks X
 - visual overlay verification - how?
 
 
@@ -32,9 +32,8 @@ Alignment ===================================
 
 ==== HASS, general framework code ============
 
-- stft_info struct??
+- make sure youre passing "notes" around, not "midi" - mildy more efficient, much more flexible, and MATLAB does the pointer arithmetic :D
+- stft_info struct!!
 - proper tolerance functions
 - code up sep_sources_aligned
-- we should only converge up to nyquist, not all the way to fs. make that happen
-	- reeeeeeally we should converge on a tiny lil sliver - currently lots of irrelevant freq info. 
-	- new spect func? (exciting...)
+- Reduce the amount of the spectrum we converge on for a big speedup 

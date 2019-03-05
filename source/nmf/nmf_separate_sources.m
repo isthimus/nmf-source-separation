@@ -58,6 +58,10 @@ function sources_out = nmf_separate_sources (nmf_func, nmf_init_func, spect_func
         if plot_level >= 4
            sources_sum = sum(sources_out);
            
+           if plot_level >= 5
+               sound(sources_sum, 44100); % TODO - make this work with spectInfo/stftInfo
+           end 
+           
            figure (1);
            plot (sources_sum);
            title('sum of sources');
