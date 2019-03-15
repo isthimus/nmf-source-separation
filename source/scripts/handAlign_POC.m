@@ -30,18 +30,21 @@ notes = midiInfo(midi, 0);
 % something something, "smoke test", something mumble something
 % the "+44000" is just adding a second of silence on the end. makeMasks needs to be able to handle it.
 endTimes = notes (:, 6);
-audio_len_samp = ceil(max(endTimes(:)) * fs) + 44000;
+audio_len_samp = ceil(max(endTimes(:)) * fs);
+%audio_len_samp = ceil(max(endTimes(:)) * fs) + 44000;
 [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes, 0, hop/fs);
 pianoRoll_tb = align_secs2TimeBin (pianoRoll_t, fs, wlen, hop, audio_len_samp);
 
 % plot pianoRoll_t and pianoRoll_tb to make sure they correspond
-if 0 
+if 1
     imagesc (pianoRoll_t, pianoRoll_nn, pianoRoll); 
     wait_returnKey();
     stem (pianoRoll_t, pianoRoll_tb);
     wait_returnKey();
     pianoRoll_ts = pianoRoll_t * fs;
     stem (pianoRoll_ts, pianoRoll_tb);
+    wait_returnKey();
+    close all;
 end
 
 % plot midi note number against linear-scale frequency.
@@ -110,7 +113,7 @@ if 0
         wlen, ... 
         hop, ...
         nfft,  ...
-        num_freq_bins
+        num_freq_bins ...
     );   
 
     [W_multiTrack, H_multiTrack] = align_makeMasks_midi ( ...
@@ -120,7 +123,7 @@ if 0
         wlen, ...
         hop, ...
         nfft, ...
-        num_freq_bins
+        num_freq_bins ...
     );   
 
     if any(W_singleTrack(:) ~= W_multiTrack(:)) ...
@@ -143,7 +146,7 @@ if 0
     
     [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes, 0, hop/fs);
     pianoRoll_tb = align_secs2TimeBin (pianoRoll_t, fs, wlen, hop, audio_len_samp);
-
+    
     [W_mask, H_mask] = align_makeMasks_midi(midi_multiChan, audio_len_samp, fs, wlen, hop, nfft, num_freq_bins, 1);
 
     figure (1);

@@ -17,14 +17,14 @@ midi = readmidi (fullfile(TRIOS_DATA_PATH, 'lussier/bassoon.mid'));
 
 
 % build nmf function
-%{
-nmf_statPoint_thresh = 0.0001; % detect stationary point at xxx per 1000 iterations
+nmf_statPoint_thresh = 0.001; % detect stationary point at xxx per 1000 iterations
 nmf_max_iter = 1000000;         % max iterations 1'000'000
 nmf_done_thresh = 0;            % use only stationary point detection 
 p_nmf = @(V,W,H) ...
-    nmf_euclidian_norm(V, W, H, nmf_statPoint_thresh, nmf_max_iter, nmf_done_thresh);
-%}
+    nmf_is(V, W, H, nmf_statPoint_thresh, nmf_max_iter, nmf_done_thresh);
+%{
 p_nmf = @(V,W,H) deal(W,H);
+%}
 
 % define the stft analysis and synthesis parameters
 wlen = 1024; 
