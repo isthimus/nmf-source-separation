@@ -1,37 +1,31 @@
+=== next ===
+do low hanging fruit on spectInfo
+copy up your insights on spectInfo
+shakedown getChroma_audio
 
-- midi POC
-	- get W_mask looking right and find a way to verify W_mask/H_mask against piano_roll *** DONE YAS *** 
-	- test nmf_init_zeroMask X
-	- make audio_len_samp optional in makeMasks X
-	- account for multiple tracks/ multiple instruments X
-	- TOLERANCE X (for now...)
-- code up a lil' hand-aligned source sep dealio (prolly don't test right now) X
-- test HASS X (haha not done yet. will dive deep tomorrow)
-- num_time_bins headaches X
-- architect sep_sources_aligned X
-- think about source/align folder struct X
-
-2morrow =====================================
-- HASS deep dive X 
+onwards to alignment, i guess.. 
 
 
-=============================================
+=== spectInfo ===
+spectinfo is actually 2 problems - gathering together the little bits of information, and making it so the functions intelligently 
+pass fs, num_time_bins, etc around
+	- the data gathering one is easy, high payoff and should be fixed at once. (ie just pass spectinfo into all thos partials rather than 999 individual args)
+	- the data *flow* problem is more complicated. its in two parts - 
+		A: propogating stuff that's known at the beginning of the sep_sources pipeline - fs/nfft/wlen etc
+		B: propogating stuff that's worked out on the fly - num_time_bins etc
+		neither of these are answered questions right now. 
+		A does suggest a user convenience function with nice defaults which builds its own partials...
+		B is thorny. could permissively allow functions to pass any info down the chain. or could go ad hoc with spect. or could have several pipelines.
+		requiring no B-type dataflow is too restrcitive - the speedup from trimming spect alone justifies num_freq_bins propogating to nmf_func. 
 
-Alignment ===================================
-- fix source/align/ folder struct X
-- bash toogether stftInfo X
-- bash together chroma from score with flag X 
-- scope MiREX score alignment benchmarks X
-- visual overlay verification - how?
-
-
-
-==============================================
-
-
+=== getChroma_audio ===
+get something  the same length as the midi 2bar using endTimes, audio_len_samp, blahblah
+(tf happens if you get something shorter?)
+figure out how to take its fourier transform and get a spectInfo, etc (useful for later anyway even if its ad hoc now)
+pass audio along with spect info to getChroma_audio
+once satisfied, remove the assert that checks num_time_bins - now the spectInfo doesnt need spect() to have been called first
 
 ==== HASS, general framework code ============
-
 - make sure youre passing "notes" around, not "midi" - mildy more efficient, much more flexible, and MATLAB does the pointer arithmetic :D
 - stft_info struct!!
 - proper tolerance functions

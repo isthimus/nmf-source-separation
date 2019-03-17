@@ -16,30 +16,29 @@ function chroma = align_getChroma_midi(notes, spectInfo, use_vel)
     % build a "piano roll" matrix
     % pianoRoll_tb(n) gives the time bin corresponding to pianoRoll(:, n).
     % derived using pianoRoll_t which gives the time in seconds for pianoRoll(:, n).
-    [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes_thisChan, 1, hop/fs);
+    [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes, 1, hop/fs);
     pianoRoll_tb = align_secs2TimeBin(pianoRoll_t, fs, wlen, hop, audio_len_samp);
 
     % tidy up the edges of the pianoRoll so its prefectly aligned with timebin indices
-    pianoRoll_tbAligned = zeros(size(pianoRoll, 1), num_time_bins)
+    pianoRoll_tbAligned = zeros(size(pianoRoll, 1), num_time_bins);
     for i = 1:length(pianoRoll_tb)
         pianoRoll_tbAligned(:, pianoRoll_tb(i)) = pianoRoll_tbAligned(:, pianoRoll_tb(i)) + pianoRoll(:, i);
     end
 
     % build chromagram from tidied up pianoRoll
-    chroma = zeros(12, num_time_bins)
+    chroma = zeros(12, num_time_bins);
     for i = 1:12
         % indices_thisChroma is a vector of indices for 
         % all the rows in pianoRoll which map to row i in "chroma" 
-        indices_thisChroma = mod(pianoRoll_nn, 12) + 1 == i
-
+        indices_thisChroma = mod(pianoRoll_nn, 12) + 1 == i;
         % sum up the values in the pianoRoll rows, put in chromagram 
-        chroma(i, :) = sum(pianoRoll(indices_thisChroma,:))
+        chroma(i, :) = sum(pianoRoll_tbAligned(indices_thisChroma,:));
     end
 
     % if we arent using vel, just set all nonzero elements of chromagram to 1
     if ~ use_vel
         % the "1 *" makes it into a real array not a logical array
-        chroma = 1 * (chroma ~= 0)
+        chroma = 1 * (chroma ~= 0);
     end
 end
 
