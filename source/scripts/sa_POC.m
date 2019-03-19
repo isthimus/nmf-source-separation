@@ -120,7 +120,7 @@ if 0
 end 
 
 % test align_getChroma_midi
-if 1
+if 0
     % go find some midi
     midi = readmidi (fullfile(DEV_DATA_PATH, 'TRIOS_brahms_2bar.mid'));
 
@@ -139,7 +139,7 @@ if 1
     endTimes = notes (:, 6);
 
     % spectInfo.audio_len_samp = ceil(max(endTimes(:)) * spectInfo.fs);
-    spectInfo.audio_len_samp = ceil(max(endTimes(:)) * spectInfo.fs) + 44000;
+    spectInfo.audio_len_samp = ceil(max(endTimes(:)) * spectInfo.fs);
     spectInfo.num_time_bins = align_samps2TimeBin(...;
         spectInfo.audio_len_samp, ... 
         spectInfo.wlen, ... 
@@ -179,7 +179,7 @@ if 1
 end
 
 % prove that if end of audio is later than end of midi, the chromagram is still num_time_bins long
-if 1
+if 0
     midi = readmidi (fullfile(DEV_DATA_PATH, 'TRIOS_brahms_2bar.mid'));
 
     % create a spectInfo (partially made up for this test script)
@@ -237,5 +237,179 @@ if 1
     caxis([0, 1.5])
     colorbar
     wait_returnKey()
+    close all;
+end
+
+% test align_getChroma_audio
+if 0 
+    % get some audio
+    [vln_short, fs] = audioread(fullfile(DEV_DATA_PATH, "TRIOS_vln_C5_Eb5_F5_Ab4.wav"));
+    [vln_long, fs] = audioread(fullfile(TRIOS_DATA_PATH, "/brahms/violin.wav"));
+    audio = {vln_long};
+
+    % get some midi
+    vln_long_m = readmidi(fullfile(TRIOS_DATA_PATH, "/brahms/violin.mid"));
+    midi = {vln_long_m};
+
+
+    % build a spectInfo
+    % using some params from eNorm_source_sep_POC
+    spectInfo.wlen = 1024;
+    spectInfo.nfft = spectInfo.wlen * 4;
+    spectInfo.hop = 1024/8;
+    spectInfo.fs = fs; 
+
+    % analysis and synth windows
+    % !!! should be in spectInfo? 
+    analwin = blackmanharris(spectInfo.wlen, 'periodic');
+    synthwin = hamming(spectInfo.wlen, 'periodic');
+
+    % build spectrogram function
+    p_spect = @(x) ...
+        stft(x, analwin, spectInfo.hop, spectInfo.nfft, spectInfo.fs);
+    
+    % iterate over the different audio files
+    for i = 1:length(audio)
+
+        % get audio and take its spect.
+        % put info about final spectrogram size in spectInfo
+        thisAudio = audio{i};
+        thisMidi = midi{i};
+        plot (thisAudio);
+        wait_returnKey()
+        close all;
+
+        spect = p_spect(thisAudio);
+        spectInfo.num_freq_bins = size(spect, 1); 
+        spectInfo.num_time_bins = size(spect, 2);
+        spectInfo.audio_len_samp = length(thisAudio);
+
+        % create chromagram
+        % might fail an assertion and error
+        chroma_audio = align_getChroma_audio(thisAudio, spectInfo);
+    
+        chroma_midi = align_getChroma_midi(midiInfo(thisMidi, 0), spectInfo, 1);
+
+        % assuming it hasn't errored - display the chromagram with spectrum as subplots
+        figure(1);
+        subplot(3,1,1);
+         imagesc(abs(spect(1:100,:)));
+         title('audio')
+         colorbar;
+        subplot(3,1,2);
+         imagesc(chroma_audio);
+         title('chroma\_audio');
+         colorbar;
+        subplot(3,1,3);
+         imagesc(chroma_midi);
+         title('chroma\_midi');
+         colorbar;
+        wait_returnKey();
+        close all;
+    end    
+end
+
+% show that dtw -> resolveWarpingPath works on midi/audio chroma
+if 1
+    % getsome audio
+    [audio, fs] = audioread(fullfile(TRIOS_DATA_PATH, "/brahms/violin.wav"));
+
+    % get some midi
+    midi = readmidi(fullfile(TRIOS_DATA_PATH, "/brahms/violin.mid"));
+    notes = midiInfo(midi, 0);
+
+    % build a spectInfo
+    % using some params from eNorm_source_sep_POC
+    spectInfo.wlen = 1024;
+    spectInfo.nfft = spectInfo.wlen * 4;
+    spectInfo.hop = 1024/8;
+    spectInfo.fs = fs; 
+
+    % analysis and synth windows
+    % !!! should be in spectInfo? 
+    analwin = blackmanharris(spectInfo.wlen, 'periodic');
+    synthwin = hamming(spectInfo.wlen, 'periodic');
+
+    % build spectrogram function, take spect
+    p_spect = @(x) ...
+        stft(x, analwin, spectInfo.hop, spectInfo.nfft, spectInfo.fs);
+    spect = p_spect(audio);
+
+    % extract chroma from midi and audio
+    chroma_midi = align_getChroma_midi (notes, spectInfo, 1);
+    chroma_audio = align_getChroma_audio (audio, spectInfo);
+
+    assert (all (size(chroma_midi) == size(chroma_audio)), "bad chroma matrix sizes");
+
+    % perform dtw to find warping path between chroma
+    [~, IM, IA] = dtw (chroma_midi, chroma_audio);
+    IM = align_resolveWarpingPath (IM, IA);
+
+    % IM is a set of indices for chroma_midi which should align it to chroma_audio
+    % build a new matrix representing the aligned chroma and compare
+    chroma_midi_aligned = chroma_midi(:, IM);
+
+    figure(1);
+    subplot(3,1,1);
+     imagesc(abs(spect(1:100,:)));
+     axis xy;
+     title('audio')
+     colorbar;
+    subplot(3,1,2);
+     imagesc(chroma_audio);
+     axis xy;
+     title('chroma\_audio');
+     colorbar;
+    subplot(3,1,3);
+     imagesc(chroma_midi);
+     axis xy; 
+     title('chroma\_midi');
+     colorbar;
+
+    figure(2);
+    subplot(3,1,1);
+     imagesc(chroma_midi);
+     axis xy;
+     title('chroma\_midi unaligned');
+     colorbar;
+    subplot(3,1,2);
+     imagesc(chroma_audio);
+     axis xy;
+     title('chroma\_audio');
+     colorbar;
+    subplot(3,1,3);
+     imagesc(chroma_midi_aligned);
+     axis xy;
+     title('chroma\_midi aligned');
+     colorbar;
+
+    figure (3);
+     plot(IM);
+     title("warping path");
+    
+    wait_returnKey();
+    close all;
+
+    % now try align_dtw
+    notes_aligned = align_dtw(notes, audio, spectInfo, 0);
+
+    % build the piano roll of unaligned notes. make explicit the gap at the start, if any.
+    [pr_u, pr_u_t, pr_u_nn] = piano_roll(notes, 0, spectInfo.hop/spectInfo.fs);
+    pr_u_tb = align_secs2TimeBin(pr_u_t, spectInfo.fs, spectInfo.wlen, spectInfo.hop, spectInfo.audio_len_samp);
+    pr_u = [zeros(size(pr_u,1), min(pr_u_tb)) , pr_u];
+
+    % build the piano roll of aligned notes. make explicit the gap at the start, if any.
+    [pr_a, pr_a_t, pr_a_nn] = piano_roll(notes_aligned, 0, spectInfo.hop/spectInfo.fs);
+    pr_a_tb = align_secs2TimeBin(pr_a_t, spectInfo.fs, spectInfo.wlen, spectInfo.hop, spectInfo.audio_len_samp);
+    pr_a = [zeros(size(pr_a,1), min(pr_a_tb)) , pr_a];
+
+    figure(1);
+    subplot(2,1,1);
+     imagesc(pr_u);
+     title("unaligned");
+    subplot(2,1,2);
+     imagesc(pr_a);
+     title("aligned");
+    wait_returnKey();
     close all;
 end

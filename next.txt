@@ -19,8 +19,7 @@ pass fs, num_time_bins, etc around
 		requiring no B-type dataflow is too restrcitive - the speedup from trimming spect alone justifies num_freq_bins propogating to nmf_func. 
 
 === getChroma_audio ===
-get something  the same length as the midi 2bar using endTimes, audio_len_samp, blahblah
-(tf happens if you get something shorter?)
+X get audio
 figure out how to take its fourier transform and get a spectInfo, etc (useful for later anyway even if its ad hoc now)
 pass audio along with spect info to getChroma_audio
 once satisfied, remove the assert that checks num_time_bins - now the spectInfo doesnt need spect() to have been called first
