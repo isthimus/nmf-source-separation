@@ -9,9 +9,11 @@ PROJECT_PATH = fullfile('../../');
 TRIOS_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/TRIOS');
 DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');
 
-
 % test align_resolveWarpingPath
 if 0 
+    % clear spectInfo from last time
+    spectInfo = struct();
+
     % make two vectors for alignment
     a = [0 0 0 0 0 10 0 0 0 0 0 0 10 0 0 10 0 0 0 0 0];
     b = [0 0 0 0 0 1  7 1 1 1 7 1  1 1 1  7 0 0 0 0 0];
@@ -121,6 +123,9 @@ end
 
 % test align_getChroma_midi
 if 0
+    % clear spectInfo from last time
+    spectInfo = struct();
+
     % go find some midi
     midi = readmidi (fullfile(DEV_DATA_PATH, 'TRIOS_brahms_2bar.mid'));
 
@@ -242,6 +247,9 @@ end
 
 % test align_getChroma_audio
 if 0 
+    % clear spectInfo from last time
+    spectInfo = struct();
+
     % get some audio
     [vln_short, fs] = audioread(fullfile(DEV_DATA_PATH, "TRIOS_vln_C5_Eb5_F5_Ab4.wav"));
     [vln_long, fs] = audioread(fullfile(TRIOS_DATA_PATH, "/brahms/violin.wav"));
@@ -311,8 +319,12 @@ end
 
 % show that dtw -> resolveWarpingPath works on midi/audio chroma
 if 1
+    % clear spectInfo from last time
+    spectInfo = struct();
+
     % getsome audio
     [audio, fs] = audioread(fullfile(TRIOS_DATA_PATH, "/brahms/violin.wav"));
+    spectInfo.audio_len_samp = length(audio);
 
     % get some midi
     midi = readmidi(fullfile(TRIOS_DATA_PATH, "/brahms/violin.mid"));
@@ -322,7 +334,7 @@ if 1
     % using some params from eNorm_source_sep_POC
     spectInfo.wlen = 1024;
     spectInfo.nfft = spectInfo.wlen * 4;
-    spectInfo.hop = 1024/8;
+    spectInfo.hop = 1024/4;
     spectInfo.fs = fs; 
 
     % analysis and synth windows
@@ -334,6 +346,10 @@ if 1
     p_spect = @(x) ...
         stft(x, analwin, spectInfo.hop, spectInfo.nfft, spectInfo.fs);
     spect = p_spect(audio);
+
+    % pick up num_time_bins/num_freq_bins    
+    spectInfo.num_freq_bins = size(spect, 1);
+    spectInfo.num_time_bins = size(spect, 2);
 
     % extract chroma from midi and audio
     chroma_midi = align_getChroma_midi (notes, spectInfo, 1);
@@ -403,6 +419,8 @@ if 1
     pr_a_tb = align_secs2TimeBin(pr_a_t, spectInfo.fs, spectInfo.wlen, spectInfo.hop, spectInfo.audio_len_samp);
     pr_a = [zeros(size(pr_a,1), min(pr_a_tb)) , pr_a];
 
+    disp(spectInfo);
+
     figure(1);
     subplot(2,1,1);
      imagesc(pr_u);
@@ -413,3 +431,160 @@ if 1
     wait_returnKey();
     close all;
 end
+
+% check if calls to align_getChromaAudio with different scaling are more/less useful
+% answer - no
+if 0
+    % clear spectInfo from last time
+    spectInfo = struct();
+
+    % getsome audio
+    [audio, fs] = audioread(fullfile(TRIOS_DATA_PATH, "/brahms/violin.wav"));
+    spectInfo.audio_len_samp = length(audio);
+
+    % some variants on the audio - first norm to +- 1, +- 10
+    audio_norm_1 = mat_normalise(audio, 1);
+    audio_norm_10 = mat_normalise(audio, 10); 
+
+    % try some heavy handed compression
+    audio_comp = audio;
+    audioMax = max(abs(audio)); ratio = 0.2;
+    comp_indices = audio_comp(abs(audio_comp) > 0.5 * audioMax);
+    for i = 1:length(audio_comp)
+        if ismember(i, comp_indices)
+            thisSamp = audio_comp(i);
+            if thisSamp < 0
+                audio_comp(i) = ((thisSamp + 0.5 * audioMax) * ratio) - 0.5 * audioMax;
+            else
+                audio_comp(i) = ((thisSamp - 0.5 * audioMax) * ratio) + 0.5 * audioMax;
+            end
+        end
+    end
+    audio_comp_1 = mat_normalise(audio_comp, 1);
+    audio_comp_10 = mat_normalise(audio_comp, 10); 
+
+    % build a spectInfo
+    % using some params from eNorm_source_sep_POC
+    spectInfo.wlen = 1024;
+    spectInfo.nfft = spectInfo.wlen * 4;
+    spectInfo.hop = 1024/8;
+    spectInfo.fs = fs; 
+
+    % analysis and synth windows
+    % !!! should be in spectInfo? 
+    analwin = blackmanharris(spectInfo.wlen, 'periodic');
+    synthwin = hamming(spectInfo.wlen, 'periodic');
+
+    % build spectrogram function, take spect
+    p_spect = @(x) ...
+        stft(x, analwin, spectInfo.hop, spectInfo.nfft, spectInfo.fs);
+    spect = p_spect(audio);
+
+    % pick up num_time_bins/num_freq_bins    
+    spectInfo.num_freq_bins = size(spect, 1);
+    spectInfo.num_time_bins = size(spect, 2);
+
+    figure(1);
+    subplot(3,1,1);
+     imagesc(align_getChroma_audio(audio, spectInfo));
+     axis xy;
+     title('audio');
+     colorbar;
+    subplot(3,1,2);
+     imagesc(align_getChroma_audio(audio_norm_1, spectInfo));
+     axis xy;
+     title('norm 1');
+     colorbar;
+    subplot(3,1,3);
+     imagesc(align_getChroma_audio(audio_norm_10, spectInfo));
+     axis xy;
+     title('norm 10');
+     colorbar;
+
+    figure(2);
+    subplot(3,1,1);
+     imagesc(align_getChroma_audio(audio, spectInfo));
+     axis xy;
+     title('audio');
+     colorbar;
+    subplot(3,1,2);
+     imagesc(align_getChroma_audio(audio_comp_1, spectInfo));
+     axis xy;
+     title('comp 1');
+     colorbar;
+    subplot(3,1,3);
+     imagesc(align_getChroma_audio(audio_comp_10, spectInfo));
+     axis xy;
+     title('comp 10');
+     colorbar;
+
+     wait_returnKey();
+     close all;
+end
+
+% try smaller hop for align_getChroma_audio
+if 0 
+    % clear spectInfo from last time
+    spectInfo = struct();
+
+    % getsome audio
+    [audio, fs] = audioread(fullfile(TRIOS_DATA_PATH, "/brahms/violin.wav"));
+    spectInfo.audio_len_samp = length(audio);
+
+    results = cell(1, 1);
+    for i = 0:2
+
+        % build a spectInfo
+        % using some params from eNorm_source_sep_POC
+        spectInfo.wlen = 1024;
+        spectInfo.nfft = spectInfo.wlen * 4;
+        assert(spectInfo.wlen/(2^i * 4) > 32);
+        spectInfo.hop = spectInfo.wlen/(2^i * 4);
+        spectInfo.fs = fs; 
+
+        disp(spectInfo.hop);
+        assert (mod(spectInfo.hop, 1) == 0, "DAMMIT JACK");
+
+        % analysis and synth windows
+        % !!! should be in spectInfo? 
+        analwin = blackmanharris(spectInfo.wlen, 'periodic');
+        synthwin = hamming(spectInfo.wlen, 'periodic');
+
+        % build spectrogram function, take spect
+        p_spect = @(x) ...
+            stft(x, analwin, spectInfo.hop, spectInfo.nfft, spectInfo.fs);
+        spect = p_spect(audio);
+
+        % pick up num_time_bins/num_freq_bins    
+        spectInfo.num_freq_bins = size(spect, 1);
+        spectInfo.num_time_bins = size(spect, 2);
+
+        % extract chroma from midi and audio
+        chroma_audio = align_getChroma_audio (audio, spectInfo);
+
+        results{i + 1} = chroma_audio;
+    end
+
+    % plot results
+
+    figure(1)
+    subplot(3,1,1)
+     imagesc(results{1})
+     axis xy
+     title('hop 1/4')
+     colorbar;
+    subplot(3,1,2)
+     imagesc(results{2})
+     axis xy
+     title('hop 1/8')
+     colorbar;
+    subplot(3,1,3)
+     imagesc(results{3})
+     axis xy
+     title('hop 1/16')
+     colorbar;
+     
+     wait_returnKey();
+     close all;
+end
+

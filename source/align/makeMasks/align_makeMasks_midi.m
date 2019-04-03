@@ -1,4 +1,4 @@
-    function [W_mask, H_mask] = align_makeMasks_midi (midi, audio_len_samp, fs, wlen, hop, nfft, num_freq_bins, tol)
+    function [W_mask, H_mask] = align_makeMasks_midi (midi, audio_len_samp, fs, wlen, hop, nfft, num_freq_bins)
     % given a midi representation of the notes in a piece of audio, builds masks for W and H
     % to allow score - aware initialisation.
     % audio_len_samp can be optionally derived from the midi information - leave as []
@@ -10,11 +10,6 @@
     % precondition checks
     % make sure wlen is a multiple of hop - this allows all time bins to line up exactly with a midi "pixel"
     assert( mod(wlen, hop) == 0, "wlen must be a whole number multiple of hop!");
-
-    % if tol is not provided set it to 0
-    if nargin < 8
-        tol = 0;
-    end
 
     % extract the notes array
     notes = midiInfo(midi, 0);
@@ -54,10 +49,6 @@
         W_mask = [W_mask, W_mask_curr]; % horizontal cat
         H_mask = [H_mask; H_mask_curr]; % vertical cat
     end
-
-    % add tolerance to W 
-    % !!! eventually this should live somewhere else
-    W_mask = add_tolerance(W_mask, tol);
 
 end
 

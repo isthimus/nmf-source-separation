@@ -1,7 +1,8 @@
 function notes_aligned = align_dtw (notes, audio_vec, spectInfo, use_vel)
-    % extract chroma from midi and audio
+    % extract chroma from midi and audio. normalise audio
     chroma_midi = align_getChroma_midi (notes, spectInfo, use_vel);
     chroma_audio = align_getChroma_audio (audio_vec, spectInfo);
+    chroma_audio = mat_normalise(chroma_audio, 1);
 
     assert (all (size(chroma_midi) == size(chroma_audio)), "bad chroma matrix sizes");
 
@@ -10,12 +11,12 @@ function notes_aligned = align_dtw (notes, audio_vec, spectInfo, use_vel)
     IM = align_resolveWarpingPath (IM, IA);
 
     % get all midi event times in notes, as timebin indexes
-    %% < vector full of indices, V(i) represents time of event in notes(i, :), as a timebin>
+    % < vector full of indices, V(i) represents time of event in notes(i, :), as a timebin>
     startTimes_bins = align_secs2TimeBin(notes(:, 5), spectInfo.fs, spectInfo.wlen, spectInfo.hop, spectInfo.audio_len_samp);
     endTimes_bins   = align_secs2TimeBin(notes(:, 6), spectInfo.fs, spectInfo.wlen, spectInfo.hop, spectInfo.audio_len_samp);
 
     % warp midi event times using IM warping path
-    %% ie replace each num in V with the index of the first instance in IM which is >= that num
+    % ie replace each num in V with the index of the first instance in IM which is >= that num
     % using find like this is the "sad painters algorithm" - seemingly inefficient
     % but we can't do it "properly" because ORDEREDNESS of *Times_bins is NOT GUARANTEED
     for i = 1:length(startTimes_bins)
