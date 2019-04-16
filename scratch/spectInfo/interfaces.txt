@@ -1,0 +1,18 @@
+----- BAD -----
+function freqBins = align_freq2FreqBin (f, nfft, fs)
+function freqBins = align_nn2FreqBin (nn, nfft, fs)
+function timeBins = align_samps2TimeBin (samps, wlen, hop, audio_len_samp)
+function timeBins = align_secs2TimeBin (t, fs, wlen, hop, audio_len_samp)
+function [W_mask, H_mask] = align_makeMasks_midi (midi, audio_len_samp, fs, wlen, hop, nfft, num_freq_bins)
+function [W_out, H_out] = nmf_init_rand (num_freq_bins, num_time_bins, k, avg)
+function [W_out, H_out] = nmf_init_zeroMask (num_freq_bins, num_time_bins, W_mask, H_mask)
+
+----- MAYBE -----
+function [W_mask, H_mask] = mask_from_pRoll (pianoRoll, pianoRoll_nn, pianoRoll_tb, nfft, num_freq_bins, num_time_bins, fs)
+
+----- GOOD -----
+function notes_aligned = align_dtw (notes, audio_vec, spectInfo, use_vel)
+function chroma = align_getChroma_audio (audio_vec, spectInfo)
+function chroma = align_getChroma_midi(notes, spectInfo, use_vel)
+function secs = align_timeBin2Secs (tb, spectInfo)
+function valid_flag = checkSpectInfo(spectInfo, prespect, print_ans)

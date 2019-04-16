@@ -1,0 +1,22 @@
+contents of a spectInfo 
+	wlen
+	audio_len_samp
+	hop
+	nfft
+	num_freq_bins
+	num_time_bins
+	fs
+
+gameplan:
+
+	- got a list of all the functions whose interface needs to change
+	- got a list of all the places those functions are referenced 
+	- scoped individual funcs
+	- scoped nmf_init_rand. probably fine to leave as is
+	- scoped recons. potential problem
+
+	- figure out and change everything except nmf_init_rand.  
+	- look for "dead" spectinfo references
+	- at a later date: figure out stft_si, istft_si, recons_si.
+
+
