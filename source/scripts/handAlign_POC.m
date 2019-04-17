@@ -18,11 +18,11 @@ DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');
 
 % make and view a piano roll
 midi = readmidi ('jesu.mid');
-wlen = 1024;
-nfft = wlen * 4;
-num_freq_bins = nfft / 2 + 1;
-hop = 1024/8;
-fs = 44000;
+spectInfo.wlen = 1024;
+spectInfo.nfft = wlen * 4;
+spectInfo.num_freq_bins = nfft / 2 + 1;
+spectInfo.hop = 1024/8;
+spectInfo.fs = 44000;
 
 % build piano roll
 notes = midiInfo(midi, 0);
@@ -30,10 +30,14 @@ notes = midiInfo(midi, 0);
 % something something, "smoke test", something mumble something
 % the "+44000" is just adding a second of silence on the end. makeMasks needs to be able to handle it.
 endTimes = notes (:, 6);
-audio_len_samp = ceil(max(endTimes(:)) * fs);
+spectInfo.audio_len_samp = ceil(max(endTimes(:)) * fs);
 %audio_len_samp = ceil(max(endTimes(:)) * fs) + 44000;
+
+hop = spectInfo.hop;
+fs = spectInfo.fs;
+
 [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes, 0, hop/fs);
-pianoRoll_tb = align_secs2TimeBin (pianoRoll_t, fs, wlen, hop, audio_len_samp);
+pianoRoll_tb = align_secs2TimeBin (pianoRoll_t, spectInfo);
 
 % plot pianoRoll_t and pianoRoll_tb to make sure they correspond
 if 1
@@ -146,8 +150,8 @@ if 0
     
     [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes, 0, hop/fs);
     pianoRoll_tb = align_secs2TimeBin (pianoRoll_t, fs, wlen, hop, audio_len_samp);
-    
-    [W_mask, H_mask] = align_makeMasks_midi(midi_multiChan, audio_len_samp, fs, wlen, hop, nfft, num_freq_bins, 1);
+
+    [W_mask, H_mask] = align_makeMasks_midi(midi_multiChan, audio_len_samp, fs, wlen, hop, nfft, num_freq_bins);
 
     figure (1);
     %imagesc(W_mask);

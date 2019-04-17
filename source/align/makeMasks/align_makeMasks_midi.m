@@ -1,4 +1,4 @@
-    function [W_mask, H_mask] = align_makeMasks_midi (midi, audio_len_samp, fs, wlen, hop, nfft, num_freq_bins)
+function [W_mask, H_mask] = align_makeMasks_midi (midi, audio_len_samp, fs, wlen, hop, nfft, num_freq_bins)
     % given a midi representation of the notes in a piece of audio, builds masks for W and H
     % to allow score - aware initialisation.
     % audio_len_samp can be optionally derived from the midi information - leave as []
@@ -38,8 +38,8 @@
         % pianoRoll_tb(n) gives the fft time bin corresponding to pianoRoll(:, n).
         % derived using pianoRoll_t which gives the time in seconds for pianoRoll(:, n).
         [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes_thisChan, 0, hop/fs);
-        pianoRoll_tb = align_secs2TimeBin(pianoRoll_t, fs, wlen, hop, audio_len_samp);
-            
+        pianoRoll_tb = align_secs2TimeBin(pianoRoll_t, spectInfo);
+
         % build masks for W and H based on this channel
         [W_mask_curr, H_mask_curr] = mask_from_pRoll (pianoRoll, pianoRoll_nn, pianoRoll_tb, nfft, num_freq_bins, num_time_bins, fs);
 

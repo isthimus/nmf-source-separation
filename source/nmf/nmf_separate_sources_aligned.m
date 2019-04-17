@@ -13,7 +13,7 @@ function sources_out = nmf_separate_sources_aligned (
     % a many-argumented beast which performs the whole SASS pipeline based on 7 partial functions
     % !!! much more commenting/ explanation to come here...
     % !!! good defaults will make a big difference here
-    % THIS USES SPECTINFO. 
+    % THIS USES SPECTINFO.
     % SOME SPRING CLEANING BEFORE SEPSOURCES (no spectInfo) WIL PLAY NICE WITH SEPSOURCES_ALIGNED
 
     % take spect, update spectInfo

@@ -43,8 +43,7 @@ p_reconstruct = @(audio_spect, W, H) ...
 
 % below will be superceded when we have a proper sep_sources_aligned pipeline
 % make W,H masks from midi
-%                                          
-[W_mask, H_mask] = align_makeMasks_midi (midi, length(audio_vec), fs, wlen, hop, nfft, num_freq_bins, 0);
+[W_mask, H_mask] = align_makeMasks_midi (midi, length(audio_vec), fs, wlen, hop, nfft, num_freq_bins);
 %[W_mask, H_mask] = align_makeMasks_midi (midi, [], fs, wlen, hop, nfft, 0);
 % build init function
 p_init = @(freqBins, timeBins) ...
