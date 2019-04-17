@@ -1,4 +1,7 @@
-function freqBins = align_freq2FreqBin (f, nfft, fs)
+function freqBins = align_freq2FreqBin (f, spectInfo)
+	nfft = spectInfo.nfft
+	fs = spectInfo.fs
+
 	% check preconditions
 	assert ( all(f <= fs/2), "at least one frequency given for conversion is above the nyquist limit!");
 

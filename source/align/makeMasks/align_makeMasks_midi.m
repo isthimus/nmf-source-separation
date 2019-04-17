@@ -1,4 +1,4 @@
-function [W_mask, H_mask] = align_makeMasks_midi (midi, audio_len_samp, fs, wlen, hop, nfft, num_freq_bins)
+function [W_mask, H_mask] = align_makeMasks_midi (notes, spectInfo)
     % given a midi representation of the notes in a piece of audio, builds masks for W and H
     % to allow score - aware initialisation.
     % audio_len_samp can be optionally derived from the midi information - leave as []
@@ -6,33 +6,34 @@ function [W_mask, H_mask] = align_makeMasks_midi (midi, audio_len_samp, fs, wlen
 
     % supress silly matlab warnings about semicolons
     %#ok<*NOSEL>
-    
+
+    % unpack spectInfo
+    wlen = spectInfo.wlen
+    hop = spectInfo.hop
+    audio_len_samp = spectInfo.audio_len_samp
+    fs = spectInfo.fs
+
     % precondition checks
     % make sure wlen is a multiple of hop - this allows all time bins to line up exactly with a midi "pixel"
-    assert( mod(wlen, hop) == 0, "wlen must be a whole number multiple of hop!");
+    assert(mod(wlen, hop) == 0, "wlen must be a whole number multiple of hop!");
 
-    % extract the notes array
-    notes = midiInfo(midi, 0);
-
-    % pick up audio_len_samp if its not provided, and find num_time_bins
+    % make sure there are no midi events after the end of the audio
     endTimes = notes(:, 6);
     lastEndTime_samp = ceil(fs * max(endTimes(:)));
-    if isempty(audio_len_samp)
-        audio_len_samp = lastEndTime_samp;
-    else 
-        assert (lastEndTime_samp <= audio_len_samp, "midi events occur after stated end of audio!")
-    end
-    num_time_bins = align_samps2TimeBin(audio_len_samp, wlen, hop, audio_len_samp);
+    assert (lastEndTime_samp <= audio_len_samp, "midi events occur after stated end of audio!")
 
-    % iterate over all channels in the midi file 
+    % figure out the max channel value and initialise W_mask and H_mask
     chans = notes(:,2);
     maxChan = max(chans);
     W_mask = []; H_mask = [];
+
+    % iterate over all channels in the midi file
     for i = 0:maxChan
 
         % extract all the notes on this channel
+        % continue to next iteration if current channel is empty
         notes_thisChan = notes(chans == i, :);
-        if isempty (notes_thisChan); continue; end; 
+        if isempty (notes_thisChan); continue; end;
 
         % build a "piano roll" matrix
         % pianoRoll_tb(n) gives the fft time bin corresponding to pianoRoll(:, n).
@@ -41,7 +42,7 @@ function [W_mask, H_mask] = align_makeMasks_midi (midi, audio_len_samp, fs, wlen
         pianoRoll_tb = align_secs2TimeBin(pianoRoll_t, spectInfo);
 
         % build masks for W and H based on this channel
-        [W_mask_curr, H_mask_curr] = mask_from_pRoll (pianoRoll, pianoRoll_nn, pianoRoll_tb, nfft, num_freq_bins, num_time_bins, fs);
+        [W_mask_curr, H_mask_curr] = mask_from_pRoll (pianoRoll, pianoRoll_nn, pianoRoll_tb, spectInfo);
 
         % concatenate the new masks with those obtained from other channels
         % !!! BIG OL' PREALLOCATION PROBLEM HERE. but can't see a neat way round it :(
@@ -52,19 +53,26 @@ function [W_mask, H_mask] = align_makeMasks_midi (midi, audio_len_samp, fs, wlen
 
 end
 
-function [W_mask, H_mask] = mask_from_pRoll (pianoRoll, pianoRoll_nn, pianoRoll_tb, nfft, num_freq_bins, num_time_bins, fs)
+function [W_mask, H_mask] = mask_from_pRoll (pianoRoll, pianoRoll_nn, pianoRoll_tb, spectInfo)
+
+    % unpack spectInfo
+    nfft = spectInfo.nfft
+    num_freq_bins = spectInfo.num_freq_bins
+    num_time_bins = spectInfo.num_time_bins
+    fs = spectInfo.fs
+
     % figure out how many note nums actually used, for preallocation.
     num_notes_used = size(pianoRoll,1);
-    for i = 1:size(pianoRoll,1) 
+    for i = 1:size(pianoRoll,1)
         % iterate over note numbers in piano roll and check if unused
-        if all(pianoRoll(i,:) == 0) 
+        if all(pianoRoll(i,:) == 0)
             num_notes_used = num_notes_used - 1;
         end
     end
 
     % preallocate W, H
     W_mask = zeros(num_freq_bins, num_notes_used);
-    H_mask = zeros(num_notes_used, num_time_bins); 
+    H_mask = zeros(num_notes_used, num_time_bins);
 
     % iterate over piano roll and fill out W_mask, H_mask
     WH_i = 1;                       % WH_i  is which row/col of W/H we're on.
@@ -72,8 +80,8 @@ function [W_mask, H_mask] = mask_from_pRoll (pianoRoll, pianoRoll_nn, pianoRoll_
 
         % skip empty rows
         % this case increments PR_i but not WH_i, hence the two iterators
-        if all(pianoRoll(PR_i,:) == 0) 
-            continue; 
+        if all(pianoRoll(PR_i,:) == 0)
+            continue;
         end
 
         % this PR row is not empty - so this note number will have a column in W
@@ -81,7 +89,7 @@ function [W_mask, H_mask] = mask_from_pRoll (pianoRoll, pianoRoll_nn, pianoRoll_
         fund_freq = midi2freq(pianoRoll_nn(PR_i));
         nyquist_freq = fs/2;
         harmonics = fund_freq : fund_freq : nyquist_freq;
-        bins = align_freq2FreqBin(harmonics, nfft, fs);
+        bins = align_freq2FreqBin(harmonics, spectInfo);
         bins = bins (bins <= num_freq_bins);
 
         % ... and write it into W
@@ -92,24 +100,9 @@ function [W_mask, H_mask] = mask_from_pRoll (pianoRoll, pianoRoll_nn, pianoRoll_
             if pianoRoll(PR_i, PR_j) ~= 0
                 H_mask(WH_i, pianoRoll_tb(PR_j)) = 1;
             end
-        end 
+        end
 
         % we've filled in a row/col - increment WH_i
         WH_i = WH_i + 1;
     end
-end
-
-function W_out = add_tolerance (W_in, tol)
-% adds  tolerance to W_mask using matlab imdilate
-% !!! this could be muuuuch smarter. eg log tolerance, kernel not all ones, 
-% smart tolerance based on actual freq not quantised freq bin, etc etc etc
-
-
-% freak out if given negative tol values
-assert (tol >=  0, "cannot have a negative tolerance value");
-
-kernelSize = 1 + 2 * floor(tol);
-kernel = ones (kernelSize, 1);
-W_out = imdilate(W_in, kernel);
-
 end

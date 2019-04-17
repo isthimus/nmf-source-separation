@@ -26,12 +26,12 @@ function notes_aligned = align_dtw (notes, audio_vec, spectInfo, use_vel)
         endTimes_bins(i) = find(IM >= endTimes_bins(i), 1);
     end
 
-    % update the notes array using warping information, return
+    % get start and end times in seconds
     startTimes_secs = align_timeBin2Secs(startTimes_bins, spectInfo);
     endTimes_secs = align_timeBin2Secs(endTimes_bins, spectInfo);
 
+    % build the realigned notes array, return
     notes_aligned = notes;
-    notes_aligned (:, 5) = startTimes_secs;
-    notes_aligned (:, 6) = endTimes_secs;
-
+    notes_aligned(:, 5) = startTimes_secs;
+    notes_aligned(:, 6) = endTimes_secs;
 end
