@@ -1,12 +1,12 @@
 function timeBins = align_samps2TimeBin (samps, spectInfo, use_audio_len)
     % unpack spectinfo
-    wlen = spectInfo.wlen
-    hop = spectInfo.hop
-    audio_len_samp = spectInfo.audio_len_samp
+    wlen = spectInfo.wlen;
+    hop = spectInfo.hop;
+    audio_len_samp = spectInfo.audio_len_samp;
 
     % if use_audio_len is not provided, default to true
     if nargin < 3
-        use_audio_len = true
+        use_audio_len = true;
 
     if use_audio_len
         % if using audio len, check that no samples are out of

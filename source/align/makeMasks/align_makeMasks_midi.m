@@ -8,10 +8,10 @@ function [W_mask, H_mask] = align_makeMasks_midi (notes, spectInfo)
     %#ok<*NOSEL>
 
     % unpack spectInfo
-    wlen = spectInfo.wlen
-    hop = spectInfo.hop
-    audio_len_samp = spectInfo.audio_len_samp
-    fs = spectInfo.fs
+    wlen = spectInfo.wlen;
+    hop = spectInfo.hop;
+    audio_len_samp = spectInfo.audio_len_samp;
+    fs = spectInfo.fs;
 
     % precondition checks
     % make sure wlen is a multiple of hop - this allows all time bins to line up exactly with a midi "pixel"
@@ -56,10 +56,10 @@ end
 function [W_mask, H_mask] = mask_from_pRoll (pianoRoll, pianoRoll_nn, pianoRoll_tb, spectInfo)
 
     % unpack spectInfo
-    nfft = spectInfo.nfft
-    num_freq_bins = spectInfo.num_freq_bins
-    num_time_bins = spectInfo.num_time_bins
-    fs = spectInfo.fs
+    nfft = spectInfo.nfft;
+    num_freq_bins = spectInfo.num_freq_bins;
+    num_time_bins = spectInfo.num_time_bins;
+    fs = spectInfo.fs;
 
     % figure out how many note nums actually used, for preallocation.
     num_notes_used = size(pianoRoll,1);

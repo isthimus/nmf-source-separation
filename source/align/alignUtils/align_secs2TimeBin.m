@@ -6,7 +6,7 @@ function timeBins = align_secs2TimeBin (t, spectInfo, use_audio_len)
     	use_audio_len = true;
 
     % unpack spectInfo
-    fs = spectInfo.fs
+    fs = spectInfo.fs;
 
     % get nearest sample indices to t and find first window centre
     samps = round(t .* fs);

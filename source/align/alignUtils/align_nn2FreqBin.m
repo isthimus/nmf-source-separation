@@ -5,8 +5,8 @@ function freqBins = align_nn2FreqBin (nn, spectInfo)
 	% so [freqBin, freqBin+1] are the two nearest bins
 
 	% unpack spectInfo
-	nfft = spectInfo.nfft
-	fs = spectInfo.fs
+	nfft = spectInfo.nfft;
+	fs = spectInfo.fs;
 
 	f_midi = midi2freq(nn);
 

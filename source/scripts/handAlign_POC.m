@@ -19,10 +19,12 @@ DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');
 % make and view a piano roll
 midi = readmidi ('jesu.mid');
 spectInfo.wlen = 1024;
-spectInfo.nfft = wlen * 4;
-spectInfo.num_freq_bins = nfft / 2 + 1;
+spectInfo.nfft = spectInfo.wlen * 4;
+spectInfo.num_freq_bins = spectInfo.nfft / 2 + 1;
 spectInfo.hop = 1024/8;
 spectInfo.fs = 44000;
+
+fs = spectInfo.fs;
 
 % build piano roll
 notes = midiInfo(midi, 0);
@@ -32,7 +34,7 @@ notes = midiInfo(midi, 0);
 endTimes = notes (:, 6);
 spectInfo.audio_len_samp = ceil(max(endTimes(:)) * fs);
 %audio_len_samp = ceil(max(endTimes(:)) * fs) + 44000;
-spectInfo.num_time_bins = align_samps2TimeBin(audio_len_samp, spectInfo);
+spectInfo.num_time_bins = align_samps2TimeBin(spectInfo.audio_len_samp, spectInfo);
 
 
 hop = spectInfo.hop;
@@ -66,7 +68,7 @@ if 1
     p1 = stem (align_nn2FreqBin([0:127], spectInfo_halfNfft));
     p2 = stem (align_nn2FreqBin([0:127], spectInfo));
     p3 = stem (align_nn2FreqBin([0:127], spectInfo_doubleNfft));
-    legend ([p1,p2,p3],'nfft = 2048', 'nfft = 4096', 'nfft = 8192')
+    legend ([p1,p2,p3],'nfft = 2048', 'nfft = 4096', 'nfft = 8192');
     title ("midi note num against freq bin for a linear frequency scale, fs =  44k");
     xlabel ("midi note number");
     ylabel ("freq bin");

@@ -28,7 +28,7 @@ p_nmf = @(V,W,H) deal(W,H);
 %}
 
 % define the stft analysis and synthesis parameters
-spectInfo.fs = fs
+spectInfo.fs = fs;
 spectInfo.wlen = 1024;
 spectInfo.hop = wlen/8;
 spectInfo.nfft = wlen;
