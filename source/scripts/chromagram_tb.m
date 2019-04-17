@@ -36,7 +36,6 @@ disp(spectInfo.audio_len_samp/spectInfo.hop);
 disp(size(chroma));
 %}
 
-
 i = 10;
 
 cnfft = 1024;

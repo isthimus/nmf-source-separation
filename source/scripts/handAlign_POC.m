@@ -49,7 +49,7 @@ end
 
 % plot midi note number against linear-scale frequency.
 % houston, do we have a problem here?
-if 0
+if 1
     figure;hold on
     p1 = stem (align_nn2FreqBin([0:127], nfft/2, fs));
     p2 = stem (align_nn2FreqBin([0:127], nfft, fs));
@@ -58,10 +58,12 @@ if 0
     title ("midi note num against freq bin for a linear frequency scale, fs =  44k");
     xlabel ("midi note number");
     ylabel ("freq bin");
+    wait_returnKey()
+    close all;
 end
 
 % run align_makeMasks_midi and plot along with piano roll for comparison
-if 0 
+if 1 
     [W_mask, H_mask] = align_makeMasks_midi(midi, audio_len_samp, fs, wlen, hop, nfft, num_freq_bins);
 
     figure (1);
@@ -88,9 +90,9 @@ if 0
 end
 
 % run align_makeMasks_midi, use as input to nmf_init_zeromask, display.
-if 0
+if 1
     [W_mask, H_mask] = align_makeMasks_midi(midi, audio_len_samp, fs, wlen, hop, nfft, num_freq_bins);
-    [W_init, H_init] = nmf_init_zeroMask (nfft, align_samps2TimeBin(audio_len_samp, wlen, hop, audio_len_samp), W_mask, H_mask);
+    [W_init, H_init] = nmf_init_zeroMask (num_freq_bins, align_samps2TimeBin(audio_len_samp, wlen, hop, audio_len_samp), W_mask, H_mask);
 
     figure (1);
     imagesc(W_init);
@@ -103,7 +105,7 @@ if 0
 end 
 
 % check that the multitrack and single track mask functions give the same matrices when given a 1 track midi file
-if 0
+if 1
     midi = readmidi ('jesu.mid');
 
     [W_singleTrack, H_singleTrack] = align_makeMasks_midi ( ...
@@ -136,7 +138,7 @@ if 0
 end
 
 % make masks from a multitrack midi file and display the various stages
-if 0
+if 1
     midipath = fullfile (DEV_DATA_PATH, 'phenicx_beethoven_2track.mid');
     midi_multiChan = readmidi(midipath);
 
@@ -147,7 +149,7 @@ if 0
     [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes, 0, hop/fs);
     pianoRoll_tb = align_secs2TimeBin (pianoRoll_t, fs, wlen, hop, audio_len_samp);
     
-    [W_mask, H_mask] = align_makeMasks_midi(midi_multiChan, audio_len_samp, fs, wlen, hop, nfft, num_freq_bins, 1);
+    [W_mask, H_mask] = align_makeMasks_midi(midi_multiChan, audio_len_samp, fs, wlen, hop, nfft, num_freq_bins);
 
     figure (1);
     %imagesc(W_mask);
