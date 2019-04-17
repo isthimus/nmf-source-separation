@@ -48,10 +48,6 @@
 ../../source/scripts/eNorm_source_sep_POC.m
 ../../source/scripts/handAlign_POC.m
 ../../source/scripts/hass_POC.m
-../../source/scripts/plot_spectra.m
-../../source/scripts/sa_POC.m
-../../source/scripts/setpaths.m
-../../source/scripts/tst.m
 ../../source/util/checkSpectInfo.m
 ../../source/util/find_window_hop.m
 ../../source/util/find_window_hop_multi.m

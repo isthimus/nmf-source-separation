@@ -5,7 +5,7 @@ function timeBins = align_secs2TimeBin (t, spectInfo, use_audio_len)
     if nargin < 3
     	use_audio_len = true;
 
-    % unpack spectinfo
+    % unpack spectInfo
     fs = spectInfo.fs
 
     % get nearest sample indices to t and find first window centre
@@ -13,9 +13,11 @@ function timeBins = align_secs2TimeBin (t, spectInfo, use_audio_len)
 
     % defer to the samps2TimeBin function
     if use_audio_len
-    	timeBins = align_samps2TimeBin(samps, wlen, hop, audio_len_samp);
+        % use audio length
+    	timeBins = align_samps2TimeBin(samps, spectInfo);
     else
-    	timeBins = align_samps2TimeBin(samps, wlen, hop);
+        % don't use audio length
+    	timeBins = align_samps2TimeBin(samps, spectInfo, false);
     end
 
     % implicitly return timebins
