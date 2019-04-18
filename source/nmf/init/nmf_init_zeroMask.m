@@ -1,8 +1,8 @@
 function [W_out, H_out] = nmf_init_zeroMask (W_mask, H_mask, spectInfo)
 
 	% unpack spectInfo
-	num_freq_bins = spectInfo.num_freq_bins
-	num_time_bins = spectInfo.num_time_bins
+	num_freq_bins = spectInfo.num_freq_bins;
+	num_time_bins = spectInfo.num_time_bins;
 
 	% precondition checks
 	assert (size(W_mask,1) == num_freq_bins, "shape of W_mask does not match value given for num_freq_bins");

@@ -1,3 +1,5 @@
+clear
+
 % cd to the folder this script is in
 script_path = mfilename('fullpath');
 script_path = script_path(1: find(script_path == '\', 1, 'last'));
@@ -14,6 +16,8 @@ DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');
 %[audio_vec, fs] = audioread(fullfile(DEV_DATA_PATH, 'TRIOS_vln_Db6_B6.wav'));
 midi = readmidi (fullfile(TRIOS_DATA_PATH, 'lussier/bassoon.mid'));
 notes = midiInfo(midi, 0);
+endTimes = notes (:, 6);
+audio_len_samp = length(audio_vec);
 %sound(audio_vec, fs);
 
 
@@ -29,13 +33,28 @@ p_nmf = @(V,W,H) deal(W,H);
 
 % define the stft analysis and synthesis parameters
 spectInfo.fs = fs;
-spectInfo.wlen = 1024;
-spectInfo.hop = wlen/8;
-spectInfo.nfft = wlen;
-spectInfo.num_freq_bins = nfft/2 + 1;
-spectInfo.analwin = blackmanharris(wlen, 'periodic');
-spectInfo.synthwin = hamming(wlen, 'periodic');
+spectInfo.audio_len_samp = audio_len_samp;
 
+wlen = 1024;
+spectInfo.wlen = wlen;
+
+hop = wlen/8;
+spectInfo.hop = hop;
+
+nfft = wlen;
+spectInfo.nfft = nfft;
+
+num_freq_bins = nfft/2 + 1;
+spectInfo.num_freq_bins = num_freq_bins;
+
+analwin = blackmanharris(wlen, 'periodic');
+spectInfo.analwin = analwin;
+
+synthwin = hamming(wlen, 'periodic');
+spectInfo.synthwin = synthwin;
+
+num_time_bins = align_samps2TimeBin(audio_len_samp, spectInfo);
+spectInfo.num_time_bins = num_time_bins;
 % build spectrum and reconstruction functions
 p_spect = @(x) ...
     stft(x, spectInfo.analwin, spectInfo.hop, spectInfo.nfft, spectInfo.fs);
@@ -46,6 +65,11 @@ p_reconstruct = @(audio_spect, W, H) ...
 % below will be superceded when we have a proper sep_sources_aligned pipeline
 % make W,H masks from midi
 [W_mask, H_mask] = align_makeMasks_midi (notes, spectInfo);
+disp('W_mask');
+disp(size(W_mask));
+disp('H_mask');
+disp(size(H_mask));
+
 % build init function
 p_init = @(freqBins, timeBins) ...
     nmf_init_zeroMask(W_mask, H_mask, struct('num_freq_bins',spectInfo.num_freq_bins,'num_time_bins', spectInfo.num_time_bins));
