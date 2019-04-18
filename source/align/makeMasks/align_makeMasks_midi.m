@@ -65,8 +65,6 @@ function [W_mask, H_mask] = mask_from_pRoll (pianoRoll, pianoRoll_nn, pianoRoll_
     % preallocate W, H
     W_mask = zeros(num_freq_bins, num_notes_used);
     H_mask = zeros(num_notes_used, num_time_bins); 
-    disp('preallocate');
-    disp(size(H_mask));
 
     % iterate over piano roll and fill out W_mask, H_mask
     WH_i = 1;                       % WH_i  is which row/col of W/H we're on.
@@ -99,9 +97,6 @@ function [W_mask, H_mask] = mask_from_pRoll (pianoRoll, pianoRoll_nn, pianoRoll_
         % we've filled in a row/col - increment WH_i
         WH_i = WH_i + 1;
     end
-    
-    disp('final');
-    disp(size(H_mask));
 end
 
 function W_out = add_tolerance (W_in, tol)
