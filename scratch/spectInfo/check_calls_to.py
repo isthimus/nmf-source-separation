@@ -1,9 +1,27 @@
-# given a list of identifiers in args, lists all the places those identifiers are referenced
+# given a list of identifiers in args, lists all the places those identifiers are referenced,
+# ignoring unless one of the spectInfo words is also found
 # call using
 #     cat badFuncs.txt | xargs python check_calls_to.py > calls.txt
 
 import sys
 args = sys.argv
+
+# check if a line has one of the spectInfo "keywords"
+def hasSpectInfoWord (s):
+    words= [
+        "wlen",
+        "audio_len_samp",
+        "hop",
+        "nfft",
+        "num_freq_bins",
+        "num_time_bins",
+        "fs",
+    ]
+
+    for word in words:
+        if word in s:
+            return True
+    return False
 
 # pick up list of m files from mfiles.txt
 mfiles = []
@@ -23,7 +41,8 @@ for path in mfiles:           # go through every path
 		lines = [l[:-1] for l in f.readlines()] # extract lines array
 		for (linenum, line) in enumerate(lines):    # for each line...
 			for name in fnames:                     # ... and name
-				if name.lower() in line.lower(): # check if the name is in the line
+				if (name.lower() in line.lower()  # check if the name is in the line
+				and hasSpectInfoWord(line)):      # and whether there is a "bad word" on the same line
 
 					# if so put the filename and line number into calls list
 					calls[fnames.index(name)].append((path, linenum+1, line)) # lol off by one
@@ -33,6 +52,7 @@ for path in mfiles:           # go through every path
 lastPath = None
 for i, name in enumerate(fnames):
 	print('-----', name, '-----')
+	lastPath = None
 	for call in calls[i]:
 		path, linenum, line = call
 		if path == lastPath:

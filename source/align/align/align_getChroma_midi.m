@@ -9,15 +9,13 @@ function chroma = align_getChroma_midi(notes, spectInfo, use_vel)
     % get the right bits out of spectInfo
     hop = spectInfo.hop;
     fs = spectInfo.fs;
-    wlen = spectInfo.wlen;
-    audio_len_samp = spectInfo.audio_len_samp;
     num_time_bins = spectInfo.num_time_bins;
 
     % build a "piano roll" matrix
     % pianoRoll_tb(n) gives the time bin corresponding to pianoRoll(:, n).
     % derived using pianoRoll_t which gives the time in seconds for pianoRoll(:, n).
     [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes, 1, hop/fs);
-    pianoRoll_tb = align_secs2TimeBin(pianoRoll_t, fs, wlen, hop, audio_len_samp);
+    pianoRoll_tb = align_secs2TimeBin(pianoRoll_t, spectInfo);
 
     % tidy up the edges of the pianoRoll so its prefectly aligned with timebin indices
     pianoRoll_tbAligned = zeros(size(pianoRoll, 1), num_time_bins);
@@ -41,43 +39,3 @@ function chroma = align_getChroma_midi(notes, spectInfo, use_vel)
         chroma = 1 * (chroma ~= 0);
     end
 end
-
-%{
-    % preallocate chroma array
-    chroma = zeros(12, spectInfo.num_time_bins);
-
-    % get chroma val, start, end, and (vel)
-    nns = notes(:, 3);
-    vels = notes(:, 4) ./ 127; % normalise vels to 1
-    start_sec = notes(:, 5);
-    end_sec = notes(:, 6);
-
-    chroma_vals = mod (nns, 12) + 1; % +1 for matlab indexing. sigh
-    
-    start_bins = align_secs2TimeBin( ...
-        start_sec, ...
-        spectInfo.fs, ...
-        spectInfo.wlen, ...
-        spectInfo.hop, ...
-        spectInfo.audio_len_samp ...
-    );
-
-    end_bins = align_secs2TimeBin( ...
-        end_sec, ...
-        spectInfo.fs, ...
-        spectInfo.wlen, ...
-        spectInfo.hop, ...
-        spectInfo.audio_len_samp ...
-    );        
-
-    % paint chroma according to values (norm vel to 1 for noo)
-    if use_vel
-        for i = 1:size(notes,1)
-            chroma(chroma_vals(i), start_bins(i) : end_bins(i)) = vels(i);
-        end
-    else
-        for i = 1:size(notes,1)
-            chroma(chroma_vals(i), start_bins(i) : end_bins(i)) = 1;
-        end
-    end
-%}

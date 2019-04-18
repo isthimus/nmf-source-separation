@@ -6,7 +6,7 @@ function valid_flag = checkSpectInfo(spectInfo, prespect, print_ans)
 
     % current spec for a valid spectInfo
     % this is in a comment because its likely to change as everything gets smoothed out
-    % pre spect call: 
+    % pre spect call:
     %   audio_len_samp
     %   wlen
     %   nfft
@@ -17,7 +17,7 @@ function valid_flag = checkSpectInfo(spectInfo, prespect, print_ans)
     %   num_freq_bins
     %   num_time_bins
 
-    % default args 
+    % default args
     if nargin <= 2
         print_ans = false;
     end
@@ -58,9 +58,9 @@ function valid_flag = checkSpectInfo(spectInfo, prespect, print_ans)
         else
             disp('*****missing fields:*****');
             for i = 1:length(missing_fields); disp (missing_fields(i)); end;
-            disp('*************************');  
+            disp('*************************');
         end
     end
 
     % implicit return of valid_flag
-end 
+end

@@ -12,8 +12,8 @@ function notes_aligned = align_dtw (notes, audio_vec, spectInfo, use_vel)
 
     % get all midi event times in notes, as timebin indexes
     % < vector full of indices, V(i) represents time of event in notes(i, :), as a timebin>
-    startTimes_bins = align_secs2TimeBin(notes(:, 5), spectInfo.fs, spectInfo.wlen, spectInfo.hop, spectInfo.audio_len_samp);
-    endTimes_bins   = align_secs2TimeBin(notes(:, 6), spectInfo.fs, spectInfo.wlen, spectInfo.hop, spectInfo.audio_len_samp);
+    startTimes_bins = align_secs2TimeBin(notes(:, 5), spectInfo);
+    endTimes_bins   = align_secs2TimeBin(notes(:, 6), spectInfo);
 
     % warp midi event times using IM warping path
     % ie replace each num in V with the index of the first instance in IM which is >= that num
@@ -25,13 +25,13 @@ function notes_aligned = align_dtw (notes, audio_vec, spectInfo, use_vel)
     for i = 1:length(endTimes_bins)
         endTimes_bins(i) = find(IM >= endTimes_bins(i), 1);
     end
- 
-    % update the notes array using warping information, return
+
+    % get start and end times in seconds
     startTimes_secs = align_timeBin2Secs(startTimes_bins, spectInfo);
     endTimes_secs = align_timeBin2Secs(endTimes_bins, spectInfo);
 
+    % build the realigned notes array, return
     notes_aligned = notes;
-    notes_aligned (:, 5) = startTimes_secs;
-    notes_aligned (:, 6) = endTimes_secs;
-
+    notes_aligned(:, 5) = startTimes_secs;
+    notes_aligned(:, 6) = endTimes_secs;
 end

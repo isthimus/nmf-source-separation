@@ -1,9 +1,9 @@
 === next ===
-do low hanging fruit on spectInfo
-copy up your insights on spectInfo
-shakedown getChroma_audio
-
-onwards to alignment, i guess.. 
+spectInfo reckoning
+fix up this file
+shakedown getChroma_audio (apparently?)
+bottom out hop sizes and chroma extraction
+try and put the damn thing together...
 
 
 === spectInfo ===

@@ -10,38 +10,38 @@ TRIOS_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/TRIOS');
 DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');
 
 % test align_resolveWarpingPath
-if 1 
+if 1
     % clear spectInfo from last time
     spectInfo = struct();
 
     % make two vectors for alignment
     a = [0 0 0 0 0 10 0 0 0 0 0 0 10 0 0 10 0 0 0 0 0];
     b = [0 0 0 0 0 1  7 1 1 1 7 1  1 1 1  7 0 0 0 0 0];
-    
+
     % plot unaligned
-    plot(a); hold on; plot (b); 
+    plot(a); hold on; plot (b);
     title('unaligned');
     wait_returnKey
     close all
-    
+
     % align with dtw
     [~, ia, ib] = dtw (a, b);
-    
+
     % plot a(ia) against b(ib)
     % theyre aligned now but this is longer than the original sequence!
-    plot(a(ia)); hold on; plot(b(ib)); 
+    plot(a(ia)); hold on; plot(b(ib));
     title('ia - ib');
     wait_returnKey
     close all;
 
     % now resolve the warping path to bring ia into line with an unmodified ib
     ia_r = align_resolveWarpingPath(ia, ib);
-    plot(a(ia_r)); hold on; plot(b); 
+    plot(a(ia_r)); hold on; plot(b);
     title('ia resolved to b');
     wait_returnKey
     close all;
 
-    % bring ib into line with ia instead 
+    % bring ib into line with ia instead
     ib_r = align_resolveWarpingPath (ib, ia);
     plot (a); hold on; plot (b(ib_r));
     title ('ib resolved to a');
@@ -54,7 +54,7 @@ if 1
     wait_returnKey
     close all;
 
-    % upsample, smooth and try again 
+    % upsample, smooth and try again
     a = upsample(a, 10);
     b = upsample(b, 10);
 
@@ -64,29 +64,29 @@ if 1
     b = conv(b, quadsmooth_IR);
 
     % plot unaligned
-    plot(a); hold on; plot (b); 
+    plot(a); hold on; plot (b);
     title('unaligned');
     wait_returnKey
     close all
-    
+
     % align with dtw
     [~, ia, ib] = dtw (a, b);
-    
+
     % plot a(ia) against b(ib)
     % theyre aligned now but this is longer than the original sequence!
-    plot(a(ia)); hold on; plot(b(ib)); 
+    plot(a(ia)); hold on; plot(b(ib));
     title('ia - ib');
     wait_returnKey
     close all;
 
     % now resolve the warping path to bring ia into line with an unmodified ib
     ia_r = align_resolveWarpingPath(ia, ib);
-    plot(a(ia_r)); hold on; plot(b); 
+    plot(a(ia_r)); hold on; plot(b);
     title('ia resolved to b');
     wait_returnKey
     close all;
 
-    % bring ib into line with ia instead 
+    % bring ib into line with ia instead
     ib_r = align_resolveWarpingPath (ib, ia);
     plot (a); hold on; plot (b(ib_r));
     title ('ib resolved to a');
@@ -110,16 +110,16 @@ if 1
 
     % see if theyre different
     plot (ia_r); hold on; plot(v_ia_r);
-    title('vectorised vs non vectorised warping'); 
+    title('vectorised vs non vectorised warping');
     wait_returnKey;
     close all;
 
     % show that the differences are basically rounding differences
     plot (v_ia_r - ia_r)
-    title('vectorised vs non vectorised warping - difference'); 
+    title('vectorised vs non vectorised warping - difference');
     wait_returnKey
     close all;
-end 
+end
 
 % test align_getChroma_midi
 if 1
@@ -134,7 +134,7 @@ if 1
     spectInfo.nfft = spectInfo.wlen * 4;
     spectInfo.num_freq_bins = spectInfo.nfft / 2 + 1;
     spectInfo.hop = 1024/8;
-    spectInfo.fs = 44000; 
+    spectInfo.fs = 44000;
 
     % build piano roll
     notes = midiInfo(midi, 0);
@@ -145,16 +145,11 @@ if 1
 
     % spectInfo.audio_len_samp = ceil(max(endTimes(:)) * spectInfo.fs);
     spectInfo.audio_len_samp = ceil(max(endTimes(:)) * spectInfo.fs);
-    spectInfo.num_time_bins = align_samps2TimeBin(...;
-        spectInfo.audio_len_samp, ... 
-        spectInfo.wlen, ... 
-        spectInfo.hop, ... 
-        spectInfo.audio_len_samp ... 
-    );
+    spectInfo.num_time_bins = align_samps2TimeBin(spectInfo.audio_len_samp, spectInfo);
 
     % get pianoRoll
     [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes, 0, spectInfo.hop/spectInfo.fs);
-    pianoRoll_tb = align_secs2TimeBin (pianoRoll_t, spectInfo.fs, spectInfo.wlen, spectInfo.hop, spectInfo.audio_len_samp);
+    pianoRoll_tb = align_secs2TimeBin (pianoRoll_t, spectInfo);
 
     % create a chromagram on the same timebase
     chromagram = align_getChroma_midi(notes, spectInfo, 0);
@@ -173,7 +168,7 @@ if 1
     % build a new matrix which is the marked up pianoRoll concatenated with the chromagram, with a "line" of 0.7 values in between
     chromagram(1,:) = chromagram(1,:)  + 0.5;
     display_mat = [pianoRoll_tbAligned; ones(1, spectInfo.num_time_bins) * 0.7; chromagram];
-    
+
     %plot for visual inspection
     imagesc(display_mat)
     title('visual check')
@@ -185,6 +180,8 @@ end
 
 % prove that if end of audio is later than end of midi, the chromagram is still num_time_bins long
 if 1
+    % clear spectInfo, read in midi file
+    spectInfo = struct()
     midi = readmidi (fullfile(DEV_DATA_PATH, 'TRIOS_brahms_2bar.mid'));
 
     % create a spectInfo (partially made up for this test script)
@@ -192,7 +189,7 @@ if 1
     spectInfo.nfft = spectInfo.wlen * 4;
     spectInfo.num_freq_bins = spectInfo.nfft / 2 + 1;
     spectInfo.hop = 1024/8;
-    spectInfo.fs = 44000; 
+    spectInfo.fs = 44000;
 
     % build piano roll
     notes = midiInfo(midi, 0);
@@ -203,16 +200,10 @@ if 1
 
     % spectInfo.audio_len_samp = ceil(max(endTimes(:)) * spectInfo.fs);
     spectInfo.audio_len_samp = ceil(max(endTimes(:)) * spectInfo.fs) + 44000;
-    spectInfo.num_time_bins = align_samps2TimeBin(...;
-        spectInfo.audio_len_samp, ... 
-        spectInfo.wlen, ... 
-        spectInfo.hop, ... 
-        spectInfo.audio_len_samp ... 
-    );
-
+    spectInfo.num_time_bins = align_samps2TimeBin(spectInfo.audio_len_samp, spectInfo);
     % get pianoRoll
     [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes, 0, spectInfo.hop/spectInfo.fs);
-    pianoRoll_tb = align_secs2TimeBin (pianoRoll_t, spectInfo.fs, spectInfo.wlen, spectInfo.hop, spectInfo.audio_len_samp);
+    pianoRoll_tb = align_secs2TimeBin (pianoRoll_t, spectInfo);
 
     % create a chromagram on the same timebase
     chromagram = align_getChroma_midi(notes, spectInfo, 0);
@@ -235,7 +226,7 @@ if 1
     pianoRoll_tbAligned(C_indices, :) = pianoRoll_tbAligned(C_indices, :) + 0.3;
     chromagram(1,:) = chromagram(1,:)  + 0.5;
     display_mat = [pianoRoll_tbAligned; ones(1, spectInfo.num_time_bins) * 0.7; chromagram];
-    
+
     %plot for visual inspection
     imagesc(display_mat)
     title('visual check')
@@ -246,7 +237,7 @@ if 1
 end
 
 % test align_getChroma_audio
-if 1 
+if 1
     % clear spectInfo from last time
     spectInfo = struct();
 
@@ -265,17 +256,17 @@ if 1
     spectInfo.wlen = 1024;
     spectInfo.nfft = spectInfo.wlen * 4;
     spectInfo.hop = 1024/8;
-    spectInfo.fs = fs; 
+    spectInfo.fs = fs;
 
     % analysis and synth windows
-    % !!! should be in spectInfo? 
+    % !!! should be in spectInfo?
     analwin = blackmanharris(spectInfo.wlen, 'periodic');
     synthwin = hamming(spectInfo.wlen, 'periodic');
 
     % build spectrogram function
     p_spect = @(x) ...
         stft(x, analwin, spectInfo.hop, spectInfo.nfft, spectInfo.fs);
-    
+
     % iterate over the different audio files
     for i = 1:length(audio)
 
@@ -288,14 +279,14 @@ if 1
         close all;
 
         spect = p_spect(thisAudio);
-        spectInfo.num_freq_bins = size(spect, 1); 
+        spectInfo.num_freq_bins = size(spect, 1);
         spectInfo.num_time_bins = size(spect, 2);
         spectInfo.audio_len_samp = length(thisAudio);
 
         % create chromagram
         % might fail an assertion and error
         chroma_audio = align_getChroma_audio(thisAudio, spectInfo);
-    
+
         chroma_midi = align_getChroma_midi(midiInfo(thisMidi, 0), spectInfo, 1);
 
         % assuming it hasn't errored - display the chromagram with spectrum as subplots
@@ -314,7 +305,7 @@ if 1
          colorbar;
         wait_returnKey();
         close all;
-    end    
+    end
 end
 
 % show that dtw -> resolveWarpingPath works on midi/audio chroma
@@ -335,10 +326,10 @@ if 1
     spectInfo.wlen = 1024;
     spectInfo.nfft = spectInfo.wlen * 4;
     spectInfo.hop = 1024/4;
-    spectInfo.fs = fs; 
+    spectInfo.fs = fs;
 
     % analysis and synth windows
-    % !!! should be in spectInfo? 
+    % !!! should be in spectInfo?
     analwin = blackmanharris(spectInfo.wlen, 'periodic');
     synthwin = hamming(spectInfo.wlen, 'periodic');
 
@@ -347,7 +338,7 @@ if 1
         stft(x, analwin, spectInfo.hop, spectInfo.nfft, spectInfo.fs);
     spect = p_spect(audio);
 
-    % pick up num_time_bins/num_freq_bins    
+    % pick up num_time_bins/num_freq_bins
     spectInfo.num_freq_bins = size(spect, 1);
     spectInfo.num_time_bins = size(spect, 2);
 
@@ -378,7 +369,7 @@ if 1
      colorbar;
     subplot(3,1,3);
      imagesc(chroma_midi);
-     axis xy; 
+     axis xy;
      title('chroma\_midi');
      colorbar;
 
@@ -402,7 +393,7 @@ if 1
     figure (3);
      plot(IM);
      title("warping path");
-    
+
     wait_returnKey();
     close all;
 
@@ -411,12 +402,12 @@ if 1
 
     % build the piano roll of unaligned notes. make explicit the gap at the start, if any.
     [pr_u, pr_u_t, pr_u_nn] = piano_roll(notes, 0, spectInfo.hop/spectInfo.fs);
-    pr_u_tb = align_secs2TimeBin(pr_u_t, spectInfo.fs, spectInfo.wlen, spectInfo.hop, spectInfo.audio_len_samp);
+    pr_u_tb = align_secs2TimeBin(pr_u_t, spectInfo);
     pr_u = [zeros(size(pr_u,1), min(pr_u_tb)) , pr_u];
 
     % build the piano roll of aligned notes. make explicit the gap at the start, if any.
     [pr_a, pr_a_t, pr_a_nn] = piano_roll(notes_aligned, 0, spectInfo.hop/spectInfo.fs);
-    pr_a_tb = align_secs2TimeBin(pr_a_t, spectInfo.fs, spectInfo.wlen, spectInfo.hop, spectInfo.audio_len_samp);
+    pr_a_tb = align_secs2TimeBin(pr_a_t, spectInfo);
     pr_a = [zeros(size(pr_a,1), min(pr_a_tb)) , pr_a];
 
     disp(spectInfo);
@@ -444,7 +435,7 @@ if 0
 
     % some variants on the audio - first norm to +- 1, +- 10
     audio_norm_1 = mat_normalise(audio, 1);
-    audio_norm_10 = mat_normalise(audio, 10); 
+    audio_norm_10 = mat_normalise(audio, 10);
 
     % try some heavy handed compression
     audio_comp = audio;
@@ -461,17 +452,17 @@ if 0
         end
     end
     audio_comp_1 = mat_normalise(audio_comp, 1);
-    audio_comp_10 = mat_normalise(audio_comp, 10); 
+    audio_comp_10 = mat_normalise(audio_comp, 10);
 
     % build a spectInfo
     % using some params from eNorm_source_sep_POC
     spectInfo.wlen = 1024;
     spectInfo.nfft = spectInfo.wlen * 4;
     spectInfo.hop = 1024/8;
-    spectInfo.fs = fs; 
+    spectInfo.fs = fs;
 
     % analysis and synth windows
-    % !!! should be in spectInfo? 
+    % !!! should be in spectInfo?
     analwin = blackmanharris(spectInfo.wlen, 'periodic');
     synthwin = hamming(spectInfo.wlen, 'periodic');
 
@@ -480,7 +471,7 @@ if 0
         stft(x, analwin, spectInfo.hop, spectInfo.nfft, spectInfo.fs);
     spect = p_spect(audio);
 
-    % pick up num_time_bins/num_freq_bins    
+    % pick up num_time_bins/num_freq_bins
     spectInfo.num_freq_bins = size(spect, 1);
     spectInfo.num_time_bins = size(spect, 2);
 
@@ -523,7 +514,7 @@ if 0
 end
 
 % try smaller hop for align_getChroma_audio
-if 1 
+if 1
     % clear spectInfo from last time
     spectInfo = struct();
 
@@ -540,13 +531,13 @@ if 1
         spectInfo.nfft = spectInfo.wlen * 4;
         assert(spectInfo.wlen/(2^i * 4) > 32);
         spectInfo.hop = spectInfo.wlen/(2^i * 4);
-        spectInfo.fs = fs; 
+        spectInfo.fs = fs;
 
         disp(spectInfo.hop);
         assert (mod(spectInfo.hop, 1) == 0, "DAMMIT JACK");
 
         % analysis and synth windows
-        % !!! should be in spectInfo? 
+        % !!! should be in spectInfo?
         analwin = blackmanharris(spectInfo.wlen, 'periodic');
         synthwin = hamming(spectInfo.wlen, 'periodic');
 
@@ -555,7 +546,7 @@ if 1
             stft(x, analwin, spectInfo.hop, spectInfo.nfft, spectInfo.fs);
         spect = p_spect(audio);
 
-        % pick up num_time_bins/num_freq_bins    
+        % pick up num_time_bins/num_freq_bins
         spectInfo.num_freq_bins = size(spect, 1);
         spectInfo.num_time_bins = size(spect, 2);
 
@@ -583,7 +574,7 @@ if 1
      axis xy
      title('hop 1/16')
      colorbar;
-     
+
      wait_returnKey();
      close all;
 end
