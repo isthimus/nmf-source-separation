@@ -132,6 +132,7 @@ if 1
     % build piano roll
     [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes_multiChan, 0, hop/fs);
     pianoRoll_tb = align_secs2TimeBin (pianoRoll_t, spectInfo);
+    spectInfo.num_time_bins = align_samps2TimeBin(spectInfo.audio_len_samp, spectInfo);
 
     %perform alignment
     [W_mask, H_mask] = align_makeMasks_midi(notes_multiChan, spectInfo);
