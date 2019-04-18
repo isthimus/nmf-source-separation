@@ -24,6 +24,8 @@ function sources_out = nmf_separate_sources (nmf_func, nmf_init_func, spect_func
     
     % initialise W and H, plot if plot_level >= 2
     [num_freq_bins, num_time_bins] = size(spect);
+    disp('size of spect');
+    disp(size(spect));
     [W_init, H_init] = nmf_init_func(num_freq_bins, num_time_bins);
     plot_if_plotLvl(plot_level, 2, 'W\_init', false, @imagesc, W_init)
     plot_if_plotLvl(plot_level, 2, 'H\_init', true,  @imagesc, H_init)

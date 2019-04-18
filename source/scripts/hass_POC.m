@@ -1,3 +1,5 @@
+clear
+
 % cd to the folder this script is in
 script_path = mfilename('fullpath');
 script_path = script_path(1: find(script_path == '\', 1, 'last'));
