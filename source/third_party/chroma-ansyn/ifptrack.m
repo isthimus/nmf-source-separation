@@ -9,23 +9,23 @@ function [p,m,S] = ifptrack(d,w,sr,fminl,fminu,fmaxl,fmaxu)
 % 2006-05-03 dpwe@ee.columbia.edu
 
 %   Copyright (c) 2006 Columbia University.
-% 
+%
 %   This file is part of LabROSA-coversongID
-% 
+%
 %   LabROSA-coversongID is free software; you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License version 2 as
 %   published by the Free Software Foundation.
-% 
+%
 %   LabROSA-coversongID is distributed in the hope that it will be useful, but
 %   WITHOUT ANY WARRANTY; without even the implied warranty of
 %   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 %   General Public License for more details.
-% 
+%
 %   You should have received a copy of the GNU General Public License
 %   along with LabROSA-coversongID; if not, write to the Free Software
 %   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 %   02110-1301 USA
-% 
+%
 %   See the file "COPYING" for the text of the license.
 
 % downweight fundamentals below here
@@ -34,7 +34,6 @@ if nargin < 5; fminu = 300; end
 % highest frequency we look to
 if nargin < 6; fmaxl = 2000; end
 if nargin < 7; fmaxu = 4000; end
-
 
 % Calculate the inst freq gram
 [I,S] = ifgram(d,w,w/2,w/4,sr);
@@ -94,13 +93,14 @@ for t = 1:size(I,2)
       mags(i) = 0;
       frqs(i) = 0;
     end
-    
+
   end
 
-% then just keep the largest at each frame (for now)
-%  [v,ix] = max(mags);
-%  p(t) = frqs(ix);
-%  m(t) = mags(ix);
+  % then just keep the largest at each frame (for now)
+  %  [v,ix] = max(mags);
+  %  p(t) = frqs(ix);
+  %  m(t) = mags(ix);
+
   % No, keep them all
   %bin = st;
   bin = round((st+en)/2);

@@ -10,7 +10,7 @@ TRIOS_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/TRIOS');
 DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');
 
 % test align_resolveWarpingPath
-if 1
+if 0
     % clear spectInfo from last time
     spectInfo = struct();
 
@@ -122,7 +122,7 @@ if 1
 end
 
 % test align_getChroma_midi
-if 1
+if 0
     % clear spectInfo from last time
     spectInfo = struct();
 
@@ -179,7 +179,7 @@ if 1
 end
 
 % prove that if end of audio is later than end of midi, the chromagram is still num_time_bins long
-if 1
+if 0
     % clear spectInfo, read in midi file
     spectInfo = struct()
     midi = readmidi (fullfile(DEV_DATA_PATH, 'TRIOS_brahms_2bar.mid'));
@@ -237,7 +237,7 @@ if 1
 end
 
 % test align_getChroma_audio
-if 1
+if 0
     % clear spectInfo from last time
     spectInfo = struct();
 
@@ -309,7 +309,7 @@ if 1
 end
 
 % show that dtw -> resolveWarpingPath works on midi/audio chroma
-if 1
+if 0
     % clear spectInfo from last time
     spectInfo = struct();
 
@@ -550,7 +550,7 @@ if 1
         spectInfo.num_freq_bins = size(spect, 1);
         spectInfo.num_time_bins = size(spect, 2);
 
-        % extract chroma from midi and audio
+        % extract chroma from audio
         chroma_audio = align_getChroma_audio (audio, spectInfo);
 
         results{i + 1} = chroma_audio;
