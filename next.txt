@@ -1,9 +1,25 @@
 === next ===
-spectInfo reckoning
-fix up this file
-shakedown getChroma_audio (apparently?)
-bottom out hop sizes and chroma extraction
-try and put the damn thing together...
+x quick look at onset and decision time on that.
+x scope out empty bins also.
+
+hom for pen. 
+Copy up spectInfo insights + onset lookover. CYTE for onset paper (with good tag) writeup redtext struct (top of head, can be .txt. standardised. read steph)
+
+figure out overlay display and/or click for comparison. figure out midi distance func for bench.
+
+see how aligned the ground truth is for TRIOS/PHENICX. consider MiREX.
+skeletal alignment bench. follow paper.
+data through if possible.
+
+empty bin start and end x 5 mins lol
+at least bosh together some onset functions to say you have (plspls and etc)
+
+
+writeup in redtext.
+	- citations from onset paper and pals - see scratch/onset/diary.txt
+
+=== next: source/user ===
+to include stft from spectinfo. revisit nmf_init_func() and recons_func(). spect elision?? might be v easy to impl if we just say "set by hand FU
 
 
 === spectInfo ===
@@ -18,15 +34,3 @@ pass fs, num_time_bins, etc around
 		B is thorny. could permissively allow functions to pass any info down the chain. or could go ad hoc with spect. or could have several pipelines.
 		requiring no B-type dataflow is too restrcitive - the speedup from trimming spect alone justifies num_freq_bins propogating to nmf_func. 
 
-=== getChroma_audio ===
-X get audio
-figure out how to take its fourier transform and get a spectInfo, etc (useful for later anyway even if its ad hoc now)
-pass audio along with spect info to getChroma_audio
-once satisfied, remove the assert that checks num_time_bins - now the spectInfo doesnt need spect() to have been called first
-
-==== HASS, general framework code ============
-- make sure youre passing "notes" around, not "midi" - mildy more efficient, much more flexible, and MATLAB does the pointer arithmetic :D
-- stft_info struct!!
-- proper tolerance functions
-- code up sep_sources_aligned
-- Reduce the amount of the spectrum we converge on for a big speedup 

@@ -1,0 +1,74 @@
+=== High resolution audio synchronization using chroma onset features ==
+
+"we combine the robustness of conventional chroma features with the accuracy of conventional one dimensional onset features[2]." so they might be talking about a second level sort of thing.
+
+that citation is "a tutorial in onset detection in audio signals", see below
+
+they have a specific onset measure - we could fake with stuff from "tutorial" + division into freq bands. or try and use theirs.they basically do the same trick - chroma onset, then local normalisation.
+
+novel part - convolve (i think?) with a decaying sequence sqrt(1), sqrt(0.9), sqrt(0.8). useful later apparently. LEFT EDGE STILL SHARP BC DISCONTINUITY AT 0 IN H(N).
+
+C_chroma is the usual cost matrix built using midi chroma and audio chroma
+C_DLNCO is the cost matrix built from onset. get onset from audio in the usual way and take euclidian 
+dist with a simple midi extraction.
+
+they use 50 features/sec. 
+to testbench they split up into N sections of equal length and compressed or expanded by +- 30%.  
+they averaged out the onset error as a figure of merit
+
+
+
+
+
+=== a tutorial in onset detection in audio signals ===
+covers loads of techniques.
+
+attack vs transient vs onset: attack is the time interval where envelope is increasing
+			      transient is "hard to define" but basically a period of fast evolution of eg. harmonics
+			      onset is a single instant chosen to represent the whole thing. usually at earliest possible detection of transient
+
+detection function = novelty function =  "the onset detecting transform"
+basic idea: preprocess -> detection func (much lower fs appaz) -> peak-pick
+
+preprocess can be either westy direct transient detection, or just split into bands. we will do neither (HACKWEEK)
+
+detection. a simple one (pp1037) - take the local energy + lowpass (or envelope-follow). then take first difference. this has peaks when the overall energy of the signal is rising sharply. bosh. can use log-loudness. sensitive to preprocessing (coudl downward expand?)
+
+detection. slightly cleverer - for white-noise-like attacks (guitar, drums [take 5 tho]), can take an stft, weight the bins and avg, looking for high-frequency energy (since resonance-based sound will probably be lower freq fingers crossed like). this seems easy to implement and interesting. theres a paper [22] about it. need to choose weighing with care ofc - sometimes can be equivalent to to eg first diff, energy, etc etc
+
+k tho but spectral difference looks like the one: take a euclidian distance between sucessive stft frames. some variations around rectification (avoid offsets), different norms(L1, L2, etc). seems to perform well for piano at least.
+
+NORMALISE.
+
+NORMALISE 
+
+NORMALISE.
+
+ok - peak picking.
+broadly = posprocess, threshold, decision.
+
+postprocess could be smoothing, normalisation, DC removal
+
+fixed thresholding is BS, need adaptive
+can just lowpass the signal and say "if \delta above lowpassed version..." 
+can also say "if \delta above local median ... "
+
+their way : detection func -> subtract mean -> normalise to 1 -> adaptive threshold using moving median filter. then every local maximum above zero is an onset. (i guess "1-local" ie look at neighbors, but idk).
+parameters hand-tuned(!!)
+
+so, the pipeline:
+
+(no preproc) -> energy first diff | HFC | spec diff -> sub mean & normalise -> adaptive threshold(median) -> clamp to zero from below -> 1-local max detect -> build euclidian cost matrix against midi extracted version -> sum with chroma cost matrix
+
+code to write
+
+audio onset extraction code
+some light (shared?) postprocessing code
+midi onset extraction code
+dtw hand-coded (but can edit fairly directly from the MATLAB lib function)
+
+
+
+
+
+
