@@ -11,6 +11,7 @@ see how aligned the ground truth is for TRIOS/PHENICX. consider MiREX.
 skeletal alignment bench. follow paper.
 data through if possible.
 
+foldering of /source/align/...
 empty bin start and end x 5 mins lol
 at least bosh together some onset functions to say you have (plspls and etc)
 
