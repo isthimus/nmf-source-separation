@@ -1,6 +1,10 @@
 % cd to the folder this script is in
 script_path = mfilename('fullpath');
-script_path = script_path(1 : find(script_path == '\', 1, 'last'));
+if ispc
+    script_path = script_path(1: find(script_path == '\', 1, 'last'));
+elseif isunix
+    script_path = script_path(1: find(script_path == '/', 1, 'last'));
+end
 cd(script_path)
 
 % set matlab path and pick up some other useful paths
