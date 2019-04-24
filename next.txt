@@ -3,25 +3,31 @@ x quick look at onset and decision time on that.
 x scope out empty bins also.
 
 X hom for pen. 
-X Copy up spectInfo insights + onset lookover. CYTE for onset paper (with good tag) 
+X Copy up spectInfo insights + onset lookover. 
+X CYTE for onset paper (with good tag) 
 writeup redtext struct (top of head, can be .txt. standardised. read steph)
 
-figure out overlay display and/or click for comparison. figure out midi distance func for bench.
+X figure out overlay display and/or click for comparison. 
+X plan out alignment bench
+foldering - source/align, bench, might as well placehold user and kill remote as well
+	X plan it out
+	once over of the codebase
+	just DDDOOOOOOOH ITTTTTT. YESTERDAY, YA SAID TUMARRROW. so just DHOOOOOOOOOO EIIIIIIIT
 
 see how aligned the ground truth is for TRIOS/PHENICX. consider MiREX.
-skeletal alignment bench. follow paper.
+skeletal alignment bench + tweakable "short feedback loop"
 data through if possible.
-
-foldering of /source/align/...
+	
 empty bin start and end x 5 mins lol
 at least bosh together some onset functions to say you have (plspls and etc)
-
 
 writeup in redtext.
 	- citations from onset paper and pals - see scratch/onset/diary.txt
 
 === next: source/user ===
-to include stft from spectinfo. revisit nmf_init_func() and recons_func(). spect elision?? might be v easy to impl if we just say "set by hand FU
+if it's tomorrow morning now (25/4): new week plan, accounting for VHDL, writeup, code, toolboxing, citations....
+
+new SS funcs to include stft from spectinfo. revisit nmf_init_func() and recons_func(). spect elision?? might be v easy to impl if we just say "set by hand FU
 
 
 === spectInfo ===
