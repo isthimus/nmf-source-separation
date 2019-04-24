@@ -9,36 +9,17 @@ writeup redtext struct (top of head, can be .txt. standardised. read steph)
 
 X figure out overlay display and/or click for comparison. 
 X plan out alignment bench
-foldering - source/align, bench, might as well placehold user and kill remote as well
+X foldering - source/align, bench, might as well placehold user and kill remote as well
 	X plan it out
-	once over of the codebase
-	just DDDOOOOOOOH ITTTTTT. YESTERDAY, YA SAID TUMARRROW. so just DHOOOOOOOOOO EIIIIIIIT
+	X once over of the codebase
+	X just DDDOOOOOOOH ITTTTTT. YESTERDAY, YA SAID TUMARRROW. so just DHOOOOOOOOOO EIIIIIIIT
 
-see how aligned the ground truth is for TRIOS/PHENICX. consider MiREX.
-skeletal alignment bench + tweakable "short feedback loop"
-data through if possible.
+X see how aligned the ground truth is for TRIOS/PHENICX. consider MiREX/RWC.
+alignment and onset benches, per Logbook 24-4-19 "onset and alignment benches roadmap"
 	
-empty bin start and end x 5 mins lol
-at least bosh together some onset functions to say you have (plspls and etc)
-
-writeup in redtext.
-	- citations from onset paper and pals - see scratch/onset/diary.txt
-
 === next: source/user ===
 if it's tomorrow morning now (25/4): new week plan, accounting for VHDL, writeup, code, toolboxing, citations....
 
 new SS funcs to include stft from spectinfo. revisit nmf_init_func() and recons_func(). spect elision?? might be v easy to impl if we just say "set by hand FU
-
-
-=== spectInfo ===
-spectinfo is actually 2 problems - gathering together the little bits of information, and making it so the functions intelligently 
-pass fs, num_time_bins, etc around
-	- the data gathering one is easy, high payoff and should be fixed at once. (ie just pass spectinfo into all thos partials rather than 999 individual args)
-	- the data *flow* problem is more complicated. its in two parts - 
-		A: propogating stuff that's known at the beginning of the sep_sources pipeline - fs/nfft/wlen etc
-		B: propogating stuff that's worked out on the fly - num_time_bins etc
-		neither of these are answered questions right now. 
-		A does suggest a user convenience function with nice defaults which builds its own partials...
-		B is thorny. could permissively allow functions to pass any info down the chain. or could go ad hoc with spect. or could have several pipelines.
-		requiring no B-type dataflow is too restrcitive - the speedup from trimming spect alone justifies num_freq_bins propogating to nmf_func. 
-
+AT THIS POINT IT IS A VERY GOOD IDEA TO MAKE RIGOROUSLY SURE YOUR NMF FUNCTIONS CONVERGE XOXO MKC
+as part of this - change "align_" prefix to "aln_" or similar? small thing which actually makes a big difference on first look
