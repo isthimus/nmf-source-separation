@@ -2,8 +2,9 @@
 x quick look at onset and decision time on that.
 x scope out empty bins also.
 
-hom for pen. 
-Copy up spectInfo insights + onset lookover. CYTE for onset paper (with good tag) writeup redtext struct (top of head, can be .txt. standardised. read steph)
+X hom for pen. 
+X Copy up spectInfo insights + onset lookover. CYTE for onset paper (with good tag) 
+writeup redtext struct (top of head, can be .txt. standardised. read steph)
 
 figure out overlay display and/or click for comparison. figure out midi distance func for bench.
 

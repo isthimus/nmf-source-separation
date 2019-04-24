@@ -248,6 +248,8 @@ if 0
     % get some audio
     [vln_short, fs] = audioread(fullfile(DEV_DATA_PATH, "TRIOS_vln_C5_Eb5_F5_Ab4.wav"));
     [vln_long, fs] = audioread(fullfile(TRIOS_DATA_PATH, "/brahms/violin.wav"));
+    disp(size(vln_long));
+    freakout
     audio = {vln_long};
 
     % get some midi
@@ -427,6 +429,47 @@ if 0
     close all;
 end
 
+% test audible alignment utility
+if 1
+    % clear spectInfo from last time
+    spectInfo = struct();
+
+    % getsome audio
+    [audio, fs] = audioread(fullfile(TRIOS_DATA_PATH, "/brahms/violin.wav"));
+    spectInfo.audio_len_samp = length(audio);
+
+    % get some midi
+    midi = readmidi(fullfile(TRIOS_DATA_PATH, "/brahms/violin.mid"));
+    notes = midiInfo(midi, 0);
+
+    % build a spectInfo
+    % using some params from eNorm_source_sep_POC
+    spectInfo.wlen = 1024;
+    spectInfo.nfft = spectInfo.wlen * 4;
+    spectInfo.hop = 1024/4;
+    spectInfo.fs = fs;
+
+    % analysis and synth windows
+    % !!! should be in spectInfo?
+    analwin = blackmanharris(spectInfo.wlen, 'periodic');
+    synthwin = hamming(spectInfo.wlen, 'periodic');
+
+    % build spectrogram function, take spect
+    p_spect = @(x) ...
+        stft(x, analwin, spectInfo.hop, spectInfo.nfft, spectInfo.fs);
+    spect = p_spect(audio);
+
+    % pick up num_time_bins/num_freq_bins
+    spectInfo.num_freq_bins = size(spect, 1);
+    spectInfo.num_time_bins = size(spect, 2);
+
+    % align using align_dtw
+    notes_aligned = align_dtw(notes, audio, spectInfo, 0);
+
+    % call midiAudioClick
+    sound(midiAudioClick(notes, audio, spectInfo), fs);
+end
+
 % check if calls to align_getChromaAudio with different scaling are more/less useful
 % answer - no
 if 0
@@ -518,7 +561,7 @@ if 0
 end
 
 % try smaller hop for align_getChroma_audio
-if 1
+if 0
     % clear spectInfo from last time
     spectInfo = struct();
 
