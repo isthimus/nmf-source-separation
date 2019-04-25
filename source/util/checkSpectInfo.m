@@ -5,11 +5,11 @@ function valid_flag = checkSpectInfo(spectInfo, prespect, print_ans)
     % both defaut to false
 
     % default args
-    if nargin <= 2
-        print_ans = false;
-    end
     if nargin <= 1
         prespect = false;
+    end
+    if nargin <= 2
+        print_ans = false;
     end
 
     % get required fields in a list

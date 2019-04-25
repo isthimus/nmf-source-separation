@@ -26,24 +26,48 @@ alignment and onset benches, per Logbook 24-4-19 "onset and alignment benches ro
 	x median peak pick codeup (from diary)
 	x energy first diff chroma
 	x onset folder in source/align/
-	shakedown spec diffs in order and assimilate with p-bench
-		make sure theyre flying now
-		make it write to wav for much better comparison in SV
-	test and tune the peak-picker in isolation, then assimilate with p-bench
-		include putting signals through separately and making sure they work in the matrix	
+	X shakedown spec diffs in order and assimilate with p-bench
+		X ooh fuck separate the plotters into spect and non spect
+		X make sure theyre flying now
+		X make it write to wav for much better comparison in SV
+	X block and row normalise
 
-	better bench with good plotting
-	tuning (all audio files)
-	some light writeup?
+	(test and tune the peak-picker in isolation, then assimilate with p-bench
+		include putting signals through separately and making sure they match in the matrix)
+		(no tho)
+	
+	X add zero thresh for normalisation
+	X chroma bins hahahahahah
+	
+	X better bench plan & tuning
+		X figure out how to visualise the 12D ones
+		X codeup 12D export (separate bench?)
+			X wow the splitter does fuck all who knew	
+		X conv
+		X all audio types
+		X see magpie benching list
+		X also just write out all the functions you're calling and what their args are.
+		X (good plotting) good charting
+	
+	X write bench plan into LB
+	X write (but dont test) benchmark_onset()
+	X write (but dont test) leading edge()
+
+	(maybe some lil testing on norm block len)
+	try moving that pesky 0	
+
+	scriptlike bench for chart. some choice figures saved in results. jobs a goodun. REMEMBER ALIGN_ONSET_SMOOTH 
+	
+	WRITEUP!! NO ALIGNMENT TONIGHT K	
 
 	--- alignment --- 
+	spect from spectInfo
 	midi prewarp
 	midi distance
 	dtw_multi
 	align_dtw_onset codeup
 		CHECK THAT CHROMA BIN 1 MATCHES BETWEEN FUNCTIONS
-		I THINK ITS cb = mod(nn + 3, 12) + 1
-		make the nn2Chroma function work and use it (rename to nn2ChromaBin)
+		X make the nn2Chroma function work and use it (rename to nn2ChromaBin)
 	align_dtw_onset shakedown
 	align_dtw_freeEnds
 	proper alignment bench	
@@ -59,11 +83,8 @@ if it's tomorrow morning now (25/4): new week plan, accounting for VHDL, writeup
 
 spect from spectInfo, and clean up everywhere else its called. maybe a few standard spectinfos? less ad hoc
 	onset_* in spectInfo even?
+	while you're here. align -> aln, nmf -> nss
 spect elision x 10 minutes
 revisit nmf_init_func() and recons_func()
 make new nmf functions + shakedown
 MAKE RIGOROUSLY SURE YOUR NMF FUNCTIONS ARE COOPERATING XOXO
-
-new SS funcs to include stft from spectinfo. revisit nmf_init_func() and recons_func(). spect elision?? might be v easy to impl if we just say "set by hand FU
-AT THIS POINT IT IS A VERY GOOD IDEA TO MAKE RIGOROUSLY SURE YOUR NMF FUNCTIONS CONVERGE XOXO MKC
-as part of this - change "align_" prefix to "aln_" or similar? small thing which actually makes a big difference on first look

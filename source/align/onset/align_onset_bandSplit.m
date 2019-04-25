@@ -1,13 +1,8 @@
-function out = align_onset_bandSplit(audio, spectInfo,  onset_func, lowest_nn, highest_nn)
+function out = align_onset_bandSplit(spect, spectInfo,  onset_func, lowest_nn, highest_nn)
 	% splits a signal into chroma, calls onset_func on each band, and recombines
 
     % unpack spectInfo
-    wlen = spectInfo.wlen;
-    nfft = spectInfo.nfft;
-    hop = spectInfo.hop;
     fs = spectInfo.fs;
-    analwin = spectInfo.analwin;
-    synthwin = spectInfo.synthwin;
 
     % default args
     if nargin <= 3
@@ -21,9 +16,6 @@ function out = align_onset_bandSplit(audio, spectInfo,  onset_func, lowest_nn, h
     assert(midi2freq(lowest_nn) < fs/2,  "lowest_nn has a frequency above the nyquist limit");
     assert(midi2freq(highest_nn) < fs/2, "highest_nn has a frequency above the nyquist limit");
 
-    % take spectrogram
-    spect = stft(audio, analwin, spectInfo.hop, spectInfo.nfft, spectInfo.fs);
-
     % preallocate return val
     out = zeros(12, size(spect, 2));
 
@@ -36,11 +28,9 @@ function out = align_onset_bandSplit(audio, spectInfo,  onset_func, lowest_nn, h
         freqBins = align_nn2FreqBin(nns, spectInfo);
 
         % find out what chroma index this is
-        thisChromaIndex = mod (nns(1) + 3, 12) + 1; 
+        thisChromaIndex = align_nn2ChromaBin(nns(1));
 
         % find the onset func for this band
-        % onset funcs work on column vectors, so transpose, calculate, transpose back.
-        disp(size(spect(freqBins, :)));
         out(thisChromaIndex,:) = onset_func(spect(freqBins, :), spectInfo);
     end    
 

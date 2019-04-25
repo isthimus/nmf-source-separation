@@ -29,7 +29,7 @@ function chroma = align_getChroma_midi(notes, spectInfo, use_vel)
         % indices_thisChroma is a vector of indices for 
         % all the rows in pianoRoll which map to row i in "chroma" 
         indices_thisChroma = ...
-            mod(pianoRoll_nn + 3, 12) + 1 == i;
+            align_nn2ChromaBin(pianoRoll_nn) == i;
         % sum up the values in the pianoRoll rows, put in chromagram 
         chroma(i, :) = sum(pianoRoll_tbAligned(indices_thisChroma,:));  
     end
