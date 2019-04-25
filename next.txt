@@ -23,14 +23,15 @@ alignment and onset benches, per Logbook 24-4-19 "onset and alignment benches ro
 	x spec diff codeup - taxi
 	x spec diff codeup - L2	
 	x spec diff chroma codeup
-	shakedown spec diffs in order and assimilate with p-bench	
-
-	energy first diff chroma
-	simple global HFC
-	median peak-pick from diary
-	
+	x median peak pick codeup (from diary)
+	X energy first diff chroma
+	shakedown spec diffs in order and assimilate with p-bench
+	test and tune the peak-picker in isolation, then assimilate with p-bench
+		include putting signals through separately and making sure they work in the matrix	
+	onset folder in source/align/
 	better bench with good plotting
 	tuning (all audio files)
+	some light writeup?
 
 	--- alignment --- 
 	midi prewarp
@@ -42,7 +43,7 @@ alignment and onset benches, per Logbook 24-4-19 "onset and alignment benches ro
 		could write a function even
 	align_dtw_onset shakedown
 	align_dtw_freeEnds
-	proper alignment bench
+	proper alignment bench	
 
 	--- writeup ---
 	proper figures for each
