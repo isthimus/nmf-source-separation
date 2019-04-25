@@ -1,6 +1,5 @@
 % script to take an onset function, apply it to a given piece of audio and plot it.
 % ONSET FUNCTION INTERFACE: onset_func(audio, spectInfo)
-
 clear
 
 PLOT = true; % plot results to screen
@@ -33,11 +32,22 @@ audio_paths = { ...
 
 % functions to plot
 test_funcs = { ...
-    @(a, si) align_onset_energyFirstDiff(a, si, 10) ...
-    @(a, si) align_onset_energyFirstDiff(a, si, 20) ...
-    @(a, si) align_onset_energyFirstDiff(a, si, 30) ...
-    @(a, si) align_onset_energyFirstDiff(a, si, 40) ...
+%    @align_onset_specDiff_taxi,   ...
+%    @align_onset_specDiff_rectL2, ...
+    @(a,si)align_onset_bandSplit(a,si,@align_onset_specDiff_taxi), ...
+    @(a,si)align_onset_bandSplit(a,si,@align_onset_specDiff_rectL2) ...
+    @align_onset_energyFirstDiff, ...
 };
+
+% create spectInfo
+spectInfo = struct ( ...
+    'wlen', 1024, ... 
+    'nfft', 4*1024, ... 
+    'hop', 1024/4 ... 
+);
+spectInfo.analwin = blackmanharris(spectInfo.wlen, 'periodic'); 
+spectInfo.synthwin = hamming(spectInfo.wlen, 'periodic');
+
 
 % for each test function...
 for i = 1:length(test_funcs)
@@ -49,25 +59,36 @@ for i = 1:length(test_funcs)
         [audio, fs] = audioread(audio_path);
         [~, audioName, ~] = fileparts(audio_path);
 
-        % clear and rebuild spectInfo
-        spectInfo = struct();
+        % update spectInfo
+        spectInfo.audio_len_samp = length(audio);
         spectInfo.fs = fs;
+        spect = stft(audio, spectInfo.analwin, spectInfo.hop, spectInfo.nfft, spectInfo.fs);
 
         % apply func
         test_func = test_funcs{i};
         onsets = test_func(audio, spectInfo);
 
-        % make sure test_func is giving the right kind of result
-        assert (all(size(onsets) == size(audio)), "audio size does not match onset vector size");
-        
+        % make sure test_func is giving the right kind of result.
+        if iscolumn(onsets)
+            % 1D measure
+            assert(size(onsets,1) == size(spect, 2), "bad length output from 1D onset measure");
+        else
+            % only other allowable measure is 12D chroma based
+            assert(isequal(size(onsets), [12,size(spect,2)]), "bad length output from 12D onset measure");
+        end
+       
         % plot, if told to do so
         if PLOT
             figure(1);
              subplot(2,1,1);
-             plot(audio);
+             imagesc(abs(spect(1:100, :)));
              title(strcat("audio - ", audioName))
              subplot(2,1,2);
-             plot(onsets);
+             if iscolumn(onsets); 
+                plot(onsets);
+             else;           
+                imagesc(onsets); 
+             end
              title(strcat("test function #", num2str(i)));
             
             % wait for return key 

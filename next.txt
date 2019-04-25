@@ -24,11 +24,14 @@ alignment and onset benches, per Logbook 24-4-19 "onset and alignment benches ro
 	x spec diff codeup - L2	
 	x spec diff chroma codeup
 	x median peak pick codeup (from diary)
-	X energy first diff chroma
+	x energy first diff chroma
+	x onset folder in source/align/
 	shakedown spec diffs in order and assimilate with p-bench
+		make sure theyre flying now
+		make it write to wav for much better comparison in SV
 	test and tune the peak-picker in isolation, then assimilate with p-bench
 		include putting signals through separately and making sure they work in the matrix	
-	onset folder in source/align/
+
 	better bench with good plotting
 	tuning (all audio files)
 	some light writeup?
@@ -40,7 +43,7 @@ alignment and onset benches, per Logbook 24-4-19 "onset and alignment benches ro
 	align_dtw_onset codeup
 		CHECK THAT CHROMA BIN 1 MATCHES BETWEEN FUNCTIONS
 		I THINK ITS cb = mod(nn + 3, 12) + 1
-		could write a function even
+		make the nn2Chroma function work and use it (rename to nn2ChromaBin)
 	align_dtw_onset shakedown
 	align_dtw_freeEnds
 	proper alignment bench	
@@ -55,6 +58,7 @@ alignment and onset benches, per Logbook 24-4-19 "onset and alignment benches ro
 if it's tomorrow morning now (25/4): new week plan, accounting for VHDL, writeup, code, toolboxing, citations....
 
 spect from spectInfo, and clean up everywhere else its called. maybe a few standard spectinfos? less ad hoc
+	onset_* in spectInfo even?
 spect elision x 10 minutes
 revisit nmf_init_func() and recons_func()
 make new nmf functions + shakedown

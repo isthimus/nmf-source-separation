@@ -1,13 +1,5 @@
-function out = align_onset_bandSplit(audio, spectInfo, lowest_nn, highest_nn, onset_func)
+function out = align_onset_bandSplit(audio, spectInfo,  onset_func, lowest_nn, highest_nn)
 	% splits a signal into chroma, calls onset_func on each band, and recombines
-
-    % default args
-    if nargin <= 2
-        lowest_nn = 48; % C3
-    end
-    if nargin <= 3
-        highest_nn = floor(align_freq2nn_fractional(fs/2)); % nearest nn below nyquist
-    end
 
     % unpack spectInfo
     wlen = spectInfo.wlen;
@@ -16,6 +8,14 @@ function out = align_onset_bandSplit(audio, spectInfo, lowest_nn, highest_nn, on
     fs = spectInfo.fs;
     analwin = spectInfo.analwin;
     synthwin = spectInfo.synthwin;
+
+    % default args
+    if nargin <= 3
+        lowest_nn = 48; % C3
+    end
+    if nargin <= 4
+        highest_nn = floor(align_freq2nn_fractional(fs/2)); % nearest nn below nyquist
+    end
 
     % preconditions
     assert(midi2freq(lowest_nn) < fs/2,  "lowest_nn has a frequency above the nyquist limit");
@@ -38,7 +38,9 @@ function out = align_onset_bandSplit(audio, spectInfo, lowest_nn, highest_nn, on
         % find out what chroma index this is
         thisChromaIndex = mod (nns(1) + 3, 12) + 1; 
 
-        % take the spectral difference 
+        % find the onset func for this band
+        % onset funcs work on column vectors, so transpose, calculate, transpose back.
+        disp(size(spect(freqBins, :)));
         out(thisChromaIndex,:) = onset_func(spect(freqBins, :), spectInfo);
     end    
 

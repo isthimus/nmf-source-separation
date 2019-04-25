@@ -21,6 +21,7 @@ function out = align_onset_energyFirstDiff(audio, spectInfo, f_3db, N)
 
     % unpack spectInfo
     fs = spectInfo.fs;
+    num_time_bins = spectInfo.num_time_bins;
 
     % build lowpass filter
     d = fdesign.lowpass('N,F3db' , N, f_3db, fs);
@@ -36,8 +37,28 @@ function out = align_onset_energyFirstDiff(audio, spectInfo, f_3db, N)
     % find running difference and half wave rectify
     diffs = diff(localEnergy);
     diffs(diffs < 0) = 0;
-
-    % find the first difference and return()
     % need to cat a 0 on the start since diff() gives a vector one shorter than original
-    out = [0; diffs]; 
+    diffs = [0; diffs]; 
+
+    % need the output to be one value per timeBin rather than one value per audio sample
+    % no need to conserve any freq-domain properties - just take the max of each bin.
+
+    % preallocate return val
+    out = zeros(num_time_bins, 1);
+
+    % get center times of all timebins
+    center_samps = align_timeBin2Samps(1:num_time_bins);
+
+    %iterate over timeBins
+    for i = 1:num_time_bins 
+        % take max of [center +- hop/2], put in out(i)
+        % account for asymmetrical endpoints
+        % NB this actually ignores some samples at the start and end 
+        %    because the bins are unevenly spaced. but the total time
+        %    ignored is ~1/88th of a sec, and independent of audio_len_samp.
+        %    so no worries.
+        out (i) = max(audio(center_samps(i)+hop/2:center_times(i)+1-hop/2));
+    end
+
+    % implicitly return out
 end

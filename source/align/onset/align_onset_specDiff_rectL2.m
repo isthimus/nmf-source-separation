@@ -7,15 +7,18 @@ function out = align_onset_spectDiff_rectL2 (audio, spectInfo)
     nfft = spectInfo.nfft;
     hop = spectInfo.hop;
     fs = spectInfo.fs;
-    analwin = spectinfo.analwin;
-    synthwin = spectinfo.synthwin;
+    analwin = spectInfo.analwin;
+    synthwin = spectInfo.synthwin;
 
     % take audio spectrogram
     spect = stft(audio, analwin, spectInfo.hop, spectInfo.nfft, spectInfo.fs);
+    spectInfo.num_freq_bins = size(spect, 1);
+    spectInfo.num_time_bins = size(spect, 2);
+
 
     % compute rolling distance using rectified L2 norm
     % see helper function below
-    distances = rectL2_distance (spect(:, 1:end-1), spect(:, 2:end));
+    distances = rectL2_distance (abs(spect(:, 1:end-1)), abs(spect(:, 2:end)));
     out = [0; distances.'];
 
 end
