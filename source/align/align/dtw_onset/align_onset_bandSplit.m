@@ -6,7 +6,7 @@ function out = align_onset_bandSplit(audio, spectInfo, lowest_nn, highest_nn, on
         lowest_nn = 48; % C3
     end
     if nargin <= 3
-        highest_nn = floor(align_freq2nn_fractional(fs/2)) % nearest nn below nyquist
+        highest_nn = floor(align_freq2nn_fractional(fs/2)); % nearest nn below nyquist
     end
 
     % unpack spectInfo
@@ -39,7 +39,7 @@ function out = align_onset_bandSplit(audio, spectInfo, lowest_nn, highest_nn, on
         thisChromaIndex = mod (nns(1) + 3, 12) + 1; 
 
         % take the spectral difference 
-        out(thisChromaIndex,:) = onset_func(spect(freqBins, :), spectInfo)
+        out(thisChromaIndex,:) = onset_func(spect(freqBins, :), spectInfo);
     end    
 
     % implicitly return out

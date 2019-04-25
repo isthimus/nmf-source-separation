@@ -2,7 +2,6 @@ function out = align_onset_spectDiff_rectL2 (audio, spectInfo)
 	% onset detecting function based on the rectified euclidian distance between sucessive stft frames
 	% no chroma separation
 
-
 	% unpack spectInfo
 	wlen = spectInfo.wlen;
     nfft = spectInfo.nfft;
@@ -14,11 +13,10 @@ function out = align_onset_spectDiff_rectL2 (audio, spectInfo)
     % take audio spectrogram
     spect = stft(audio, analwin, spectInfo.hop, spectInfo.nfft, spectInfo.fs);
 
-
     % compute rolling distance using rectified L2 norm
     % see helper function below
     distances = rectL2_distance (spect(:, 1:end-1), spect(:, 2:end));
-    out = [0; distances.']
+    out = [0; distances.'];
 
 end
 

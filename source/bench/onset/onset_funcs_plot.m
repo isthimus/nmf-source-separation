@@ -28,6 +28,7 @@ audio_paths = { ...
     % fullfile(TRIOS_DATA_PATH, "mozart/clarinet.wav"), ... % clarinet - harder
     % fullfile(TRIOS_DATA_PATH, "schubert/violin.wav"), ... % violin - much harder i suspect
     % fullfile(TRIOS_DATA_PATH, "schubert/mix.wav"), ... % simplest mix i could find - hard but no need for perfection. 
+    % fullfile(TRIOS_DATA_PATH, "schubert/cello.wav"), ... % "hey look, low pitched instruments are difficult without multires"
 };
 
 % functions to plot
