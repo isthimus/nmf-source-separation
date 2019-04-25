@@ -15,10 +15,49 @@ X foldering - source/align, bench, might as well placehold user and kill remote 
 	X just DDDOOOOOOOH ITTTTTT. YESTERDAY, YA SAID TUMARRROW. so just DHOOOOOOOOOO EIIIIIIIT
 
 X see how aligned the ground truth is for TRIOS/PHENICX. consider MiREX/RWC.
+
 alignment and onset benches, per Logbook 24-4-19 "onset and alignment benches roadmap"
+	--- onset ---
+	x energy first diff codeup
+	x proto-bench
+	x spec diff codeup - taxi
+	x spec diff codeup - L2	
+	x spec diff chroma codeup
+	shakedown spec diffs in order and assimilate with p-bench	
+
+	energy first diff chroma
+	simple global HFC
+	median peak-pick from diary
 	
+	better bench with good plotting
+	tuning (all audio files)
+
+	--- alignment --- 
+	midi prewarp
+	midi distance
+	dtw_multi
+	align_dtw_onset codeup
+		CHECK THAT CHROMA BIN 1 MATCHES BETWEEN FUNCTIONS
+		I THINK ITS cb = mod(nn + 3, 12) + 1
+		could write a function even
+	align_dtw_onset shakedown
+	align_dtw_freeEnds
+	proper alignment bench
+
+	--- writeup ---
+	proper figures for each
+	"method" written up in detail
+	redtext + cyte
+		
+
 === next: source/user ===
 if it's tomorrow morning now (25/4): new week plan, accounting for VHDL, writeup, code, toolboxing, citations....
+
+spect from spectInfo, and clean up everywhere else its called. maybe a few standard spectinfos? less ad hoc
+spect elision x 10 minutes
+revisit nmf_init_func() and recons_func()
+make new nmf functions + shakedown
+MAKE RIGOROUSLY SURE YOUR NMF FUNCTIONS ARE COOPERATING XOXO
 
 new SS funcs to include stft from spectinfo. revisit nmf_init_func() and recons_func(). spect elision?? might be v easy to impl if we just say "set by hand FU
 AT THIS POINT IT IS A VERY GOOD IDEA TO MAKE RIGOROUSLY SURE YOUR NMF FUNCTIONS CONVERGE XOXO MKC

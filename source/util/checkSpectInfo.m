@@ -4,19 +4,6 @@ function valid_flag = checkSpectInfo(spectInfo, prespect, print_ans)
     % print_ans is a flag saying whether to print the results
     % both defaut to false
 
-    % current spec for a valid spectInfo
-    % this is in a comment because its likely to change as everything gets smoothed out
-    % pre spect call:
-    %   audio_len_samp
-    %   wlen
-    %   nfft
-    %   hop
-    %   fs
-    %
-    % post spect call:
-    %   num_freq_bins
-    %   num_time_bins
-
     % default args
     if nargin <= 2
         print_ans = false;
@@ -26,7 +13,7 @@ function valid_flag = checkSpectInfo(spectInfo, prespect, print_ans)
     end
 
     % get required fields in a list
-    prespect_fields = ["audio_len_samp", "wlen", "nfft", "hop", "fs"];
+    prespect_fields = ["audio_len_samp", "wlen", "nfft", "hop", "fs", "analwin", "synthwin"];
     postspect_fields = ["num_time_bins", "num_freq_bins"];
 
     % check prespect fields
