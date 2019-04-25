@@ -1,6 +1,5 @@
-function out = align_onset_specDiffChroma_taxi (audio, spectInfo, lowest_nn, highest_nn)
-    % spectral difference measurement based on taxicab distance
-    % splits the signal up into chroma bands first
+function out = align_onset_bandSplit(audio, spectInfo, lowest_nn, highest_nn, onset_func)
+	% splits a signal into chroma, calls onset_func on each band, and recombines
 
     % default args
     if nargin <= 2
@@ -40,7 +39,7 @@ function out = align_onset_specDiffChroma_taxi (audio, spectInfo, lowest_nn, hig
         thisChromaIndex = mod (nns(1) + 3, 12) + 1; 
 
         % take the spectral difference 
-        out(thisChromaIndex,:) = align_onset_specDiff_taxi(spect(freqBins, :), spectInfo)
+        out(thisChromaIndex,:) = onset_func(spect(freqBins, :), spectInfo)
     end    
 
     % implicitly return out
