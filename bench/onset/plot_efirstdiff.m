@@ -19,7 +19,7 @@ end
 cd(script_path)
 
 % setup matlab path and pick up some useful path strings
-PROJECT_PATH = fullfile('../../../');
+PROJECT_PATH = fullfile('../../');
 TRIOS_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/TRIOS');
 PHENICX_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/PHENICX');
 DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');

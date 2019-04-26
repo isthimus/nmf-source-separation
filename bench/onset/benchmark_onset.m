@@ -92,6 +92,5 @@ function [false_pos_percent, num_false_neg, num_total_onsets, mean_response_time
     wait_returnKey();
     close all;
 
-
     % implicit return of num_false_neg, false_pos_percent, num_total_onsets
 end

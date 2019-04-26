@@ -5,4 +5,4 @@ cloc-1.80.exe
 **/tst.m
 regexes.txt
 
-source/bench/onset/tmp/
+bench/*/tmp/
