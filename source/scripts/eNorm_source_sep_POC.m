@@ -1,5 +1,6 @@
 % proof of concept to source separate and play audio
 % when i have all the bits working i'll generic-ify
+clear
 
 % cd to the folder this script is in
 script_path = mfilename('fullpath');

@@ -1,6 +1,10 @@
 function out = block_normalise (in, blockSize, dropout_dB, removeMean, rectify)
     % applies block_normalise to the rows of a matrix
 
+    % !!! theres still some differences between block and row normalise 
+    % that never got bottomed out. test like billy-o before removing this
+    freakout
+
     % default args
     if nargin <= 2
         dropout_dB = -3;

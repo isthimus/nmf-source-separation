@@ -1,3 +1,5 @@
+clear
+
 % cd to the folder this script is in
 script_path = mfilename('fullpath');
 if ispc
