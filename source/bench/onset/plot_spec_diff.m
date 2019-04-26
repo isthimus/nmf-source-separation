@@ -38,6 +38,7 @@ test_funcs = { ...
 %    @align_onset_specDiff_rectL2, ...
 %    @(s,si)block_normalise(align_onset_specDiff_taxi(s,si),100,-99)
     @(s,si)block_normalise(align_onset_specDiff_taxi(s,si),100,0) % best 1D atm
+    @(s,si)align_onset_leadingEdge(block_normalise(align_onset_specDiff_taxi(s,si),100,0))
 %    @(s,si)block_normalise(align_onset_specDiff_taxi(s,si),100,10) 
 %   @(s,si)block_normalise(align_onset_specDiff_rectL2(s,si),100,0)
 %    @(s,si)block_normalise(align_onset_specDiff_rectL2(s,si),100,-3)
@@ -137,7 +138,7 @@ function write_to_file (onsets, audio, spectInfo, filename)
         onsets_norm = onsets / max(onsets);
     else
         % if its multidimensional just show the magnitudes in the file 
-max        onsets_norm = zeros(size(onsets,2), 1);
+        onsets_norm = zeros(size(onsets,2), 1);
         for k = 1:size(onsets, 2)
             onsets_norm(k) = norm(onsets(:, k));
         end

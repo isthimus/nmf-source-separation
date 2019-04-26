@@ -1,4 +1,4 @@
-function [Notes,endtime] = midiInfo(midi,outputFormat,tracklist,verbose)
+function [Notes,endtime] = midiInfo(midi,outputFormat,tracklist,verbose, trim_starting_silence)
 % [Notes,endtime] = midiInfo(midi,outputFormat,tracklist)
 %
 % Takes a midi structre and generates info on notes and messages
@@ -23,6 +23,9 @@ function [Notes,endtime] = midiInfo(midi,outputFormat,tracklist,verbose)
 
 % Copyright (c) 2009 Ken Schutte
 % more info at: http://www.kenschutte.com/midi
+if nargin < 5
+  trim_starting_silence = false;
+end
 if nargin<4
   verbose = 0;
 end
@@ -195,12 +198,16 @@ for i=1:length(tracklist)
   
 end
 
-% make this an option!!!
-% - I'm not sure why it's needed...
-% remove start silence:
-first_t = min(Notes(:,5));
-Notes(:,5) = Notes(:,5) - first_t;
-Notes(:,6) = Notes(:,6) - first_t;
+%%%%%%%% !!! MKC Apr '19 %%%%%%%%%%%%%
+% made this an option per earlier comment (previously these three lines ran unconditionally)
+% important - this means this file no longer matches the vanilla Ken Schutte library!
+% bug report pending
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if trim_starting_silence
+  first_t = min(Notes(:,5));
+  Notes(:,5) = Notes(:,5) - first_t;
+  Notes(:,6) = Notes(:,6) - first_t;
+end
 
 % sort Notes by start time:
 [junk,ord] = sort(Notes(:,5));

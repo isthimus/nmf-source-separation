@@ -1,3 +1,7 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ON HOLD UNTIL IVE SPOKEN TO MARK ABOUT FILTER BANKS, PROPER PEAKPICK, ETC         %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % script to take an onset function, apply it to a given piece of audio and plot it.
 % ONSET FUNCTION INTERFACE: onset_func(audio, spectInfo)
 clear

@@ -1,4 +1,4 @@
-=== next ===
+=== getting bck in the swing ===
 x quick look at onset and decision time on that.
 x scope out empty bins also.
 
@@ -16,67 +16,90 @@ X foldering - source/align, bench, might as well placehold user and kill remote 
 
 X see how aligned the ground truth is for TRIOS/PHENICX. consider MiREX/RWC.
 
-alignment and onset benches, per Logbook 24-4-19 "onset and alignment benches roadmap"
-	--- onset ---
-	x energy first diff codeup
-	x proto-bench
-	x spec diff codeup - taxi
-	x spec diff codeup - L2	
-	x spec diff chroma codeup
-	x median peak pick codeup (from diary)
-	x energy first diff chroma
-	x onset folder in source/align/
-	X shakedown spec diffs in order and assimilate with p-bench
-		X ooh fuck separate the plotters into spect and non spect
-		X make sure theyre flying now
-		X make it write to wav for much better comparison in SV
-	X block and row normalise
+=== onset ===
+x energy first diff codeup
+x proto-bench
+x spec diff codeup - taxi
+x spec diff codeup - L2	
+x spec diff chroma codeup
+x median peak pick codeup (from diary)
+x energy first diff chroma
+x onset folder in source/align/
+X shakedown spec diffs in order and assimilate with p-bench
+	X ooh fuck separate the plotters into spect and non spect
+	X make sure theyre flying now
+	X make it write to wav for much better comparison in SV
+X block and row normalise
 
-	(test and tune the peak-picker in isolation, then assimilate with p-bench
-		include putting signals through separately and making sure they match in the matrix)
-		(no tho)
+(test and tune the peak-picker in isolation, then assimilate with p-bench
+	include putting signals through separately and making sure they match in the matrix)
+	(no tho)
+
+X add zero thresh for normalisation
+X chroma bins hahahahahah
+
+X better bench plan & tuning
+	X figure out how to visualise the 12D ones
+	X codeup 12D export (separate bench?)
+		X wow the splitter does fuck all who knew	
+	X conv
+	X all audio types
+	X see magpie benching list
+	X also just write out all the functions you're calling and what their args are.
+	X (good plotting) good charting
+
+X write bench plan into LB
+X write (but dont test) benchmark_onset()
+X write (but dont test) leading edge()
+
+=== onset tidying up and bench script === 
+
+test:
+	X benchmark_onset() 
+	X leading_edge()
+	X smoothing func 
+
+X file-level bench design
+X general bench structure going forward
+X copy up to LB 
+
+move bench folder and realign paths (again lel). make sure things still work with bench not on path.
+	while youre there, add "clear" to the start of every script that needs it
+codeup bench_onset, per LB 26-4-19 "scriptlike bench codeup"
+
+(am i gonna do these 3? prollly no)
+some lil shakedown testing on norm block len
+ughhhhh block vs row normalise... 
+try moving that pesky 0	in specdiff (can save it for when the benchmark is working tho)
+
+scriptlike bench for chart. some choice figures saved in results. also skim sime random 12D figures. a quick struct for the writeup. jobs a goodun.
+
+--- writeup magpie ---
+start a lil list of things to remeber for report somewhere
+talk over general testbench arch	
+
+=== alignment ===
+spect from spectInfo
+midi prewarp
+midi distance
+dtw_multi + figure out how to visualise
+align_dtw_onset codeup
+	CHECK THAT CHROMA BIN 1 MATCHES BETWEEN FUNCTIONS
+	X make the nn2Chroma function work and use it (rename to nn2ChromaBin)
+align_dtw_onset shakedown
+align_dtw_freeEnds
+proper alignment bench	
+
+--- alignment bench magpie ---
+different types of chromagram
+weighting of onset vs chroma, "cautious" vs "agressive" onset detection
+super pretty plots from benchmark_onset (currently sat in comments at the bottom)
+
+=== alignment and onset writeup === 
+proper figures for each
+"method" written up in detail
+redtext + cyte
 	
-	X add zero thresh for normalisation
-	X chroma bins hahahahahah
-	
-	X better bench plan & tuning
-		X figure out how to visualise the 12D ones
-		X codeup 12D export (separate bench?)
-			X wow the splitter does fuck all who knew	
-		X conv
-		X all audio types
-		X see magpie benching list
-		X also just write out all the functions you're calling and what their args are.
-		X (good plotting) good charting
-	
-	X write bench plan into LB
-	X write (but dont test) benchmark_onset()
-	X write (but dont test) leading edge()
-
-	(maybe some lil testing on norm block len)
-	try moving that pesky 0	
-
-	scriptlike bench for chart. some choice figures saved in results. jobs a goodun. REMEMBER ALIGN_ONSET_SMOOTH 
-	
-	WRITEUP!! NO ALIGNMENT TONIGHT K	
-
-	--- alignment --- 
-	spect from spectInfo
-	midi prewarp
-	midi distance
-	dtw_multi
-	align_dtw_onset codeup
-		CHECK THAT CHROMA BIN 1 MATCHES BETWEEN FUNCTIONS
-		X make the nn2Chroma function work and use it (rename to nn2ChromaBin)
-	align_dtw_onset shakedown
-	align_dtw_freeEnds
-	proper alignment bench	
-
-	--- writeup ---
-	proper figures for each
-	"method" written up in detail
-	redtext + cyte
-		
 
 === next: source/user ===
 if it's tomorrow morning now (25/4): new week plan, accounting for VHDL, writeup, code, toolboxing, citations....
