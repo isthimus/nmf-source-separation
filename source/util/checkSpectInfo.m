@@ -13,6 +13,7 @@ function valid_flag = checkSpectInfo(spectInfo, prespect, print_ans)
     end
 
     % get required fields in a list
+    % other allowable prespect_fields: max_freq_bins
     prespect_fields = ["audio_len_samp", "wlen", "nfft", "hop", "fs", "analwin", "synthwin"];
     postspect_fields = ["num_time_bins", "num_freq_bins"];
 

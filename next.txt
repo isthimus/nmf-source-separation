@@ -72,19 +72,29 @@ X scriptlike bench for chart
 === GUD MRONING CEVILLIANS X 1 hr ===
 X fix up bench
 
-assimilate results from onset bench
-pick up some illustrative figs (inc some rando 12D ones)
-copy up results struct from "a tutorial..."
-quick lil struct for the writeup, no bigs
+
+X assimilate results from onset bench
+x plotting codeup
+x debugging
 
 === alignment ===
-spect from spectInfo
-midi prewarp
-midi distance
-dtw_multi + figure out how to visualise
-align_dtw_onset codeup
-	CHECK THAT CHROMA BIN 1 MATCHES BETWEEN FUNCTIONS
-	X make the nn2Chroma function work and use it (rename to nn2ChromaBin)
+X spect from spectInfo
+X midi prewarp
+X midi distance
+X scope out dtw_multi
+
+dtw stuff:
+	X dtw_buildCostMatrix_euclid
+		X (ie build C then D)
+	align_dtw_onset codeup
+	align_getOnset_midi codeup
+	move files to where they should be
+
+BEER?
+
+MAYBE TEST SOME SHIT IDFK
+CHECK THAT CHROMA BIN 1 MATCHES BETWEEN FUNCTIONS
+
 align_dtw_onset shakedown
 align_dtw_freeEnds
 proper alignment bench	
@@ -100,13 +110,9 @@ proper figures for each
 redtext + cyte
 	
 
-=== next: source/user ===
+=== next: source/user (this is basically bss or sass benching) ===
 if it's tomorrow morning now (25/4): new week plan, accounting for VHDL, writeup, code, toolboxing, citations....
-
-spect from spectInfo, and clean up everywhere else its called. maybe a few standard spectinfos? less ad hoc
-	onset_* in spectInfo even?
-	while you're here. align -> aln, nmf -> nss
-spect elision x 10 minutes
+while you're here. align -> aln, nmf -> nss
 revisit nmf_init_func() and recons_func()
 make new nmf functions + shakedown
 MAKE RIGOROUSLY SURE YOUR NMF FUNCTIONS ARE COOPERATING XOXO
