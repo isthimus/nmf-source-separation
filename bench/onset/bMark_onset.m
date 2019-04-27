@@ -1,12 +1,10 @@
-function [false_pos_percent, num_false_neg, num_total_onsets, mean_response_time] = benchmark_onset(notes, onset, fs, tol_sec, print_ans)
+function [false_pos_percent, num_false_neg, num_total_onsets, mean_response_time] = bMark_onset(notes, onset, fs, tol_sec, print_ans)
     % measures false positive percentage and number of missed onsets for a given onset measure and midi file
     % bit primitive but itll do the job
     % might need a slightly different approach for leading-edge shenanigans
     % onset MUST be at sample rate not timebin rate! read from a wav file and make your life easy :)
 
-    % !!! MORNING MATT. a good way to test this is to visualise groundTruth and
-    %     make sure the onset times arent running into each other
-    %     also think about whether tol_sec should be either side, or asymmetric
+    PLOT = false;
 
     if nargin < 4
         tol_sec = 0.05; % single sided!
@@ -76,21 +74,23 @@ function [false_pos_percent, num_false_neg, num_total_onsets, mean_response_time
         fprintf("avg. response time (s): %.4f\n---\n", mean_response_time)
     end
 
-    figure (1)
-    subplot(2,1,1)
-    stem(1 * groundTruth);
-    subplot(2,1,2)
-    plot(onset);
-    wait_returnKey()
-    close all;
+    if PLOT
+        figure (1)
+        subplot(2,1,1)
+        stem(1 * groundTruth);
+        subplot(2,1,2)
+        plot(onset);
+        wait_returnKey()
+        close all;
+        
+        plot((2*groundTruth - 1).*(onset))
+        wait_returnKey()
+        close all;
+
+        plot(10*groundTruth - onset);
+        wait_returnKey();
+        close all;
+    end
     
-    plot((2*groundTruth - 1).*(onset))
-    wait_returnKey()
-    close all;
-
-    plot(10*groundTruth - onset);
-    wait_returnKey();
-    close all;
-
     % implicit return of num_false_neg, false_pos_percent, num_total_onsets
 end
