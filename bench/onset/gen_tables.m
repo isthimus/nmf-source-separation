@@ -1,12 +1,29 @@
-function [testvectors, testdefs] = gen_tables();
+function [testvectors, testdefs] = gen_tables(switches);
     % generates input tables for testbench.m
-    TESTVECS_SOLO = true;
-    TESTVECS_MIX = false;
-    TESTDEFS_MAIN = true;
-    TESTDEFS_NORMLEN = false;
-    TESTDEFS_SPECTINFO = false;
+    
+    % pull out switches
+    if nargin == 1
+        TESTVECS_SOLO      = switches.TESTVECS_SOLO;
+        TESTVECS_MIX       = switches.TESTVECS_MIX;
+        TESTDEFS_MAIN      = switches.TESTDEFS_MAIN;
+        TESTDEFS_NORMLEN   = switches.TESTDEFS_NORMLEN;
+        TESTDEFS_SPECTINFO = switches.TESTDEFS_SPECTINFO;
+        TESTDEFS_AGRESSION = switches.TESTDEFS_AGRESSION;
+    else 
+        % when in doubt do everything
+        TESTVECS_SOLO = true;
+        TESTVECS_MIX = true;
+        TESTDEFS_MAIN = true;
+        TESTDEFS_NORMLEN = true;
+        TESTDEFS_SPECTINFO = true;
+        TESTDEFS_AGRESSION = true;
+    end
 
     % make empty testvectors/testdefs
+    % a testdef is the algorithm/parameters used to solve the problem in a particular way
+        % eg taxicab spectral difference with block normalisation, width 100
+    % a testvec is a particular case of the problem
+        % in this case that's an audio file, plus a ground-truth midi file
     testvectors = cell(0);
     testdefs = cell(0);
 
@@ -185,14 +202,6 @@ function [testvectors, testdefs] = gen_tables();
             "spectInfo", si_std ...
         );
 
-        % agressive taxi (see above) with leading-edge detection, tol 10
-        f = @(s,si)align_onset_leadingEdge(block_normalise(align_onset_specDiff_taxi(s,si),100,0),10);
-        testdefs{end+1} = struct (...
-            "name"     , "MTaxiAgressLeadingEdge10", ...
-            "testFunc" , f, ...
-            "spectInfo", si_std ...
-        );
-
         % conservative taxi (see above) with leading-edge detection, tol 1
         f = @(s,si)align_onset_leadingEdge(block_normalise(align_onset_specDiff_taxi(s,si),100,7),1);
         testdefs{end+1} = struct (...
@@ -201,13 +210,65 @@ function [testvectors, testdefs] = gen_tables();
             "spectInfo", si_std ...
         );
 
-        % conservative taxi (see above) with leading-edge detection, tol 10
-        f = @(s,si)align_onset_leadingEdge(block_normalise(align_onset_specDiff_taxi(s,si),100,7),10);
+        % MTaxiAgressLeadingEdge1 but with a smoothing kernel applied. mostly for plotting :)
+        f = @(s,si)align_onsetSmooth(align_onset_leadingEdge(block_normalise(align_onset_specDiff_taxi(s,si),100,0),1));
         testdefs{end+1} = struct (...
-            "name"     , "MTaxiConservLeadingEdge10", ...
+            "name"     , "MTaxiAgressLeadingEdge1Smooth", ...
             "testFunc" , f, ...
             "spectInfo", si_std ...
         );
+    end
+
+    if TESTDEFS_AGRESSION
+        % generator for taxiTol1
+        f_taxiTol1 = @(s,si,drop)align_onset_leadingEdge(block_normalise(align_onset_specDiff_taxi(s,si),100,drop),1);
+        mktd_taxiTol1 = @(drop) deal( struct ( ...
+            "name"     , strcat("ATaxiTol1Drop", num2str(drop)), ...
+            "testFunc" , @(s,si) f_taxiTol1(s,si,drop), ...
+            "spectInfo", si_std ...
+        ));
+
+        % generator for taxiTol10
+        f_taxiTol10 = @(s,si,drop)align_onset_leadingEdge(block_normalise(align_onset_specDiff_taxi(s,si),100,drop),10);
+        mktd_taxiTol10 = @(drop) deal( struct ( ...
+            "name"     , strcat("ATaxiTol10Drop", num2str(drop)), ...
+            "testFunc" , @(s,si) f_taxiTol10(s,si,drop), ...
+            "spectInfo", si_std ...
+        ));
+
+        % generator for rectTol1
+        f_rectTol1 = @(s,si,drop)align_onset_leadingEdge(block_normalise(align_onset_specDiff_rectL2(s,si),100,drop),1);
+        mktd_rectTol1 = @(drop) deal( struct ( ...
+            "name"     , strcat("ARectTol1Drop", num2str(drop)), ...
+            "testFunc" , @(s,si) f_rectTol1(s,si,drop), ...
+            "spectInfo", si_std ...
+        ));
+
+        % generator for rectTol10
+        f_rectTol10 = @(s,si,drop)align_onset_leadingEdge(block_normalise(align_onset_specDiff_rectL2(s,si),100,drop),10);
+        mktd_rectTol10 = @(drop) deal( struct ( ...
+            "name"     , strcat("ARectTol10Drop", num2str(drop)), ...
+            "testFunc" , @(s,si) f_rectTol10(s,si,drop), ...
+            "spectInfo", si_std ...
+        ));
+
+        % decide on db vals
+        db_vals = [0, 3, 6, 9, 12, 15, 18];
+
+        % generate testdefs
+        % this is V MANY! dont use with everything else unless you have a lot of time
+        for i  = 1:length(db_vals)
+            testdefs{end+1} = mktd_taxiTol1(db_vals(i));
+        end
+        for i  = 1:length(db_vals)
+            testdefs{end+1} = mktd_taxiTol10(db_vals(i));
+        end
+        for i  = 1:length(db_vals)
+            testdefs{end+1} = mktd_rectTol1(db_vals(i));
+        end
+        for i  = 1:length(db_vals)
+            testdefs{end+1} = mktd_rectTol10(db_vals(i));
+        end
     end
 
     if TESTDEFS_NORMLEN
@@ -260,10 +321,10 @@ function [testvectors, testdefs] = gen_tables();
         );
         si_long_wlen.analwin = blackmanharris(si_long_wlen.wlen, 'periodic'); 
         si_long_wlen.synthwin = hamming(si_long_wlen.wlen, 'periodic');
+        f = @(s,si)block_normalise(align_onset_specDiff_taxi(s,si),100,0);
 
         % standard spectInfo
         si = si_std;
-        f = @(s,si)block_normalise(align_onset_specDiff_taxi(s,si),100,0);
         testdefs{end+1} = struct (...
             "name"     , "SStandard", ...
             "testFunc" , f, ...
@@ -272,7 +333,6 @@ function [testvectors, testdefs] = gen_tables();
 
         % long Wlen long hop
         si = si_long_wlen;
-        f = @(s,si)block_normalise(align_onset_specDiff_taxi(s,si),100,0);
         testdefs{end+1} = struct (...
             "name"     , "SLongWlenLongHop", ...
             "testFunc" , f, ...
@@ -282,7 +342,6 @@ function [testvectors, testdefs] = gen_tables();
         % long Wlen, med hop
         si = si_long_wlen;
         si.hop = si.hop/2;
-        f = @(s,si)block_normalise(align_onset_specDiff_taxi(s,si),100,0);
         testdefs{end+1} = struct (...
             "name"     , "SLongWlenMedHop", ...
             "testFunc" , f, ...
@@ -292,7 +351,6 @@ function [testvectors, testdefs] = gen_tables();
         % long Wlen, short hop
         si = si_long_wlen;
         si.hop = si.hop/4;
-        f = @(s,si)block_normalise(align_onset_specDiff_taxi(s,si),100,0);
         testdefs{end+1} = struct (...
             "name"     , "SLongWlenShortHop", ...
             "testFunc" , f, ...

@@ -5,7 +5,7 @@ function out = align_onset_spectDiff_rectL2 (spect, spectInfo)
     % compute rolling distance using rectified L2 norm
     % see helper function below
     distances = rectL2_distance (abs(spect(:, 1:end-1)), abs(spect(:, 2:end)));
-    out = [0; distances.'];
+    out = [distances.'; 0];
 
 end
 

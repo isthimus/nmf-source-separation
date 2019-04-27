@@ -70,8 +70,10 @@ X codeup bench_onset, per LB 26-4-19 "bench_onset codeup"
 X scriptlike bench for chart
 
 === GUD MRONING CEVILLIANS X 1 hr ===
-assimilate results from onset bench (poss slip a few prints into main loop, le sigh)
-pick up some illustrative figs(inc some rando 12D ones)
+X fix up bench
+
+assimilate results from onset bench
+pick up some illustrative figs (inc some rando 12D ones)
 copy up results struct from "a tutorial..."
 quick lil struct for the writeup, no bigs
 

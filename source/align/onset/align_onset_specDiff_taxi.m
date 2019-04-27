@@ -4,7 +4,7 @@ function out = align_onset_specDiff_taxi (spect, spectInfo)
 
     % compute rolling taxicab distance 
     distances = taxicab_distance(abs(spect(:, 1:end-1)), abs(spect(:, 2:end)));
-    out = [0; distances.'];
+    out = [distances.'; 0];
 end
 
 function d = taxicab_distance (A, B)

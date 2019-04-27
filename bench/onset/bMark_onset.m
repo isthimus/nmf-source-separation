@@ -1,4 +1,4 @@
-function [false_pos_percent, num_false_neg, num_total_onsets, mean_response_time] = bMark_onset(notes, onset, fs, tol_sec, print_ans)
+function [false_pos_percent, num_false_pos, num_false_neg, num_total_onsets, mean_response_time, avg_lvl_on, avg_lvl_non] = bMark_onset(notes, onset, fs, tol_sec, print_ans)
     % measures false positive percentage and number of missed onsets for a given onset measure and midi file
     % bit primitive but itll do the job
     % might need a slightly different approach for leading-edge shenanigans
@@ -38,7 +38,7 @@ function [false_pos_percent, num_false_neg, num_total_onsets, mean_response_time
         onset_vec_tst(thisOnset) = 1; % !!! remove me
     end
 
-    % measure false pos percentage
+    % measure false pos time as a percentage
     good = 0; bad = 0;
     for i = 1:length(onset)
         % only look at samples where theres no onset
@@ -66,6 +66,44 @@ function [false_pos_percent, num_false_neg, num_total_onsets, mean_response_time
     end
     mean_response_time = mean(response_times);
 
+    % get false pos count
+    i = 1;
+    num_false_pos = 0;
+    LE_skip = false; % whether to skip non-zero samples because of leading-edge detect
+    while(i < length(groundTruth))
+        if groundTruth(i)
+            % if we're in an onset region, fast-forward to the next non-onset region
+            i = i + find(~groundTruth(i:end), 1) - 1;
+            LE_skip = true;
+            if isempty(i)
+                % if theres no more non onset regions, we're done - break out
+                break
+            end
+        else
+            % we're in a non-onset region - look for false positives
+            if LE_skip
+                % skip nonzeros because we've counted this onset already
+                % (or because we just came out of an onset region and its a tail)
+                LE_skip = false;
+                while onset(i) ~= 0
+                    i = i+1;
+                    if i > length(onset); break; end;
+                end
+            else
+                if onset(i) ~= 0
+                    num_false_pos = num_false_pos + 1;
+                    LE_skip = true;
+                end
+                i = i+1;
+            end                
+        end
+    end
+
+    % get avg_lvl_on and avg_lvl_non
+    % useful for less accurate measures when the other figures are nonsensical 
+    avg_lvl_on  = mean(onset(groundTruth == true));
+    avg_lvl_non = mean(onset(groundTruth == false));
+
     num_total_onsets = length(noteOnsets);
     if print_ans
         fprintf("---\nfalse pos percent: %.1f\n", false_pos_percent)
@@ -92,5 +130,5 @@ function [false_pos_percent, num_false_neg, num_total_onsets, mean_response_time
         close all;
     end
     
-    % implicit return of num_false_neg, false_pos_percent, num_total_onsets
+    % implicit return of a bunch of things
 end
