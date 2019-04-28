@@ -16,7 +16,7 @@ function notes_warped = midi_randWarp(notes, maxWarp, numSegments)
     % figure out the different segments
     numNotes = size(notes,1);
     segHop = numNotes ./ numSegments; % the "exact" size of a segment. may be fractional
-    seg_indices = floor(0:segHop:numNotes) + 1 % the segment boundaries
+    seg_indices = floor(0:segHop:numNotes) + 1; % the segment boundaries
                                                 % includes both 1 and numNotes + 1
                                                 
     assert(length(seg_indices) == numSegments + 1);
