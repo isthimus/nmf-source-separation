@@ -6,4 +6,5 @@ cloc-1.80.exe
 regexes.txt
 
 bench/*/tmp/
-bench/*/results/
+bench/*/results/*
+!bench/*/results/placeholder

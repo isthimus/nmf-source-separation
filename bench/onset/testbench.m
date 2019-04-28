@@ -1,11 +1,12 @@
 % full benchmark for onsets
 clear
 
+% switches for this testbench
 CALC = false;
 BENCH = true;
 PLOT = true;
 
-% set table switches
+% switches for gen_tables
 table_switches = struct();
 table_switches.TESTVECS_SOLO = true;
 table_switches.TESTVECS_MIX = true;
@@ -30,10 +31,8 @@ PHENICX_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/PHENICX');
 DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');
 run(fullfile(PROJECT_PATH, 'source/scripts/setpaths.m'));
 
-tic
 % generate testvector and test definition tables
 [testVectors, testDefs] = gen_tables(table_switches);
-toc
 
 % CALC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

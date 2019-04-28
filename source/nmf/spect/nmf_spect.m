@@ -5,6 +5,7 @@ function [spect, spectInfo_out] = nmf_spect(audio, spectInfo)
     nfft = spectInfo.nfft;
     fs = spectInfo.fs;
     analwin = spectInfo.analwin;
+    max_freq_bins = spectInfo.max_freq_bins;
 
     % take spectrum
     spect = stft(audio,analwin,hop,nfft,fs);
@@ -16,5 +17,6 @@ function [spect, spectInfo_out] = nmf_spect(audio, spectInfo)
 
     % pack up spectInfo_out
     spectInfo_out = spectInfo;
+    spectInfo_out.audio_len_samp = length(audio);
     [spectInfo_out.num_freq_bins, spectInfo_out.num_time_bins] = size(spect);
 end

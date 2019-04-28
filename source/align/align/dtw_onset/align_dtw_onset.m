@@ -15,21 +15,24 @@ function notes_aligned = align_dtw_onset (notes, audio, spectInfo, onset_func, u
     chroma_audio = mat_normalise(chroma_audio, 1);
 
     % get the chroma-based dtw cost matrix
-    C_chroma = dtw_buildCostMatrix(chroma_midi, chroma_audio);
+    C_chroma = align_dtw_buildCostMatrix(chroma_midi, chroma_audio);
 
     % extract onsets from midi and audio (at timeBin-rate)
     onset_midi = align_getOnset_midi(notes, spectInfo, use_root);
     onset_audio = onset_func(audio, spectInfo);
 
     % get the onset-based dtw cost matrix
-    C_onset = dtw_buildCostMatrix (onset_midi, onset_audio);
+    C_onset = align_dtw_buildCostMatrix (onset_midi, onset_audio);
 
     % !!! should normalise?
     % make the final cost matrix using a weighted sum of the two
     C_final = chroma_onset_ratio*C_chroma + (1-chroma_onset_ratio)*C_onset;
 
     % traceback to find warping path
-    [~, IM, IA] = dtw_traceback(C_final)
+    % make sure IM, IA are column vectors first
+    [~, IM, IA] = align_dtw_traceback(C_final)
+    if isrow(IM); IM = IM'; end
+    if isrow(IA); IA = IA'; end
     IM = align_resolveWarpingPath(IM, IA);
 
     % warp the midi and return

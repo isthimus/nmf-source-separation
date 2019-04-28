@@ -16,8 +16,8 @@ function C_out = dtw_buildCostMatrix(X,Y, dist_func)
     end
 
     % get x and y len, preallocate C_direct
-    xlen = size(X, 1);
-    ylen = size(Y, 1);
+    xlen = size(X, 2);
+    ylen = size(Y, 2);
     C_direct = zeros(ylen, xlen);
 
     % build C_direct
@@ -26,6 +26,11 @@ function C_out = dtw_buildCostMatrix(X,Y, dist_func)
             C_direct(j,i) = dist_func(X(:,i), Y(:,j));
         end
     end
+
+    imagesc(C_direct);
+    axis xy;
+    wait_returnKey();
+    close all;
 
     % preallocate C_out
     % make it overlarge and initialise with Inf to simplify the logic
@@ -37,8 +42,15 @@ function C_out = dtw_buildCostMatrix(X,Y, dist_func)
     % build C_out
     for i = 1:xlen
         for j = 1:ylen
-            C_out(j+1, i+1) = C_direct(j,i) + ...
-                min(C_direct(j-1,i), C_direct(j-1,i-1), C_direct(j,i-1));
+            % account for the extra Inf rows
+            i_out = i+1;
+            j_out = j+1;
+
+            cj  = C_out(j_out-1,i_out);
+            ci  = C_out(j_out,i_out-1);
+            cij = C_out(j_out-1,i_out-1);
+
+            C_out(j_out, i_out) = C_direct(j,i) + min([ci, cj, cij]);
         end
     end
 

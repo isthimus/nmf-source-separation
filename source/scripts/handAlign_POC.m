@@ -1,6 +1,5 @@
 % learning how the midi library works and doing some
 % basic testing of my helper functions
-
 clear
 
 % suppress warnings from matlab due to the "if 0" blocks

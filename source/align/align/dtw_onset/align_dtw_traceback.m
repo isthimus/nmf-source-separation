@@ -3,7 +3,7 @@ function [dist, ix, iy] = dtw_traceback (C)
     % based on the source code of the MATLAB native dtw function
 
     dist = C(end,end);
-    [ix, iy] = traceback(C);
+    [iy, ix] = traceback(C);
 end
 
 function [ix,iy] = traceback(C)
