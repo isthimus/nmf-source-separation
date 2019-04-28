@@ -90,12 +90,14 @@ dtw stuff:
 	X align_getOnset_midi codeup
 	X move files to where they should be
 
-BEER?
+BEER? DENIED
 
-MAYBE TEST SOME SHIT IDFK
-CHECK THAT CHROMA BIN 1 MATCHES BETWEEN FUNCTIONS
+X MAYBE TEST SOME SHIT IDFK
+X CHECK THAT CHROMA BIN 1 MATCHES BETWEEN FUNCTIONS
 
-align_dtw_onset shakedown
+X align_dtw_onset shakedown
+X alignment plotter up and running
+
 align_dtw_freeEnds
 proper alignment bench	
 
@@ -104,6 +106,7 @@ BLOCK NORM AUDIO LIKE
 different types of chromagram
 weighting of onset vs chroma, "cautious" vs "agressive" onset detection
 super pretty plots from benchmark_onset (currently sat in comments at the bottom) (maybe?)
+SASS WILL DEFFFF NEED TIME TOILERANCE
 
 === alignment and onset writeup === 
 proper figures for each
