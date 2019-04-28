@@ -1,19 +1,20 @@
 % full benchmark for onsets
+tic
 clear
 
 % switches for this testbench
-CALC = false;
+CALC = true;
 BENCH = true;
-PLOT = true;
+PLOT = false;
 
 % switches for gen_tables
 table_switches = struct();
 table_switches.TESTVECS_SOLO = true;
 table_switches.TESTVECS_MIX = true;
 table_switches.TESTDEFS_MAIN = true;
-table_switches.TESTDEFS_NORMLEN = false;
-table_switches.TESTDEFS_SPECTINFO = false;
-table_switches.TESTDEFS_AGRESSION = false;
+table_switches.TESTDEFS_NORMLEN = true;
+table_switches.TESTDEFS_SPECTINFO = true;
+table_switches.TESTDEFS_AGRESSION = true;
 
 % cd to the folder this script is in
 script_path = mfilename('fullpath');
@@ -296,7 +297,7 @@ if PLOT
         close all;
     end
 end
-
+toc
 
 % HELPER FUNCTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function path = test2FilePath (testDef, testVec)
