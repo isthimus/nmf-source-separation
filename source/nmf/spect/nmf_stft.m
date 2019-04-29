@@ -1,4 +1,4 @@
-function [spect, spectInfo_out] = nmf_spect(audio, spectInfo)
+function [spect, spectInfo_out] = num_stft(audio, spectInfo)
     % unpack spectInfo
     wlen = spectInfo.wlen;
     hop = spectInfo.hop;

@@ -16,7 +16,7 @@ function notes_aligned = align_dtw (notes, audio, spectInfo, use_vel)
     chroma_audio = align_getChroma_audio (audio, spectInfo);
     chroma_audio = mat_normalise(chroma_audio, 1);
     
-    spect = nmf_spect(audio,spectInfo);
+    spect = num_stft(audio,spectInfo);
 
     %{
     figure(1);
