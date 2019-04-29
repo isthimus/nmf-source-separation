@@ -4,7 +4,7 @@
 #   find . -name '*.m' | xargs python scratch/spectInfo/check_spectInfo_interface.py
 # better matfile find for this codebase:
 #   cd <codebase_root>
-#   find . -name *.m | grep -v "third_party|scratch | xargs python scratch/spectInfo/check_spectInfo_interface.py"
+#   find . -name *.m | grep -v "third_party|scratch" | xargs python scratch/spectInfo/check_spectInfo_interface.py"
 
 
 import sys
