@@ -4,6 +4,7 @@ function timeBins = align_secs2TimeBin (t, spectInfo, use_audio_len)
     % if it is false, the calculation will be done as if with an infinite length signal
     if nargin < 3
     	use_audio_len = true;
+    end
 
     % unpack spectInfo
     fs = spectInfo.fs;

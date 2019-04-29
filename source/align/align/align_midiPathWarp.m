@@ -1,7 +1,7 @@
 function notes_warped = align_midiPathWarp (notes, path, spectInfo)
     % get all midi event times in notes, as timebin indexes
-    startTimes_bins = align_secs2TimeBin(notes(:, 5), spectInfo);
-    endTimes_bins   = align_secs2TimeBin(notes(:, 6), spectInfo);
+    startTimes_bins = align_secs2TimeBin(notes(:, 5), spectInfo, false);
+    endTimes_bins   = align_secs2TimeBin(notes(:, 6), spectInfo, false);
 
     % warp midi event times using "path" as warping path
     % ie replace each num in V with the index of the first instance in path which is >= that num

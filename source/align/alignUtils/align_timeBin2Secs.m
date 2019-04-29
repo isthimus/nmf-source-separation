@@ -1,6 +1,7 @@
 function secs = align_timeBin2Secs (tb, spectInfo)
 	% unpack spectInfo
 	fs = spectInfo.fs;
+    wlen = spectInfo.wlen;
 
 	assert(mod(wlen,2) == 0, "window length should be even");
 

@@ -2,8 +2,39 @@ function [dist, ix, iy] = dtw_traceback (C)
     % traces back the cost matrix of a dtw operation to find the best warping path
     % based on the source code of the MATLAB native dtw function
 
-    dist = C(end,end);
-    [iy, ix] = traceback(C);
+    % infer the lengths of the original two vectors to be warped 
+    ylen = size(C,1);
+    xlen = size(C,2);
+    
+    % preallocate D
+    % D is the cost of the cheapest path from C(1,1) to C(i,j)
+    % make it overlarge and initialise with Inf to simplify the logic
+    D = zeros(ylen+1, xlen+1);
+    D(:,1) = Inf;
+    D(1,:) = Inf;
+    D(1,1) = 0;
+
+    % build D
+    for i = 1:xlen
+        for j = 1:ylen
+            % account for the extra Inf rows
+            i_out = i+1;
+            j_out = j+1;
+
+            cj  = D(j_out-1,i_out);
+            ci  = D(j_out,i_out-1);
+            cij = D(j_out-1,i_out-1);
+
+            D(j_out, i_out) = C(j,i) + min([ci, cj, cij]);
+        end
+    end
+
+    % discard the Inf rows
+    D = D(2:end, 2:end);
+
+    % get return vals
+    dist = D(end,end);
+    [iy, ix] = traceback(D);
 end
 
 function [ix,iy] = traceback(C)

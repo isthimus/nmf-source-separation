@@ -152,6 +152,8 @@ if BENCH
         cell2mat(avg_results(2:end, end-2)) ./ cell2mat(avg_results(2:end, end-1)) ...
     );
 
+    % save results to file
+    % THIS FILE IS GITIGNORED, NEED TO BE COMMITTED MANUALLY
     save('./results/bench_results.mat', 'bench_results');
     save('./results/avg_results.mat', 'avg_results');
 end

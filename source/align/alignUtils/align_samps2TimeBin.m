@@ -7,6 +7,7 @@ function timeBins = align_samps2TimeBin (samps, spectInfo, use_audio_len)
     % if use_audio_len is not provided, default to true
     if nargin < 3
         use_audio_len = true;
+    end
 
     if use_audio_len
         % if using audio len, check that no samples are out of

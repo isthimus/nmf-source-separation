@@ -13,15 +13,13 @@ function sources_out = nmf_separate_sources_aligned (
     % a many-argumented beast which performs the whole SASS pipeline based on 7 partial functions
     % !!! much more commenting/ explanation to come here...
     % !!! good defaults will make a big difference here
-    % THIS USES SPECTINFO.
-    % SOME SPRING CLEANING BEFORE SEPSOURCES (no spectInfo) WIL PLAY NICE WITH SEPSOURCES_ALIGNED
 
     % take spect, update spectInfo
     [spect, spectInfo] = spect_func(audio, spectInfo);
     assert(checkSpectInfo(spect), "missing values in return value for spectInfo!")
 
     % align midi
-    midiNotes_aligned = align_func(midiNotes, audio, spectInfo);
+    midiNotes_aligned = align_func(midiNotes, audio, spect, spectInfo);
 
     % build W and H masks, add tolerance
     [W_mask, H_mask] = makeMask_func(midiNotes_aligned, spectInfo);

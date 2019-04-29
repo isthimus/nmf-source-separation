@@ -1,36 +1,49 @@
-function notes_aligned = align_dtw_onset (notes, audio, spectInfo, onset_func, use_vel, chroma_onset_ratio)
+function notes_aligned = align_dtw_onset (...
+    notes, ...
+    audio, ...
+    spect, ... 
+    spectInfo, ...
+    onset_func, ...
+    chroma_onset_ratio, ...
+    use_vel, ...
+    midiOnset_useRoot ...
+)
     
     % default args
-    if nargin < 5
+    if nargin < 6
+        chroma_onset_ratio = 0.5; % 1 => all chroma, 0 => all onset.
+    end
+    if nargin < 7
         use_vel = true;
     end
-    if nargin < 6
-        chroma_onset_ratio = 0.5 % 1 => all chroma, 0 => all onset.
+    if nargin < 8
+        midiOnset_useRoot = false;
     end
     assert (0 < chroma_onset_ratio && chroma_onset_ratio < 1, "chroma_onset_ratio should be between 0 and 1!")
 
     % extract chroma from midi and audio. normalise audio
     chroma_midi = align_getChroma_midi (notes, spectInfo, use_vel);
-    chroma_audio = align_getChroma_audio (audio_vec, spectInfo);
+    chroma_midi = mat_normalise(chroma_midi, 1);
+
+    chroma_audio = align_getChroma_audio (audio, spectInfo);
     chroma_audio = mat_normalise(chroma_audio, 1);
 
     % get the chroma-based dtw cost matrix
     C_chroma = align_dtw_buildCostMatrix(chroma_midi, chroma_audio);
 
     % extract onsets from midi and audio (at timeBin-rate)
-    onset_midi = align_getOnset_midi(notes, spectInfo, use_root);
-    onset_audio = onset_func(audio, spectInfo);
+    onset_midi  = align_getOnset_midi(notes, spectInfo);
+    onset_audio = onset_func(spect, spectInfo);
 
     % get the onset-based dtw cost matrix
     C_onset = align_dtw_buildCostMatrix (onset_midi, onset_audio);
 
-    % !!! should normalise?
     % make the final cost matrix using a weighted sum of the two
     C_final = chroma_onset_ratio*C_chroma + (1-chroma_onset_ratio)*C_onset;
-
+    
     % traceback to find warping path
     % make sure IM, IA are column vectors first
-    [~, IM, IA] = align_dtw_traceback(C_final)
+    [~, IM, IA] = align_dtw_traceback(C_final);
     if isrow(IM); IM = IM'; end
     if isrow(IA); IA = IA'; end
     IM = align_resolveWarpingPath(IM, IA);

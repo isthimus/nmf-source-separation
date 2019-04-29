@@ -1,14 +1,11 @@
-function onset = align_getOnset_midi(notes, spectInfo, smooth, smooth_ksize, smooth_use_root)
+function onset = align_getOnset_midi(notes, spectInfo, smoothing, smooth_ksize, smooth_use_root)
     % extract a 1D onset measure at timeBin rate from the midi file in notes
     % along with an audio onset detecting function and an alignment function,
     % can be used to align midi to audio
 
-    % unpack spectInfo
-    num_time_bins = spectInfo.num_time_bins;
-
     % default args
     if nargin < 3
-        smooth = true;
+        smoothing = true;
     end
     if nargin < 4
         smooth_ksize = 5; 
@@ -17,21 +14,24 @@ function onset = align_getOnset_midi(notes, spectInfo, smooth, smooth_ksize, smo
         smooth_use_root = true; % true for root, false for geometric.
     end
 
+    % preallocate onset
+    % chroma_len is set by finding the last note off in the midi file
+    % and converting to timebins
+    chroma_len = align_secs2TimeBin(max(notes(:, 6)), spectInfo, false);
+    onset = zeros(chroma_len, 1);
+
     % pull out midi startTimes, convert to timeBin indices
     startTimes = notes(:, 5);
-    startBins = align_secs2TimeBin(startTimes, spectInfo);
-
-    % preallocate onset
-    onset = zeros(num_time_bins, 1);
+    startBins = align_secs2TimeBin(startTimes, spectInfo, false);
 
     % put a 1 in onsets for every onset in startBins
     for i = 1:length(startBins)
         onset(startBins(i)) = 1;
     end
 
-    % smooth if smoothing flag is set
-    if smooth
-        align_onsetSmooth(onset, smooth_ksize, smooth_use_root);
+    % smoothing if smoothing flag is set
+    if smoothing
+        onset = align_onsetSmooth(onset, smooth_ksize, smooth_use_root);
     end
 
 end
