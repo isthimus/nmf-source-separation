@@ -88,7 +88,7 @@ for vec_i = 1:length(audio_paths)
         % get spectInfo, take spect
         spectInfo = spectInfo_proto;
         spectInfo.fs = fs;
-        [spect, spectInfo] = nmf_spect(audio, spectInfo);
+        [spect, spectInfo] = num_stft(audio, spectInfo);
         assert(checkSpectInfo(spectInfo), "bad spectInfo");
 
         % apply func

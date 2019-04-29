@@ -66,7 +66,7 @@ if CALC
             % get spectInfo, take spect
             spectInfo = testDef.spectInfo;
             spectInfo.fs = fs;
-            [spect, spectInfo] = nmf_spect(audio, spectInfo);
+            [spect, spectInfo] = num_stft(audio, spectInfo);
             assert(checkSpectInfo(spectInfo), "bad spectInfo");
 
             % apply func

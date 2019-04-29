@@ -64,7 +64,7 @@
 ../../source/nmf/reconstruct/nmf_reconstruct_keepPhase.m
 ../../source/nmf/reconstruct/nmf_reconstruct_noPhase.m
 ../../source/nmf/reconstruct/nmf_reconstruct_pitchTrack.m
-../../source/nmf/spect/nmf_spect.m
+../../source/nmf/spect/num_stft.m
 ../../source/scripts/bench_midterm/bench_nmf_fuzz.m
 ../../source/scripts/bench_midterm/bench_source_sep.m
 ../../source/scripts/bench_midterm/bench_stft_reconstruction.m
