@@ -30,7 +30,7 @@ nmf_statPoint_thresh = 0.001; % detect stationary point at xxx per 1000 iteratio
 nmf_max_iter = 1000000;         % max iterations 1'000'000
 nmf_done_thresh = 0;            % use only stationary point detection
 p_nmf = @(V,W,H) ...
-    nmf_is(V, W, H, nmf_statPoint_thresh, nmf_max_iter, nmf_done_thresh);
+    nss_is(V, W, H, nmf_statPoint_thresh, nmf_max_iter, nmf_done_thresh);
 %{
 p_nmf = @(V,W,H) deal(W,H);
 %}
@@ -57,18 +57,18 @@ spectInfo.analwin = analwin;
 synthwin = hamming(wlen, 'periodic');
 spectInfo.synthwin = synthwin;
 
-num_time_bins = align_samps2TimeBin(audio_len_samp, spectInfo);
+num_time_bins = aln_samps2TimeBin(audio_len_samp, spectInfo);
 spectInfo.num_time_bins = num_time_bins;
 % build spectrum and reconstruction functions
 p_spect = @(x) ...
     stft(x, spectInfo.analwin, spectInfo.hop, spectInfo.nfft, spectInfo.fs);
 p_reconstruct = @(audio_spect, W, H) ...
-    nmf_reconstruct_keepPhase (audio_spect, W, H, spectInfo.analwin, ...
+    nss_reconstruct_keepPhase (audio_spect, W, H, spectInfo.analwin, ...
                                spectInfo.synthwin, spectInfo.hop, spectInfo.nfft, spectInfo.fs);
 
 % below will be superceded when we have a proper sep_sources_aligned pipeline
 % make W,H masks from midi
-[W_mask, H_mask] = align_makeMasks_midi (notes, spectInfo);
+[W_mask, H_mask] = aln_makeMasks_midi (notes, spectInfo);
 disp('W_mask');
 disp(size(W_mask));
 disp('H_mask');
@@ -76,7 +76,7 @@ disp(size(H_mask));
 
 % build init function
 p_init = @(freqBins, timeBins) ...
-    nmf_init_zeroMask(W_mask, H_mask, struct('num_freq_bins',spectInfo.num_freq_bins,'num_time_bins', spectInfo.num_time_bins));
+    nss_init_zeroMask(W_mask, H_mask, struct('num_freq_bins',spectInfo.num_freq_bins,'num_time_bins', spectInfo.num_time_bins));
 
 % perform source separation with max plotting level
-sources_out = nmf_separate_sources(p_nmf, p_init, p_spect, p_reconstruct, audio_vec, 99);
+sources_out = nss_separate_sources(p_nmf, p_init, p_spect, p_reconstruct, audio_vec, 99);

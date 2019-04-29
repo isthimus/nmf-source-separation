@@ -1,4 +1,4 @@
-function sources_out = nmf_reconstruct_pitchTrack (audio_spect, W, H, ptRange, varargin)
+function sources_out = nss_reconstruct_pitchTrack (audio_spect, W, H, ptRange, varargin)
     % NB varargin will be passed directly as an argument list to istft from the
     % Zhivomirov toolbox
     % other params self explanatory

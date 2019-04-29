@@ -1,4 +1,4 @@
-function [W_out, H_out] = nmf_init_zeroMask (W_mask, H_mask, spectInfo)
+function [W_out, H_out] = nss_init_zeroMask (W_mask, H_mask, spectInfo)
 
 	% unpack spectInfo
 	num_freq_bins = spectInfo.num_freq_bins;
@@ -11,8 +11,8 @@ function [W_out, H_out] = nmf_init_zeroMask (W_mask, H_mask, spectInfo)
 	% find K (ie number of independent notes)
 	K = size(W_mask, 2);
 
-	% randomly initialise W and H using nmf_init_rand
-	[W_out, H_out] = nmf_init_rand(spectInfo, K, 10);
+	% randomly initialise W and H using nss_init_rand
+	[W_out, H_out] = nss_init_rand(spectInfo, K, 10);
 
 	% mask W,H and return
 	W_out = W_out .* W_mask;

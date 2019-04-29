@@ -5,13 +5,13 @@
 
 ME = [];
 try
-    nmf_euclidian([],[1],[1],1000)
+    nss_euclidian([],[1],[1],1000)
 catch ME
 end
 
-if isempty(ME) || ME.identifier ~= "nmf_euclidian:bad_input"
+if isempty(ME) || ME.identifier ~= "nss_euclidian:bad_input"
     
-    throw (MException ("unittest:nmf_euclidian", "Doesn't handle empty V:"))
+    throw (MException ("unittest:nss_euclidian", "Doesn't handle empty V:"))
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -19,12 +19,12 @@ end
 
 ME = [];
 try
-    nmf_euclidian([1],[],[],1000)
+    nss_euclidian([1],[],[],1000)
 catch ME
 end
 
-if isempty(ME) || ME.identifier ~= "nmf_euclidian:bad_input"
-    throw (MException ("unittest:nmf_euclidian", "Doesn't handle empty W, H"))
+if isempty(ME) || ME.identifier ~= "nss_euclidian:bad_input"
+    throw (MException ("unittest:nss_euclidian", "Doesn't handle empty W, H"))
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -32,12 +32,12 @@ end
 
 ME = [];
 try
-    nmf_euclidian([1],[1],[1],-1000)
+    nss_euclidian([1],[1],[1],-1000)
 catch ME
 end
 
-if isempty(ME) || ME.identifier ~= "nmf_euclidian:bad_input"
-    throw (MException("unittest:nmf_euclidian", "Doesnt handle negative threshold"))
+if isempty(ME) || ME.identifier ~= "nss_euclidian:bad_input"
+    throw (MException("unittest:nss_euclidian", "Doesnt handle negative threshold"))
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,7 +50,7 @@ catch ME
 end
 
 if isempty(ME) || ME.identifier ~= "square_euclidian_distance:bad_input"
-    throw (MException("unittest:nmf_euclidian", "Doesnt handle badly shaped matrices to square_euclidian_distance"))
+    throw (MException("unittest:nss_euclidian", "Doesnt handle badly shaped matrices to square_euclidian_distance"))
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,56 +71,56 @@ rand20_A_cpy = rand20_A;
 % check square_euclidian_distance gives sensible values
 
 if square_euclidian_distance(six_horiz_A, six_horiz_B) ~= 10
-    throw (MException("unittest:nmf_euclidian", "square_euclidian_distance gives wrong answers"))
+    throw (MException("unittest:nss_euclidian", "square_euclidian_distance gives wrong answers"))
 end
 
 if square_euclidian_distance(six_horiz_B, six_horiz_A) ~= 10
-    throw (MException("unittest:nmf_euclidian", "square_euclidian_distance not commutative"))
+    throw (MException("unittest:nss_euclidian", "square_euclidian_distance not commutative"))
 end
 
 if square_euclidian_distance(rand20_A, rand20_B) ~= square_euclidian_distance(rand20_B, rand20_A)
-    throw (MException("unittest:nmf_euclidian", "square_euclidian_distance not commutative"))
+    throw (MException("unittest:nss_euclidian", "square_euclidian_distance not commutative"))
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % check NMF results 
 
-[W,H,~] = nmf_euclidian(V, rand20_A, ones20, 0.01);
+[W,H,~] = nss_euclidian(V, rand20_A, ones20, 0.01);
 if (rand20_A ~= rand20_A_cpy)
-    throw (MException("unittest:nmf_euclidian", "NMF mutates W,H"))
+    throw (MException("unittest:nss_euclidian", "NMF mutates W,H"))
 end
 
 if square_euclidian_distance(W*H, V) > 0.01
-    throw (MException("unittest:nmf_euclidian", "NMF gives invalid answers"))
+    throw (MException("unittest:nss_euclidian", "NMF gives invalid answers"))
 end
 
-[W,H,~] = nmf_euclidian(V, rand20_A, rand20_B, 0.01);
+[W,H,~] = nss_euclidian(V, rand20_A, rand20_B, 0.01);
 if square_euclidian_distance(W*H, V) > 0.01
-    throw (MException("unittest:nmf_euclidian", "NMF gives invalid answers"))
+    throw (MException("unittest:nss_euclidian", "NMF gives invalid answers"))
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % make sure it doesnt hang when given an impossible problem
 ME = [];
 try
-    [W,H,~] = nmf_euclidian(V, rand20_A, zeros(20), 0.01);
+    [W,H,~] = nss_euclidian(V, rand20_A, zeros(20), 0.01);
 catch ME
 end
 
-if isempty(ME) || ME.identifier ~= "nmf_euclidian:failed_to_converge"
+if isempty(ME) || ME.identifier ~= "nss_euclidian:failed_to_converge"
     disp (ME.identifier)
-    throw (MException("unittest:nmf_euclidian", "Doesn't handle 'out of iterations' gracefully"))
+    throw (MException("unittest:nss_euclidian", "Doesn't handle 'out of iterations' gracefully"))
 end
 
 ME = [];
 try
-    [W,H,~] = nmf_euclidian(V, zeros(20), rand20_B, 0.01);
+    [W,H,~] = nss_euclidian(V, zeros(20), rand20_B, 0.01);
 catch ME
 end
 
-if isempty(ME) || ME.identifier ~= "nmf_euclidian:failed_to_converge"
+if isempty(ME) || ME.identifier ~= "nss_euclidian:failed_to_converge"
     disp (ME.identifier)
-    throw (MException("unittest:nmf_euclidian", "Doesn't handle 'out of iterations' gracefully"))
+    throw (MException("unittest:nss_euclidian", "Doesn't handle 'out of iterations' gracefully"))
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -141,7 +141,7 @@ startW = endW.*rand(20,20) * 2;
 startH = endH.*rand(20,20) * 2;
 
 try
-    [W,H,~] = nmf_euclidian (V, startW, startH, 100);
+    [W,H,~] = nss_euclidian (V, startW, startH, 100);
 catch ME
     disp (ME.identifier)
 end

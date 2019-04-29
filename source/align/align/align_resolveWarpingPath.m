@@ -1,4 +1,4 @@
-function out = align_resolveWarpingPath (IX, IY)
+function out = aln_resolveWarpingPath (IX, IY)
 	to_keep = logical(ones(size(IX)));
 
 	trail = IY(1);

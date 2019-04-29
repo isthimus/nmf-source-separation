@@ -1,4 +1,4 @@
-function out = align_onsUtil_energyFirstDiff(audio, spectInfo, f_3db, N)
+function out = aln_onsUtil_energyFirstDiff(audio, spectInfo, f_3db, N)
     % detects onsets in a signal by taking the local energy (squaring each sample),
     % lowpass filtering, and taking the first difference of the result. this has the
     % effect of creating short spikes when there is a sudden rise in the low-frequency energy.
@@ -48,7 +48,7 @@ function out = align_onsUtil_energyFirstDiff(audio, spectInfo, f_3db, N)
     out = zeros(num_time_bins, 1);
 
     % get center times of all timebins
-    center_samps = align_timeBin2Samps(1:num_time_bins, spectInfo);
+    center_samps = aln_timeBin2Samps(1:num_time_bins, spectInfo);
 
     %iterate over timeBins
     for i = 1:num_time_bins 

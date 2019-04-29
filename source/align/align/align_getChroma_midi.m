@@ -1,4 +1,4 @@
-function chroma = align_getChroma_midi(notes, spectInfo, use_vel)
+function chroma = aln_getChroma_midi(notes, spectInfo, use_vel)
     % extracts a chroma estimate from an unaligned midi score, for alignmment
 
     % if use_vel is not given, default to false
@@ -14,7 +14,7 @@ function chroma = align_getChroma_midi(notes, spectInfo, use_vel)
     % pianoRoll_tb(n) gives the time bin corresponding to pianoRoll(:, n).
     % derived using pianoRoll_t which gives the time in seconds for pianoRoll(:, n).
     [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes, 1, hop/fs);
-    pianoRoll_tb = align_secs2TimeBin(pianoRoll_t, spectInfo, false);
+    pianoRoll_tb = aln_secs2TimeBin(pianoRoll_t, spectInfo, false);
 
     % tidy up the edges of the pianoRoll so its prefectly aligned with timebin indices
     chroma_len = pianoRoll_tb(end);
@@ -29,7 +29,7 @@ function chroma = align_getChroma_midi(notes, spectInfo, use_vel)
         % indices_thisChroma is a vector of indices for 
         % all the rows in pianoRoll which map to row i in "chroma" 
         indices_thisChroma = ...
-            align_nn2ChromaBin(pianoRoll_nn) == i;
+            aln_nn2ChromaBin(pianoRoll_nn) == i;
         % sum up the values in the pianoRoll rows, put in chromagram 
         chroma(i, :) = sum(pianoRoll_tbAligned(indices_thisChroma,:), 1); 
     end

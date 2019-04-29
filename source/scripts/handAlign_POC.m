@@ -39,14 +39,14 @@ notes = midiInfo(midi, 0);
 endTimes = notes (:, 6);
 spectInfo.audio_len_samp = ceil(max(endTimes(:)) * fs);
 %audio_len_samp = ceil(max(endTimes(:)) * fs) + 44000;
-spectInfo.num_time_bins = align_samps2TimeBin(spectInfo.audio_len_samp, spectInfo);
+spectInfo.num_time_bins = aln_samps2TimeBin(spectInfo.audio_len_samp, spectInfo);
 
 
 hop = spectInfo.hop;
 fs = spectInfo.fs;
 
 [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes, 0, hop/fs);
-pianoRoll_tb = align_secs2TimeBin (pianoRoll_t, spectInfo);
+pianoRoll_tb = aln_secs2TimeBin (pianoRoll_t, spectInfo);
 
 % plot pianoRoll_t and pianoRoll_tb to make sure they correspond
 if 1
@@ -70,9 +70,9 @@ if 1
     spectInfo_doubleNfft.nfft = spectInfo.nfft * 2;
 
     figure;hold on
-    p1 = stem (align_nn2FreqBin([0:127], spectInfo_halfNfft));
-    p2 = stem (align_nn2FreqBin([0:127], spectInfo));
-    p3 = stem (align_nn2FreqBin([0:127], spectInfo_doubleNfft));
+    p1 = stem (aln_nn2FreqBin([0:127], spectInfo_halfNfft));
+    p2 = stem (aln_nn2FreqBin([0:127], spectInfo));
+    p3 = stem (aln_nn2FreqBin([0:127], spectInfo_doubleNfft));
     legend ([p1,p2,p3],'nfft = 2048', 'nfft = 4096', 'nfft = 8192');
     title ("midi note num against freq bin for a linear frequency scale, fs =  44k");
     xlabel ("midi note number");
@@ -81,9 +81,9 @@ if 1
     close all;
 end
 
-% run align_makeMasks_midi and plot along with piano roll for comparison
+% run aln_makeMasks_midi and plot along with piano roll for comparison
 if 1 
-    [W_mask, H_mask] = align_makeMasks_midi(notes, spectInfo);
+    [W_mask, H_mask] = aln_makeMasks_midi(notes, spectInfo);
 
     figure (1);
     %imagesc(W_mask);
@@ -108,10 +108,10 @@ if 1
     close all;
 end
 
-% run align_makeMasks_midi, use as input to nmf_init_zeromask, display.
+% run aln_makeMasks_midi, use as input to nmf_init_zeromask, display.
 if 1
-    [W_mask, H_mask] = align_makeMasks_midi(notes, spectInfo);
-    [W_init, H_init] = nmf_init_zeroMask (W_mask, H_mask, spectInfo);
+    [W_mask, H_mask] = aln_makeMasks_midi(notes, spectInfo);
+    [W_init, H_init] = nss_init_zeroMask (W_mask, H_mask, spectInfo);
 
     figure (1);
     imagesc(W_init);
@@ -136,11 +136,11 @@ if 1
 
     % build piano roll
     [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes_multiChan, 0, hop/fs);
-    pianoRoll_tb = align_secs2TimeBin (pianoRoll_t, spectInfo);
-    spectInfo.num_time_bins = align_samps2TimeBin(spectInfo.audio_len_samp, spectInfo);
+    pianoRoll_tb = aln_secs2TimeBin (pianoRoll_t, spectInfo);
+    spectInfo.num_time_bins = aln_samps2TimeBin(spectInfo.audio_len_samp, spectInfo);
 
     %perform alignment
-    [W_mask, H_mask] = align_makeMasks_midi(notes_multiChan, spectInfo);
+    [W_mask, H_mask] = aln_makeMasks_midi(notes_multiChan, spectInfo);
 
     % plot W_mask, H_mask, and pianoRoll
     figure (1);

@@ -1,4 +1,4 @@
-function timeBins = align_samps2TimeBin (samps, spectInfo, use_audio_len)
+function timeBins = aln_samps2TimeBin (samps, spectInfo, use_audio_len)
     % unpack spectinfo
     wlen = spectInfo.wlen;
     hop = spectInfo.hop;

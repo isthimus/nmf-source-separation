@@ -1,4 +1,4 @@
-% lil plotting function to test align_dtw_onset 
+% lil plotting function to test aln_dtw_onset 
 % and generally get stuff ready for benching
 clear
 rng(0);
@@ -26,16 +26,16 @@ run(fullfile(PROJECT_PATH, 'source/scripts/setpaths.m'));
 
 % functions to test
 % interface: test_func(notes, audio, spect, spectInfo)
-Ons_agress = @(s,si)align_onsUtil_smooth(align_onsUtil_leadingEdge(block_normalise(align_onsUtil_specDiff_taxi(s,si),100,0),1),15);
-Ons_cons   = @(s,si)align_onsUtil_smooth(align_onsUtil_leadingEdge(block_normalise(align_onsUtil_specDiff_taxi(s,si),100,7),1), 15);
+Ons_agress = @(s,si)aln_onsUtil_smooth(aln_onsUtil_leadingEdge(block_normalise(aln_onsUtil_specDiff_taxi(s,si),100,0),1),15);
+Ons_cons   = @(s,si)aln_onsUtil_smooth(aln_onsUtil_leadingEdge(block_normalise(aln_onsUtil_specDiff_taxi(s,si),100,7),1), 15);
 test_funcs = { ... 
-    @(n,a,s,si)align_dtw(n,a,si)
-    @(n,a,s,si)align_dtw_onset(n,a,s,si,Ons_agress)
-    @(n,a,s,si)align_dtw_onset(n,a,s,si,Ons_cons)
-    @(n,a,s,si)align_dtw_onset(n,a,s,si,Ons_agress, 0.8)
-    @(n,a,s,si)align_dtw_onset(n,a,s,si,Ons_cons, 0.8)
-    @(n,a,s,si)align_dtw_onset(n,a,s,si,Ons_agress, 0.3)
-    @(n,a,s,si)align_dtw_onset(n,a,s,si,Ons_cons, 0.3)
+    @(n,a,s,si)aln_dtw(n,a,si)
+    @(n,a,s,si)aln_dtw_onset(n,a,s,si,Ons_agress)
+    @(n,a,s,si)aln_dtw_onset(n,a,s,si,Ons_cons)
+    @(n,a,s,si)aln_dtw_onset(n,a,s,si,Ons_agress, 0.8)
+    @(n,a,s,si)aln_dtw_onset(n,a,s,si,Ons_cons, 0.8)
+    @(n,a,s,si)aln_dtw_onset(n,a,s,si,Ons_agress, 0.3)
+    @(n,a,s,si)aln_dtw_onset(n,a,s,si,Ons_cons, 0.3)
 };
 
 midi_stack( ...

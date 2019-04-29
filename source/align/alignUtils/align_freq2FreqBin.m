@@ -1,4 +1,4 @@
-function freqBins = align_freq2FreqBin (f, spectInfo)
+function freqBins = aln_freq2FreqBin (f, spectInfo)
 	nfft = spectInfo.nfft;
 	fs = spectInfo.fs;
 

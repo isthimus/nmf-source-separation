@@ -1,4 +1,4 @@
-function [W_out, H_out, final_error, iterations] = nmf_euclidian (V, W, H, varargin)
+function [W_out, H_out, final_error, iterations] = nss_euclidian (V, W, H, varargin)
 %{    
 non-negative matrix factorization algorithm - repeatedly updates "W" and "H"
 using a pair of update rules until the square euclidian distance between "V"
@@ -112,7 +112,7 @@ return values:
     % !!! should this be a warning not an error, allowing recovery of W, H?
     if final_error > done_thresh && ~atStationaryPoint
         ME = MException (                                       ...
-            "nmf_euclidian:failed_to_converge",                 ...
+            "nss_euclidian:failed_to_converge",                 ...
             "hit max iterations and still not within done_thresh" ...
         );
         throw(ME)

@@ -1,7 +1,7 @@
-function notes_warped = align_midiPathWarp (notes, path, spectInfo)
+function notes_warped = aln_midiPathWarp (notes, path, spectInfo)
     % get all midi event times in notes, as timebin indexes
-    startTimes_bins = align_secs2TimeBin(notes(:, 5), spectInfo, false);
-    endTimes_bins   = align_secs2TimeBin(notes(:, 6), spectInfo, false);
+    startTimes_bins = aln_secs2TimeBin(notes(:, 5), spectInfo, false);
+    endTimes_bins   = aln_secs2TimeBin(notes(:, 6), spectInfo, false);
 
     % warp midi event times using "path" as warping path
     % ie replace each num in V with the index of the first instance in path which is >= that num
@@ -15,8 +15,8 @@ function notes_warped = align_midiPathWarp (notes, path, spectInfo)
     end
 
     % get start and end times in seconds
-    startTimes_secs = align_timeBin2Secs(startTimes_bins, spectInfo);
-    endTimes_secs = align_timeBin2Secs(endTimes_bins, spectInfo);
+    startTimes_secs = aln_timeBin2Secs(startTimes_bins, spectInfo);
+    endTimes_secs = aln_timeBin2Secs(endTimes_bins, spectInfo);
 
     % build the realigned notes array, return
     notes_warped = notes;

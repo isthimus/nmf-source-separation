@@ -1,4 +1,4 @@
-function [x,t] = nmf_istft (spect, spectInfo)
+function [x,t] = nss_istft (spect, spectInfo)
     % performs istft on spect using the information from spectInfo
     % supports spect elision
 

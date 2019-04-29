@@ -1,4 +1,4 @@
-function samps = align_timeBin2Samps (tb, spectInfo)
+function samps = aln_timeBin2Samps (tb, spectInfo)
 	% extract values from spectInfo
 	wlen = spectInfo.wlen;
 	hop = spectInfo.hop;

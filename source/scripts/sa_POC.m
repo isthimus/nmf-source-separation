@@ -15,7 +15,7 @@ PROJECT_PATH = fullfile('../../');
 TRIOS_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/TRIOS');
 DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');
 
-% test align_resolveWarpingPath
+% test aln_resolveWarpingPath
 if 0
     % clear spectInfo from last time
     spectInfo = struct();
@@ -41,14 +41,14 @@ if 0
     close all;
 
     % now resolve the warping path to bring ia into line with an unmodified ib
-    ia_r = align_resolveWarpingPath(ia, ib);
+    ia_r = aln_resolveWarpingPath(ia, ib);
     plot(a(ia_r)); hold on; plot(b);
     title('ia resolved to b');
     wait_returnKey
     close all;
 
     % bring ib into line with ia instead
-    ib_r = align_resolveWarpingPath (ib, ia);
+    ib_r = aln_resolveWarpingPath (ib, ia);
     plot (a); hold on; plot (b(ib_r));
     title ('ib resolved to a');
     wait_returnKey
@@ -86,14 +86,14 @@ if 0
     close all;
 
     % now resolve the warping path to bring ia into line with an unmodified ib
-    ia_r = align_resolveWarpingPath(ia, ib);
+    ia_r = aln_resolveWarpingPath(ia, ib);
     plot(a(ia_r)); hold on; plot(b);
     title('ia resolved to b');
     wait_returnKey
     close all;
 
     % bring ib into line with ia instead
-    ib_r = align_resolveWarpingPath (ib, ia);
+    ib_r = aln_resolveWarpingPath (ib, ia);
     plot (a); hold on; plot (b(ib_r));
     title ('ib resolved to a');
     wait_returnKey
@@ -112,7 +112,7 @@ if 0
     [~, v_ia, v_ib] = dtw (v_a, v_b);
 
     % resolve a to b
-    v_ia_r = align_resolveWarpingPath (v_ia, v_ib);
+    v_ia_r = aln_resolveWarpingPath (v_ia, v_ib);
 
     % see if theyre different
     plot (ia_r); hold on; plot(v_ia_r);
@@ -127,7 +127,7 @@ if 0
     close all;
 end
 
-% test align_getChroma_midi
+% test aln_getChroma_midi
 if 0
     % clear spectInfo from last time
     spectInfo = struct();
@@ -151,14 +151,14 @@ if 0
 
     % spectInfo.audio_len_samp = ceil(max(endTimes(:)) * spectInfo.fs);
     spectInfo.audio_len_samp = ceil(max(endTimes(:)) * spectInfo.fs);
-    spectInfo.num_time_bins = align_samps2TimeBin(spectInfo.audio_len_samp, spectInfo);
+    spectInfo.num_time_bins = aln_samps2TimeBin(spectInfo.audio_len_samp, spectInfo);
 
     % get pianoRoll
     [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes, 0, spectInfo.hop/spectInfo.fs);
-    pianoRoll_tb = align_secs2TimeBin (pianoRoll_t, spectInfo);
+    pianoRoll_tb = aln_secs2TimeBin (pianoRoll_t, spectInfo);
 
     % create a chromagram on the same timebase
-    chromagram = align_getChroma_midi(notes, spectInfo, 0);
+    chromagram = aln_getChroma_midi(notes, spectInfo, 0);
 
     % visual checking is actually a little funky because of pianoRoll_nn
     % first, make a tidy "timebin aligned" version of pianoRoll
@@ -206,13 +206,13 @@ if 0
 
     % spectInfo.audio_len_samp = ceil(max(endTimes(:)) * spectInfo.fs);
     spectInfo.audio_len_samp = ceil(max(endTimes(:)) * spectInfo.fs) + 44000;
-    spectInfo.num_time_bins = align_samps2TimeBin(spectInfo.audio_len_samp, spectInfo);
+    spectInfo.num_time_bins = aln_samps2TimeBin(spectInfo.audio_len_samp, spectInfo);
     % get pianoRoll
     [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes, 0, spectInfo.hop/spectInfo.fs);
-    pianoRoll_tb = align_secs2TimeBin (pianoRoll_t, spectInfo);
+    pianoRoll_tb = aln_secs2TimeBin (pianoRoll_t, spectInfo);
 
     % create a chromagram on the same timebase
-    chromagram = align_getChroma_midi(notes, spectInfo, 0);
+    chromagram = aln_getChroma_midi(notes, spectInfo, 0);
 
     % lots of weird shunting around to gwet something i can look at. see above.
     pianoRoll_tbAligned = zeros(size(pianoRoll, 1), spectInfo.num_time_bins);
@@ -242,7 +242,7 @@ if 0
     close all;
 end
 
-% test align_getChroma_audio
+% test aln_getChroma_audio
 if 0
     % clear spectInfo from last time
     spectInfo = struct();
@@ -293,9 +293,9 @@ if 0
 
         % create chromagram
         % might fail an assertion and error
-        chroma_audio = align_getChroma_audio(thisAudio, spectInfo);
+        chroma_audio = aln_getChroma_audio(thisAudio, spectInfo);
 
-        chroma_midi = align_getChroma_midi(midiInfo(thisMidi, 0), spectInfo, 1);
+        chroma_midi = aln_getChroma_midi(midiInfo(thisMidi, 0), spectInfo, 1);
 
         % assuming it hasn't errored - display the chromagram with spectrum as subplots
         figure(1);
@@ -351,14 +351,14 @@ if 0
     spectInfo.num_time_bins = size(spect, 2);
 
     % extract chroma from midi and audio
-    chroma_midi = align_getChroma_midi (notes, spectInfo, 1);
-    chroma_audio = align_getChroma_audio (audio, spectInfo);
+    chroma_midi = aln_getChroma_midi (notes, spectInfo, 1);
+    chroma_audio = aln_getChroma_audio (audio, spectInfo);
 
     assert (all (size(chroma_midi) == size(chroma_audio)), "bad chroma matrix sizes");
 
     % perform dtw to find warping path between chroma
     [~, IM, IA] = dtw (chroma_midi, chroma_audio);
-    IM = align_resolveWarpingPath (IM, IA);
+    IM = aln_resolveWarpingPath (IM, IA);
 
     % IM is a set of indices for chroma_midi which should align it to chroma_audio
     % build a new matrix representing the aligned chroma and compare
@@ -405,17 +405,17 @@ if 0
     wait_returnKey();
     close all;
 
-    % now try align_dtw
-    notes_aligned = align_dtw(notes, audio, spectInfo, 0);
+    % now try aln_dtw
+    notes_aligned = aln_dtw(notes, audio, spectInfo, 0);
 
     % build the piano roll of unaligned notes. make explicit the gap at the start, if any.
     [pr_u, pr_u_t, pr_u_nn] = piano_roll(notes, 0, spectInfo.hop/spectInfo.fs);
-    pr_u_tb = align_secs2TimeBin(pr_u_t, spectInfo);
+    pr_u_tb = aln_secs2TimeBin(pr_u_t, spectInfo);
     pr_u = [zeros(size(pr_u,1), min(pr_u_tb)) , pr_u];
 
     % build the piano roll of aligned notes. make explicit the gap at the start, if any.
     [pr_a, pr_a_t, pr_a_nn] = piano_roll(notes_aligned, 0, spectInfo.hop/spectInfo.fs);
-    pr_a_tb = align_secs2TimeBin(pr_a_t, spectInfo);
+    pr_a_tb = aln_secs2TimeBin(pr_a_t, spectInfo);
     pr_a = [zeros(size(pr_a,1), min(pr_a_tb)) , pr_a];
 
     disp(spectInfo);
@@ -465,8 +465,8 @@ if 1
     spectInfo.num_freq_bins = size(spect, 1);
     spectInfo.num_time_bins = size(spect, 2);
 
-    % align using align_dtw
-    notes_aligned = align_dtw(notes, audio, spectInfo, 0);
+    % align using aln_dtw
+    notes_aligned = aln_dtw(notes, audio, spectInfo, 0);
 
     % call midiAudioClick
     sound(midiAudioClick(notes, audio, spectInfo), fs);
@@ -526,34 +526,34 @@ if 0
 
     figure(1);
     subplot(3,1,1);
-     imagesc(align_getChroma_audio(audio, spectInfo));
+     imagesc(aln_getChroma_audio(audio, spectInfo));
      axis xy;
      title('audio');
      colorbar;
     subplot(3,1,2);
-     imagesc(align_getChroma_audio(audio_norm_1, spectInfo));
+     imagesc(aln_getChroma_audio(audio_norm_1, spectInfo));
      axis xy;
      title('norm 1');
      colorbar;
     subplot(3,1,3);
-     imagesc(align_getChroma_audio(audio_norm_10, spectInfo));
+     imagesc(aln_getChroma_audio(audio_norm_10, spectInfo));
      axis xy;
      title('norm 10');
      colorbar;
 
     figure(2);
     subplot(3,1,1);
-     imagesc(align_getChroma_audio(audio, spectInfo));
+     imagesc(aln_getChroma_audio(audio, spectInfo));
      axis xy;
      title('audio');
      colorbar;
     subplot(3,1,2);
-     imagesc(align_getChroma_audio(audio_comp_1, spectInfo));
+     imagesc(aln_getChroma_audio(audio_comp_1, spectInfo));
      axis xy;
      title('comp 1');
      colorbar;
     subplot(3,1,3);
-     imagesc(align_getChroma_audio(audio_comp_10, spectInfo));
+     imagesc(aln_getChroma_audio(audio_comp_10, spectInfo));
      axis xy;
      title('comp 10');
      colorbar;
@@ -562,7 +562,7 @@ if 0
      close all;
 end
 
-% try smaller hop for align_getChroma_audio
+% try smaller hop for aln_getChroma_audio
 if 0
     % clear spectInfo from last time
     spectInfo = struct();
@@ -600,7 +600,7 @@ if 0
         spectInfo.num_time_bins = size(spect, 2);
 
         % extract chroma from audio
-        chroma_audio = align_getChroma_audio (audio, spectInfo);
+        chroma_audio = aln_getChroma_audio (audio, spectInfo);
 
         results{i + 1} = chroma_audio;
     end

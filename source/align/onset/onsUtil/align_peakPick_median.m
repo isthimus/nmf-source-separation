@@ -1,4 +1,4 @@
-function out = align_peakPick_median (sig, n_median, min_delta, add_tail)
+function out = aln_peakPick_median (sig, n_median, min_delta, add_tail)
 	% peak-picks from a column vector using an adaptive median-based threshold, 
 	% and a proportional min_delta. if add_tail is false, detected peaks will be a
 	% single-sample impulse. if true this impulse train will be convolved with

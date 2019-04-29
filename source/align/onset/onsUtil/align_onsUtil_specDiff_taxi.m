@@ -1,4 +1,4 @@
-function out = align_onsUtil_specDiff_taxi (spect, spectInfo)
+function out = aln_onsUtil_specDiff_taxi (spect, spectInfo)
     % onset detecting function based on the taxicab distance between sucessive stft frames
     % no chroma separation
 

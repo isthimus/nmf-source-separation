@@ -1,4 +1,4 @@
-function nmf_visualiser(audioFile, nmf_func, nmf_init_func, nmf_init_params)
+function nss_visualiser(audioFile, nmf_func, nmf_init_func, nmf_init_params)
     %{
     visualises the effect of NMF using a series of spectrograms. also first
     steps towards a proper harness
@@ -105,8 +105,8 @@ function nmf_visualiser(audioFile, nmf_func, nmf_init_func, nmf_init_params)
     title('W\_out')
     wait_returnKey
     
-    sources = nmf_reconstruct_keepPhase (audio_spect, W_out, H_out, anal_win, synth_win, hop, nfft, Fs);
-    %sources = nmf_reconstruct_pitchTrack (audio_spect, W_out, H_out, 5, anal_win, synth_win, hop, nfft, Fs);
+    sources = nss_reconstruct_keepPhase (audio_spect, W_out, H_out, anal_win, synth_win, hop, nfft, Fs);
+    %sources = nss_reconstruct_pitchTrack (audio_spect, W_out, H_out, 5, anal_win, synth_win, hop, nfft, Fs);
     K = size(sources, 1);
     for i = 1:K
         source_vec = sources(i, :);

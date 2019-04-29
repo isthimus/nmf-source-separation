@@ -1,4 +1,4 @@
-function out = align_onsUtil_leadingEdge (in, tol)
+function out = aln_onsUtil_leadingEdge (in, tol)
 	% a leading edge is here defined as the first index in a contiguous series of non-zero indices
 	% out will have a 1 at all leading edges and a 0 elsewhere
 	% in is a column vector like

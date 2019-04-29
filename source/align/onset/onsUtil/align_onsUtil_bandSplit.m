@@ -1,4 +1,4 @@
-function out = align_onsUtil_bandSplit(spect, spectInfo,  onset_func, lowest_nn, highest_nn)
+function out = aln_onsUtil_bandSplit(spect, spectInfo,  onset_func, lowest_nn, highest_nn)
 	% splits a signal into chroma, calls onset_func on each band, and recombines
 
     % unpack spectInfo
@@ -9,7 +9,7 @@ function out = align_onsUtil_bandSplit(spect, spectInfo,  onset_func, lowest_nn,
         lowest_nn = 48; % C3
     end
     if nargin <= 4
-        highest_nn = floor(align_freq2nn_fractional(fs/2)); % nearest nn below nyquist
+        highest_nn = floor(aln_freq2nn_fractional(fs/2)); % nearest nn below nyquist
     end
 
     % preconditions
@@ -25,10 +25,10 @@ function out = align_onsUtil_bandSplit(spect, spectInfo,  onset_func, lowest_nn,
     for i = 0:11
         % list all nns in this chroma index
         nns = lowest_nn+i : 12 : highest_nn;
-        freqBins = align_nn2FreqBin(nns, spectInfo);
+        freqBins = aln_nn2FreqBin(nns, spectInfo);
 
         % find out what chroma index this is
-        thisChromaIndex = align_nn2ChromaBin(nns(1));
+        thisChromaIndex = aln_nn2ChromaBin(nns(1));
 
         % find the onset func for this band
         out(thisChromaIndex,:) = onset_func(spect(freqBins, :), spectInfo);

@@ -1,4 +1,4 @@
-function [W_mask_out, H_mask_out] = align_tol_lin (W_mask, W_tol, H_mask, H_tol)
+function [W_mask_out, H_mask_out] = aln_tol_lin (W_mask, W_tol, H_mask, H_tol)
 	% adds frequency-linear tolerance to the output of a makeMasks function 
 	% can also add time-linear tolerance to H - but second two arguments are optional
 	% !!! this could be muuuuch smarter. eg log tolerance, kernel not all ones, 

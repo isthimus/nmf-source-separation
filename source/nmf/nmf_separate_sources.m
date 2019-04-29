@@ -1,4 +1,4 @@
-function sources_out = nmf_separate_sources (nmf_func, nmf_init_func, spect_func, reconstruct_func, audio_vec, plot_level)
+function sources_out = nss_separate_sources (nmf_func, nmf_init_func, spect_func, reconstruct_func, audio_vec, plot_level)
     % performs source separation using one of a range of nmf functions.
     % returns a matrix where each column is one separated out source.
     %
@@ -13,10 +13,10 @@ function sources_out = nmf_separate_sources (nmf_func, nmf_init_func, spect_func
     % sources_out = reconstruction_func(orig_audio_spectrogram, W, H)
     %   NB! reconstruction func to return a matrix whose rows are the sources
     %
-    % eg - to make nmf_euclidian_norm match nmf_func:
+    % eg - to make nss_euclidian_norm match nmf_func:
     % myThreshold = 10; myMaxIter = 10000;
-    % nmf_en_partial = @(V, W, H) nmf_euclidian_norm(V, W, H, myThreshold, myMaxIter)
-    % nmf_separate_sources(nmf_en_partial, <some>, <other>, <args>, ...)
+    % nmf_en_partial = @(V, W, H) nss_euclidian_norm(V, W, H, myThreshold, myMaxIter)
+    % nss_separate_sources(nmf_en_partial, <some>, <other>, <args>, ...)
     
     % get spectrogram, plot if plot_level >= 1
     spect = spect_func(audio_vec);

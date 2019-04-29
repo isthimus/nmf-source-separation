@@ -1,4 +1,4 @@
-function chroma = align_getChroma_audio (audio_vec, spectInfo)
+function chroma = aln_getChroma_audio (audio_vec, spectInfo)
     % extract vals from spectInfo
     wlen = spectInfo.wlen;
     fs = spectInfo.fs;

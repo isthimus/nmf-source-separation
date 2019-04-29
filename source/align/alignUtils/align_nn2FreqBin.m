@@ -1,4 +1,4 @@
-function freqBins = align_nn2FreqBin (nn, spectInfo)
+function freqBins = aln_nn2FreqBin (nn, spectInfo)
 	% converts a midi note number (nn, as an integer) to an fft frequency bin.
 	% vectorised
 	% since nn might not correspond exactly to frequency, this function rounds DOWN to the nearest freq bin

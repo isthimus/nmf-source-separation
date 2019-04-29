@@ -1,4 +1,4 @@
-function [W_out, H_out] = nmf_init_rand (spectInfo, k, avg)
+function [W_out, H_out] = nss_init_rand (spectInfo, k, avg)
     % given the shape of V and a value for K (ie number of basis vectors),
     % build a random pair of matrices to act as the initial W and H
     
@@ -10,12 +10,12 @@ function [W_out, H_out] = nmf_init_rand (spectInfo, k, avg)
     if size(avg) == [1,1]
         avg = [avg, avg];
     elseif ~isequal(size(avg),[1,2])
-        ME = MException ("nmf_init_rand:bad_input", "avg should be a scalar or a 2 element vector");
+        ME = MException ("nss_init_rand:bad_input", "avg should be a scalar or a 2 element vector");
         throw(ME)
     end
     
     if any(avg(:) <= 0)
-        ME = MException ("nmf_init_rand:bad_input", "avg should be all positive");
+        ME = MException ("nss_init_rand:bad_input", "avg should be all positive");
         throw(ME)
     end
     

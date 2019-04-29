@@ -1,4 +1,4 @@
-function out = align_onsUtil_specDiff_taxi_pesky0 (spect, spectInfo)
+function out = aln_onsUtil_specDiff_taxi_pesky0 (spect, spectInfo)
     % NB SAME AS SPECDIFF_TAXI BUT WITH THE 0 IN LINE 9 SWAPPED
     % will shift some times around I think. 
 
