@@ -31,7 +31,7 @@ function onset = align_getOnset_midi(notes, spectInfo, smoothing, smooth_ksize, 
 
     % smoothing if smoothing flag is set
     if smoothing
-        onset = align_onsetSmooth(onset, smooth_ksize, smooth_use_root);
+        onset = align_onsUtil_smooth(onset, smooth_ksize, smooth_use_root);
     end
 
 end

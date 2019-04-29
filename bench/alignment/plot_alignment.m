@@ -26,8 +26,8 @@ run(fullfile(PROJECT_PATH, 'source/scripts/setpaths.m'));
 
 % functions to test
 % interface: test_func(notes, audio, spect, spectInfo)
-Ons_agress = @(s,si)align_onsetSmooth(align_onset_leadingEdge(block_normalise(align_onset_specDiff_taxi(s,si),100,0),1),15);
-Ons_cons   = @(s,si)align_onsetSmooth(align_onset_leadingEdge(block_normalise(align_onset_specDiff_taxi(s,si),100,7),1), 15);
+Ons_agress = @(s,si)align_onsUtil_smooth(align_onsUtil_leadingEdge(block_normalise(align_onsUtil_specDiff_taxi(s,si),100,0),1),15);
+Ons_cons   = @(s,si)align_onsUtil_smooth(align_onsUtil_leadingEdge(block_normalise(align_onsUtil_specDiff_taxi(s,si),100,7),1), 15);
 test_funcs = { ... 
     @(n,a,s,si)align_dtw(n,a,si)
     @(n,a,s,si)align_dtw_onset(n,a,s,si,Ons_agress)
