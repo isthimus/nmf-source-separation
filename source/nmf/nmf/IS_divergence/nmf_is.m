@@ -1,4 +1,4 @@
-function [W_out, H_out, final_error, iterations] = nss_is (V, W, H, varargin)
+function [W_out, H_out, final_error, iterations] = nss_nmf_is (V, W, H, varargin)
 %{    
 non-negative matrix factorization algorithm - repeatedly updates "W" and "H"
 using a pair of update rules until the IS divergence between "V"
@@ -116,7 +116,7 @@ return values:
     % !!! should this be a warning not an error, allowing recovery of W, H?
     if final_error > done_thresh && atStationaryPoint == 0
         ME = MException (                                       ...
-            "nss_is:failed_to_converge",                 ...
+            "nss_nmf_is:failed_to_converge",                 ...
             "hit max iterations and still not within done_thresh" ...
         );
         throw(ME)

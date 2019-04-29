@@ -31,7 +31,7 @@ nmf_statPoint_thresh = 0.00001; % detect stationary point at 0.001% per 1000 ite
 nmf_max_iter = 1000000;         % max iterations 1'000'000
 nmf_done_thresh = 0;            % use only stationary point detection 
 p_nmf = @(V,W,H) ...
-    nss_euclidian_norm(V, W, H, nmf_statPoint_thresh, nmf_max_iter, nmf_done_thresh);
+    nss_nmf_euclidian_norm(V, W, H, nmf_statPoint_thresh, nmf_max_iter, nmf_done_thresh);
 
 % build init function
 init_K = 2; init_avg = 10;

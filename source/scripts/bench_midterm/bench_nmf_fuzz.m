@@ -49,16 +49,16 @@ inits = {
     "init_rand_k50",      @(V) nss_init_rand(size(V,1), size(V,2), 50, 10);
 
     % preconverge is
-    "init_is_k10",        @(V) nss_is(V, rand(size(V,1), 10), ones(10, size(V,2)));
-    "init_is_k50",        @(V) nss_is(V, rand(size(V,1), 50), ones(50, size(V,2)));
+    "init_is_k10",        @(V) nss_nmf_is(V, rand(size(V,1), 10), ones(10, size(V,2)));
+    "init_is_k50",        @(V) nss_nmf_is(V, rand(size(V,1), 50), ones(50, size(V,2)));
 
     % preconverge kl
-    "init_kl_k10",        @(V) nss_kl(V, rand(size(V,1), 10), ones(10, size(V,2)));
-    "init_kl_k50",        @(V) nss_kl(V, rand(size(V,1), 50), ones(50, size(V,2)));
+    "init_kl_k10",        @(V) nss_nmf_kl(V, rand(size(V,1), 10), ones(10, size(V,2)));
+    "init_kl_k50",        @(V) nss_nmf_kl(V, rand(size(V,1), 50), ones(50, size(V,2)));
 
     % preconverge euclidian
-    "init_euclidian_k10", @(V) nss_euclidian(V, rand(size(V,1), 10), ones(10, size(V,2)));
-    "init_euclidian_k50", @(V) nss_euclidian(V, rand(size(V,1), 50), ones(50, size(V,2)));
+    "init_euclidian_k10", @(V) nss_nmf_euclidian(V, rand(size(V,1), 10), ones(10, size(V,2)));
+    "init_euclidian_k50", @(V) nss_nmf_euclidian(V, rand(size(V,1), 50), ones(50, size(V,2)));
 };
 
 
@@ -75,9 +75,9 @@ fuzzes = {
 
 % collect nmf funcs
 nmf_funcs = {
-  "nss_euclidian", @nss_euclidian, @square_euclidian_distance;
-  "nss_is",        @nss_is,        @IS_divergence;
-  "nss_kl",        @nss_kl,        @KL_divergence;  
+  "nss_nmf_euclidian", @nss_nmf_euclidian, @square_euclidian_distance;
+  "nss_nmf_is",        @nss_nmf_is,        @IS_divergence;
+  "nss_nmf_kl",        @nss_nmf_kl,        @KL_divergence;  
 };
 
 fprintf('########################################\n')

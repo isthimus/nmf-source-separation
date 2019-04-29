@@ -1,4 +1,4 @@
-function notes_aligned = aln_dtw (notes, audio, spectInfo, use_vel)
+function notes_aligned = aln_align_dtw (notes, audio, spectInfo, use_vel)
     % perform alignment between the MIDI in notes and the audio in audio,
     % using dtw along with chroma extraction.
     % notes_aligned is the realigned MIDI.

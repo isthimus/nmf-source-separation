@@ -13,9 +13,9 @@ function sources_out = nss_separate_sources (nmf_func, nmf_init_func, spect_func
     % sources_out = reconstruction_func(orig_audio_spectrogram, W, H)
     %   NB! reconstruction func to return a matrix whose rows are the sources
     %
-    % eg - to make nss_euclidian_norm match nmf_func:
+    % eg - to make nss_nmf_euclidian_norm match nmf_func:
     % myThreshold = 10; myMaxIter = 10000;
-    % nmf_en_partial = @(V, W, H) nss_euclidian_norm(V, W, H, myThreshold, myMaxIter)
+    % nmf_en_partial = @(V, W, H) nss_nmf_euclidian_norm(V, W, H, myThreshold, myMaxIter)
     % nss_separate_sources(nmf_en_partial, <some>, <other>, <args>, ...)
     
     % get spectrogram, plot if plot_level >= 1

@@ -405,8 +405,8 @@ if 0
     wait_returnKey();
     close all;
 
-    % now try aln_dtw
-    notes_aligned = aln_dtw(notes, audio, spectInfo, 0);
+    % now try aln_align_dtw
+    notes_aligned = aln_align_dtw(notes, audio, spectInfo, 0);
 
     % build the piano roll of unaligned notes. make explicit the gap at the start, if any.
     [pr_u, pr_u_t, pr_u_nn] = piano_roll(notes, 0, spectInfo.hop/spectInfo.fs);
@@ -465,8 +465,8 @@ if 1
     spectInfo.num_freq_bins = size(spect, 1);
     spectInfo.num_time_bins = size(spect, 2);
 
-    % align using aln_dtw
-    notes_aligned = aln_dtw(notes, audio, spectInfo, 0);
+    % align using aln_align_dtw
+    notes_aligned = aln_align_dtw(notes, audio, spectInfo, 0);
 
     % call midiAudioClick
     sound(midiAudioClick(notes, audio, spectInfo), fs);
