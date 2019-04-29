@@ -1,4 +1,4 @@
-function out = align_onset_energyFirstDiff(audio, spectInfo, f_3db, N)
+function out = align_onsUtil_energyFirstDiff(audio, spectInfo, f_3db, N)
     % detects onsets in a signal by taking the local energy (squaring each sample),
     % lowpass filtering, and taking the first difference of the result. this has the
     % effect of creating short spikes when there is a sudden rise in the low-frequency energy.

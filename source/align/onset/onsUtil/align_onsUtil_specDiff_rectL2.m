@@ -1,4 +1,4 @@
-function out = align_onset_spectDiff_rectL2 (spect, spectInfo)
+function out = align_onsUtil_spectDiff_rectL2 (spect, spectInfo)
     % onset detecting function based on the rectified euclidian distance between sucessive stft frames
     % no chroma separation
 

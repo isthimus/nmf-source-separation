@@ -1,4 +1,4 @@
-function out = align_onset_bandSplit(spect, spectInfo,  onset_func, lowest_nn, highest_nn)
+function out = align_onsUtil_bandSplit(spect, spectInfo,  onset_func, lowest_nn, highest_nn)
 	% splits a signal into chroma, calls onset_func on each band, and recombines
 
     % unpack spectInfo
