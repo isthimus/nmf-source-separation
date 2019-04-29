@@ -2,6 +2,12 @@
 % when i have all the bits working i'll generic-ify
 clear
 
+% make a "legacy" version of the nmf_init_rand function
+% it's interface has changed and i'm loath to change this script 
+% until I have FSA benchmarks running
+nmf_init_rand_legacy = @(nfb,ntb,k,avg)...
+    nmf_init_rand(struct("num_freq_bins",nfb,"num_time_bins", ntb), k, avg);
+
 % cd to the folder this script is in
 script_path = mfilename('fullpath');
 if ispc
@@ -30,7 +36,7 @@ p_nmf = @(V,W,H) ...
 % build init function
 init_K = 2; init_avg = 10;
 p_init = @(freqBins, timeBins) ...
-    nmf_init_rand(freqBins, timeBins, init_K, init_avg);
+    nmf_init_rand_legacy(freqBins, timeBins, init_K, init_avg);
 
 % define the stft analysis and synthesis parameters
 stft_wlen = 1024; 

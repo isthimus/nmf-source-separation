@@ -2,6 +2,14 @@
 % are properly implemented
 % also gives some idea of how global the minima are
 
+% make a "legacy" version of the nmf_init_rand function
+% it's interface has changed and i'm loath to change this script 
+% until I have FSA benchmarks running
+nmf_init_rand_legacy = @(nfb,ntb,k,avg)...
+    nmf_init_rand(struct("num_freq_bins",nfb,"num_time_bins", ntb), k, avg);
+
+
+
 FUZZ_ATTEMPTS = 50; % set this in accordance with your patience and CPU GHz
 
 % cd to the folder this script is in
@@ -46,9 +54,9 @@ Vs = {
 % prototype - V -> W_init, H_init
 inits = {
     % rand
-    "init_rand_k03",      @(V) nmf_init_rand(size(V,1), size(V,2),  3, 10);
-    "init_rand_k10",      @(V) nmf_init_rand(size(V,1), size(V,2), 10, 10);
-    "init_rand_k50",      @(V) nmf_init_rand(size(V,1), size(V,2), 50, 10);
+    "init_rand_k03",      @(V) nmf_init_rand_legacy(size(V,1), size(V,2),  3, 10);
+    "init_rand_k10",      @(V) nmf_init_rand_legacy(size(V,1), size(V,2), 10, 10);
+    "init_rand_k50",      @(V) nmf_init_rand_legacy(size(V,1), size(V,2), 50, 10);
 
     % preconverge is
     "init_is_k10",        @(V) nmf_is(V, rand(size(V,1), 10), ones(10, size(V,2)));
