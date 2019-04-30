@@ -20,13 +20,15 @@ function [W_mask_out, H_mask_out] = aln_tol_lin (W_mask, W_tol, H_mask, H_tol)
 	% tolerance for W
 	W_kernelSize = 1 + 2 * floor(W_tol);
 	W_kernel = ones (W_kernelSize, 1);
-	W_out = imdilate(W_mask, W_kernel);
+	W_mask_out = imdilate(W_mask, W_kernel);
 
 	% tolerance for H, if doing H
 	if do_H
 		H_kernelSize = 1 + 2 * floor(H_tol);
 		H_kernel = ones (1, H_kernelSize);
-		H_out = imdilate(H_mask, H_kernel);
+		H_mask_out = imdilate(H_mask, H_kernel);
+	else 
+		H_mask_out = H_mask;
 	end
 
 end

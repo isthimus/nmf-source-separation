@@ -1,4 +1,4 @@
-function [W_mask, H_mask] = aln_makeMasks_midi (notes, spectInfo)
+function [W_mask, H_mask, chanVec] = aln_makeMasks_midi (notes, spectInfo)
     % given a midi representation of the notes in a piece of audio, builds masks for W and H
     % to allow score - aware initialisation.
     % audio_len_samp can be optionally derived from the midi information - leave as []
@@ -25,14 +25,14 @@ function [W_mask, H_mask] = aln_makeMasks_midi (notes, spectInfo)
     % figure out the max channel value and initialise W_mask and H_mask
     chans = notes(:,2);
     maxChan = max(chans);
-    W_mask = []; H_mask = [];
+    W_mask = []; H_mask = []; chanVec = [];
 
     % iterate over all channels in the midi file
-    for i = 0:maxChan
+    for chan_i = 0:maxChan
 
         % extract all the notes on this channel
         % continue to next iteration if current channel is empty
-        notes_thisChan = notes(chans == i, :);
+        notes_thisChan = notes(chans == chan_i, :);
         if isempty (notes_thisChan); continue; end;
 
         % build a "piano roll" matrix
@@ -43,13 +43,17 @@ function [W_mask, H_mask] = aln_makeMasks_midi (notes, spectInfo)
 
         % build masks for W and H based on this channel
         [W_mask_curr, H_mask_curr] = mask_from_pRoll (pianoRoll, pianoRoll_nn, pianoRoll_tb, spectInfo);
+        chanVec_curr = ones(size(H_mask_curr,1),1) * chan_i;
 
         % concatenate the new masks with those obtained from other channels
         % !!! BIG OL' PREALLOCATION PROBLEM HERE. but can't see a neat way round it :(
         % lots of arithmetic at start to decide exactly the size of W_mask, H_mask maybe?2
         W_mask = [W_mask, W_mask_curr]; % horizontal cat
         H_mask = [H_mask; H_mask_curr]; % vertical cat
+        chanVec = [chanVec; chanVec_curr];
     end
+
+    assert(iscolumn(chanVec), "internal: chanVec should be a column vector");
 
 end
 

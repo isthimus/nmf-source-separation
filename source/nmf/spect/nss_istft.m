@@ -13,11 +13,11 @@ function [x,t] = nss_nmf_istft (spect, spectInfo)
     % if spect has a max_freq_bins field, zero-fill back to its original shape
     if isfield(spectInfo, "max_freq_bins") && num_freq_bins < ceil((1+nfft)/2)
         num_zeros = ceil((1+nfft)/2) - num_freq_bins;
-        spect = [spect; zeros(num_zeros, size(spect,2));
+        spect = [spect; zeros(num_zeros, size(spect,2))];
     end
 
     % take the istft
-    [x,t] = istft(stft, analwin, synthwin, hop, nfft, fs);
+    [x,t] = istft(spect, analwin, synthwin, hop, nfft, fs);
 
 end
 

@@ -290,7 +290,7 @@ function [testvectors, testdefs] = gen_tables(switches);
             ratio = chroma_ratios(ratio_i);
 
             % taxi first
-            name = sprintf("OnsetTaxiRatio%.1fTol%iDrop%i", ratio,tol,drop);
+            name = sprintf("NVOnsetTaxiRatio%.1fTol%iDrop%i", ratio,tol,drop);
             onsFunc = @(s,si)onset_taxi(s,si, tol, drop);
             
             testdefs{end+1} = struct (...
@@ -300,7 +300,7 @@ function [testvectors, testdefs] = gen_tables(switches);
             );
 
             % then rect
-            name = sprintf("OnsetRectRatio%.1fTol%iDrop%i", ratio,tol,drop);
+            name = sprintf("NVOnsetRectRatio%.1fTol%iDrop%i", ratio,tol,drop);
             onsFunc = @(s,si)onset_rect(s,si, tol, drop);
             
             testdefs{end+1} = struct (...

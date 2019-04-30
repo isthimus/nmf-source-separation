@@ -1,25 +1,24 @@
-function sources_out = nss_sepSources_scoreAware_plot (
-    midiNotes,  ...
+function [sources_out, chanVec] = sepSources_scoreAware_plot ( ...
+    notes,  ...
     audio,  ...
     spectInfo, ...
     spect_func,  ...
     align_func,  ...
-    makeMask_func,  ...
     tol_func,  ...
-    nmf_init_func,  ...
     nmf_func,  ...
-    recons_func, ...
+    recons_func ...
 )
     % a many-argumented beast which performs the whole SASS pipeline based on 7 partial functions
     % !!! much more commenting/ explanation to come here...
-    % !!! good defaults will make a big difference here
+    % !!! good defaults will make a big difference 
+    % !!! clean up mask-making and recovery
 
     % this is the same as nss_sepSources_scoreAware 
     % except it plots intermediate values at every stage
 
     % take spect, update spectInfo
     [spect, spectInfo] = spect_func(audio, spectInfo);
-    assert(checkSpectInfo(spect), "missing values in return value for spectInfo!")
+    assert(checkSpectInfo(spectInfo), "missing values in return value for spectInfo!")
 
     % plot spectrogram
     figure(1)
@@ -32,7 +31,7 @@ function sources_out = nss_sepSources_scoreAware_plot (
     close all;
 
     % align midi
-    midiNotes_aligned = align_func(midiNotes, audio, spect, spectInfo);
+    notes_aligned = align_func(notes, audio, spect, spectInfo);
 
     % plot aligned vs unaligned MIDI
     figure(1)
@@ -42,7 +41,7 @@ function sources_out = nss_sepSources_scoreAware_plot (
     axis xy;
     colorbar;
     subplot(2,1,2)
-    imagesc(piano_roll(midiNotes));
+    imagesc(piano_roll(notes));
     
     figure(2)
     title("aligned MIDI")
@@ -51,13 +50,14 @@ function sources_out = nss_sepSources_scoreAware_plot (
     axis xy;
     colorbar;
     subplot(2,1,2)
-    imagesc(piano_roll(midiNotes_aligned));
+    imagesc(piano_roll(notes_aligned));
 
     wait_returnKey()
     close all;
 
     % build W and H masks, plot
-    [W_mask, H_mask] = makeMask_func(midiNotes_aligned, spectInfo);
+    [W_mask, H_mask, chanVec] = aln_makeMasks_midi(notes_aligned, spectInfo);
+	
     figure(1); 
     imagesc(W_mask);
     title("W\_mask - pre tolerance");
@@ -86,7 +86,9 @@ function sources_out = nss_sepSources_scoreAware_plot (
     close all;
 
     % initialise nmf matrices and mask them with W_mask, H_mask
-    [W_init, H_init] = nmf_init_func(spectInfo);
+    assert(size(W_mask,2) == size(H_mask,1), "W_mask and H_mask not multipliable");
+    k = size(W_mask,2);
+    [W_init, H_init] = nss_init_rand(spectInfo, k, 10);
     assert(all(size(W_mask) == size(W_init)), "size of W mask does not match W_init!");
     assert(all(size(H_mask) == size(H_init)), "size of H mask does not match H_init!");
     W_masked = W_init .* W_mask;
@@ -94,7 +96,7 @@ function sources_out = nss_sepSources_scoreAware_plot (
 
     % perform nmf
     spect_mag = abs(spect);
-    [W_out, H_out] = nmf_func (spect_mag, W_masked, H_masked, spectInfo);
+    [W_out, H_out] = nmf_func (spect_mag, W_masked, H_masked);
     figure(1); 
     imagesc(W_out);
     title("W\_out");
@@ -106,6 +108,9 @@ function sources_out = nss_sepSources_scoreAware_plot (
     axis xy;
     colorbar;
 
+    wait_returnKey()
+    close all;
+
     % reconstruct original sources
     sources_out = recons_func (spect, W_out, H_out, spectInfo);
 
@@ -116,4 +121,5 @@ function sources_out = nss_sepSources_scoreAware_plot (
         title('source time domain')
         wait_returnKey
     end
+    close all;
 end

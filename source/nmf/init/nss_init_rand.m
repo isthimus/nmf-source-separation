@@ -2,6 +2,11 @@ function [W_out, H_out] = nss_init_rand (spectInfo, k, avg)
     % given the shape of V and a value for K (ie number of basis vectors),
     % build a random pair of matrices to act as the initial W and H
     
+    % default args
+    if nargin < 3
+        avg = 10;
+    end
+
     % unpack spectInfo
     num_time_bins = spectInfo.num_time_bins;
     num_freq_bins = spectInfo.num_freq_bins;

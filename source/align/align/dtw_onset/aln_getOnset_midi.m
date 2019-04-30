@@ -31,7 +31,7 @@ function onsets = aln_getOnset_midi(notes, spectInfo, smoothing, smooth_ksize, s
 
     % smoothing if smoothing flag is set
     if smoothing
-        onsets = aln_onsUtil_smooth(onset, smooth_ksize, smooth_use_root);
+        onsets = aln_onsUtil_smooth(onsets, smooth_ksize, smooth_use_root);
     end
 
 end

@@ -12,8 +12,8 @@ CALC_SKIP_EXISTING = true;
 table_switches = struct();
 table_switches.TESTVECS_SOLO = true;
 table_switches.TESTVECS_MIX  = true;
-table_switches.TESTDEFS_VANILLA = false;
-table_switches.TESTDEFS_ONSET_VEL = false;
+table_switches.TESTDEFS_VANILLA = true;
+table_switches.TESTDEFS_ONSET_VEL = true;
 table_switches.TESTDEFS_ONSET_NOVEL = true;
 
 % cd to the folder this script is in
@@ -66,7 +66,7 @@ if CALC
             % get spectInfo, take spect
             spectInfo = testDef.spectInfo;
             spectInfo.fs = fs;
-            [spect, spectInfo] = num_stft(audio, spectInfo);
+            [spect, spectInfo] = nss_stft(audio, spectInfo);
             assert(checkSpectInfo(spectInfo), "bad spectInfo");
 
             % apply func
