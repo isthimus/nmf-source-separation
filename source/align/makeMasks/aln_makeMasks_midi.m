@@ -1,4 +1,4 @@
-function [W_mask, H_mask, chanVec] = aln_makeMasks_midi (notes, spectInfo)
+function [W_mask, H_mask, trackVec] = aln_makeMasks_midi (notes, spectInfo)
     % given a midi representation of the notes in a piece of audio, builds masks for W and H
     % to allow score - aware initialisation.
     % audio_len_samp can be optionally derived from the midi information - leave as []
@@ -22,38 +22,38 @@ function [W_mask, H_mask, chanVec] = aln_makeMasks_midi (notes, spectInfo)
     lastEndTime_samp = ceil(fs * max(endTimes(:)));
     assert (lastEndTime_samp <= audio_len_samp, "midi events occur after stated end of audio!")
 
-    % figure out the max channel value and initialise W_mask and H_mask
-    chans = notes(:,2);
-    maxChan = max(chans);
-    W_mask = []; H_mask = []; chanVec = [];
+    % figure out the max track value and initialise W_mask and H_mask
+    tracks = notes(:,1);
+    maxTrack = max(tracks);
+    W_mask = []; H_mask = []; trackVec = [];
 
-    % iterate over all channels in the midi file
-    for chan_i = 0:maxChan
+    % iterate over all tracks in the midi file
+    for track_i = 0:maxTrack
 
-        % extract all the notes on this channel
-        % continue to next iteration if current channel is empty
-        notes_thisChan = notes(chans == chan_i, :);
-        if isempty (notes_thisChan); continue; end;
+        % extract all the notes on this track
+        % continue to next iteration if current track is empty
+        notes_thisTrack = notes(tracks == track_i, :);
+        if isempty (notes_thisTrack); continue; end;
 
         % build a "piano roll" matrix
         % pianoRoll_tb(n) gives the fft time bin corresponding to pianoRoll(:, n).
         % derived using pianoRoll_t which gives the time in seconds for pianoRoll(:, n).
-        [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes_thisChan, 0, hop/fs);
+        [pianoRoll, pianoRoll_t, pianoRoll_nn] = piano_roll(notes_thisTrack, 0, hop/fs);
         pianoRoll_tb = aln_secs2TimeBin(pianoRoll_t, spectInfo);
 
-        % build masks for W and H based on this channel
+        % build masks for W and H based on this track
         [W_mask_curr, H_mask_curr] = mask_from_pRoll (pianoRoll, pianoRoll_nn, pianoRoll_tb, spectInfo);
-        chanVec_curr = ones(size(H_mask_curr,1),1) * chan_i;
+        trackVec_curr = ones(size(H_mask_curr,1),1) * track_i;
 
-        % concatenate the new masks with those obtained from other channels
+        % concatenate the new masks with those obtained from other tracks
         % !!! BIG OL' PREALLOCATION PROBLEM HERE. but can't see a neat way round it :(
         % lots of arithmetic at start to decide exactly the size of W_mask, H_mask maybe?2
         W_mask = [W_mask, W_mask_curr]; % horizontal cat
         H_mask = [H_mask; H_mask_curr]; % vertical cat
-        chanVec = [chanVec; chanVec_curr];
+        trackVec = [trackVec; trackVec_curr];
     end
 
-    assert(iscolumn(chanVec), "internal: chanVec should be a column vector");
+    assert(iscolumn(trackVec), "internal: trackVec should be a column vector");
 
 end
 

@@ -1,4 +1,4 @@
-function [sources_out, chanVec] = sepSources_scoreAware_plot ( ...
+function [sources_out, trackVec] = sepSources_scoreAware_plot ( ...
     notes,  ...
     audio,  ...
     spectInfo, ...
@@ -56,7 +56,7 @@ function [sources_out, chanVec] = sepSources_scoreAware_plot ( ...
     close all;
 
     % build W and H masks, plot
-    [W_mask, H_mask, chanVec] = aln_makeMasks_midi(notes_aligned, spectInfo);
+    [W_mask, H_mask, trackVec] = aln_makeMasks_midi(notes_aligned, spectInfo);
 	
     figure(1); 
     imagesc(W_mask);
@@ -112,8 +112,11 @@ function [sources_out, chanVec] = sepSources_scoreAware_plot ( ...
     close all;
 
     % reconstruct original sources
-    sources_out = recons_func (spect, W_out, H_out, spectInfo);
-
+    % note-by-note
+    sources_note = recons_func (spect, W_out, H_out, spectInfo);
+    % summed to on source per midi track
+    sources_out = aln_recoverFromMasks(sources_note, trackVec);  
+    %{
     % plot sources in time domain
     for i = 1:size(sources_out, 1)
         source_vec = sources_out(i, :);
@@ -122,4 +125,5 @@ function [sources_out, chanVec] = sepSources_scoreAware_plot ( ...
         wait_returnKey
     end
     close all;
+    %}
 end
