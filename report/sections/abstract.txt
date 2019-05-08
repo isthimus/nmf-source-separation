@@ -1,6 +1,0 @@
-NB: this is just a jumping off point. will need rewriting when the paper is done.
-
-BUILDING AN NMF SOURCE SEPARATION TOOLBOX FOR MUSICAL AUDIO
-
-Non Negative Matrix Factorisation (NMF) has proven to be an effective tool in source separation problems for musical audio. This report presents a MATLAB framework for source separation using NMF. Several related algorithms have been implemented and benchmarked, and the software is highly modular and extensible. We also present a discussion and timeline of future work, including score-aware implementations and release as a MATLAB toolbox.
-
