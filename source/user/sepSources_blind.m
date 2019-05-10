@@ -7,37 +7,36 @@ function sources_out = sepSources_blind ( ...
     nmf_func, ...
     reconstruct_func ...
 )
-    freakout % bring me back into line with sepSources_plot!
-
-
     % performs source separation using one of a range of nmf functions.
-    % returns a matrix where each column is one separated out source.
+    % returns a matrix where each row is one separated out source.
     %
     % "audio" is a vector containing the audio to be worked on.
-    % k is the expected total number of distinct notes across all instruments
+    % k is the expected totl number of distinct notes across all instruments
     % all other inputs are function handles with prototypes as below
     % use partial application to make them match if necessary
     %
-    % [W_out, H_out] = nmf_func(V, W, H)
-    % [W_init, H_init] = nmf_init_func(num_freq_bins, num_time_bins)
-    % spectrogram = spectrogram_func(vector)
-    % sources_out = reconstruction_func(orig_audio_spectrogram, W, H)
-    %   NB! reconstruction func to return a matrix whose rows are the sources
+    % !!! add the partial function interfaces
     %
-    % eg - to make nss_nmf_euclidian_norm match nmf_func:
-    % myThreshold = 10; myMaxIter = 10000;
-    % nmf_func = @(V, W, H) nss_nmf_euclidian_norm(V, W, H, myThreshold, myMaxIter)
-    % nss_separate_sources(nmf_func, <some>, <other>, <args>, ...)
+    % !!! new partial function example
     
-    % take spect and initialise
+    % take spect
     [spect, spectInfo] = spect_func(audio, spectInfo);
+    assert(checkSpectInfo(spectInfo), "missing values in return value for spectInfo!");
+
+    % initialise NMF function
     [W_init, H_init] = nmf_init_func(spectInfo, k);
+    assert(isequal( size(W_init),[spectInfo.num_freq_bins,k] ), "W_init is the wrong size");
+    assert(isequal( size(H_init),[k,spectInfo.num_freq_bins] ), "H_init is the wrong size");
 
     % do nmf
     spect_mag = abs(spect);
     [W_out,H_out] = nmf_func(spect_mag, W_init, H_init);
+    assert(isequal(size(W_init), size(W_out)), "W_out is the wrong size");
+    assert(isequal(size(H_init), size(H_out)), "H_out is the wrong size");
 
-    % reconstruct and return sources
+    % reconstruct sources
     sources_out = reconstruct_func (spect, W_out, H_out, spectInfo);
-end
+    assert(size(sources_out, 1) == k, "wrong number of sources in output");
 
+    % implicitly return sources_out
+end

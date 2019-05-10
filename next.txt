@@ -1,26 +1,30 @@
-X align_dtw_onset running in plotter 
-align_dtw_freeEnds ( or never? ) OR NEVER
+for posterity: we made it through onset, alignment, source/user, a whole massive load of benchmarking, and a million other things to get here <3
+
+=== FSA bench ===
+
+- line up *_plot with their silent counterparts X
+- verify output of SASS pipeline is track-aware X 
+
+- SASS testDefs X
+- SASS bench codeup
+	- type up testDefs X 
+	- metadata X 
+	- fix recons XXX
+	- think about error handling for nmf_kl LOL SO ANYWAY X 
+	- editing BSS_EVAL arghhh
+		- see also ARRRGGGHhhggagrhagrthhgarARGHagrhaaaaarhfuckthis
+	- need sooome sort of test run to get a feel. maybe single testvec?
+	- verfy gen_tables by eye X 
+
+- BSS testDefs
+- BSS datasets
+- BSS bench
 
 
-proper alignment bench	
 
---- alignment bench magpie ---
-BLOCK NORM AUDIO LIKE (nope)
-different types of chromagram (nope)
-weighting of onset vs chroma, "cautious" vs "agressive" onset detection
-super pretty plots from benchmark_onset (currently sat in comments at the bottom) (maybe?)
-SASS WILL DEFFFF NEED TIME TOILERANCE (haha maybe even nope)
 
-=== alignment and onset writeup === 
-proper figures for each
-"method" written up in detail
-redtext + cyte
-	
+=== docsDay ===
+- header comments for everything x.x (BREAK THIS OUT)
+- tuned_funcs, defaults, etc. 
 
-=== next: source/user (this is basically bss or sass benching) ===
-if it's tomorrow morning now (25/4)HAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHA: new week plan, accounting for VHDL, writeup, code, toolboxing, citations....
-while you're here. align -> aln, nmf -> nss
-	FUCK ME, ONSET VS ONSETS....
-revisit nmf_init_func() and recons_func()
-make new nmf functions + shakedown
-MAKE RIGOROUSLY SURE YOUR NMF FUNCTIONS ARE COOPERATING XOXO
+

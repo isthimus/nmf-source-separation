@@ -30,7 +30,11 @@ function sources_out = sepSources_blind_plot ( ...
     
     % take spect and initialise
     [spect, spectInfo] = spect_func(audio, spectInfo);
+    assert(checkSpectInfo(spectInfo), "missing values in return value for spectInfo!");
+
     [W_init, H_init] = nmf_init_func(spectInfo, k);
+    assert(isequal( size(W_init),[spectInfo.num_freq_bins,k] ), "W_init is the wrong size");
+    assert(isequal( size(H_init),[k,spectInfo.num_freq_bins] ), "H_init is the wrong size");
 
     % plot spectrogram
     figure(1)
@@ -45,6 +49,8 @@ function sources_out = sepSources_blind_plot ( ...
     % do nmf
     spect_mag = abs(spect);
     [W_out,H_out] = nmf_func(spect_mag, W_init, H_init);
+    assert(isequal(size(W_init), size(W_out)), "W_out is the wrong size");
+    assert(isequal(size(H_init), size(H_out)), "H_out is the wrong size");
 
     % plot W_out
     figure(1)
@@ -65,6 +71,7 @@ function sources_out = sepSources_blind_plot ( ...
 
     % reconstruct sources
     sources_out = reconstruct_func (spect, W_out, H_out, spectInfo);
+    assert(size(sources_out, 1) == k, "wrong number of sources in output");
 
     % plot sources in time domain
     for i = 1:size(sources_out, 1)

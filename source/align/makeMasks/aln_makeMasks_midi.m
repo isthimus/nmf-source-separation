@@ -52,9 +52,6 @@ function [W_mask, H_mask, trackVec] = aln_makeMasks_midi (notes, spectInfo)
         H_mask = [H_mask; H_mask_curr]; % vertical cat
         trackVec = [trackVec; trackVec_curr];
     end
-
-    assert(iscolumn(trackVec), "internal: trackVec should be a column vector");
-
 end
 
 function [W_mask, H_mask] = mask_from_pRoll (pianoRoll, pianoRoll_nn, pianoRoll_tb, spectInfo)

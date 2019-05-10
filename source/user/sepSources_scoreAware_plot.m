@@ -97,6 +97,8 @@ function [sources_out, trackVec] = sepSources_scoreAware_plot ( ...
     % perform nmf
     spect_mag = abs(spect);
     [W_out, H_out] = nmf_func (spect_mag, W_masked, H_masked);
+    assert(isequal(size(W_init), size(W_out)), "W_out is the wrong size");
+    assert(isequal(size(H_init), size(H_out)), "H_out is the wrong size");
     figure(1); 
     imagesc(W_out);
     title("W\_out");
@@ -114,7 +116,7 @@ function [sources_out, trackVec] = sepSources_scoreAware_plot ( ...
     % reconstruct original sources
     % note-by-note
     sources_note = recons_func (spect, W_out, H_out, spectInfo);
-    % summed to on source per midi track
+    % summed to one source per midi track
     sources_out = aln_recoverFromMasks(sources_note, trackVec);  
     %{
     % plot sources in time domain

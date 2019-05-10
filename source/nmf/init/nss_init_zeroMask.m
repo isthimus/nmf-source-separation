@@ -7,6 +7,7 @@ function [W_out, H_out] = nss_init_zeroMask (W_mask, H_mask, spectInfo)
 	% precondition checks
 	assert (size(W_mask,1) == num_freq_bins, "shape of W_mask does not match value given for num_freq_bins");
 	assert (size(H_mask,2) == num_time_bins, "shape of h_mask does not match value given for num_time_bins");
+    assert(size(W_mask,2) == size(H_mask,1), "W_mask and H_mask not multipliable");
 
 	% find K (ie number of independent notes)
 	K = size(W_mask, 2);

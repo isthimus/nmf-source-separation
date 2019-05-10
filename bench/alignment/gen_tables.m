@@ -32,6 +32,8 @@ function [testvectors, testdefs] = gen_tables(switches);
     DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');
 
     % BUILD TEST VECTORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    % solo instruments 
     if TESTVECS_SOLO
         % nice easy solo piano with lots of clear onsets
         testvectors{end+1} = struct( ...

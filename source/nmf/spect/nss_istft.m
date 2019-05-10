@@ -9,6 +9,7 @@ function [x,t] = nss_nmf_istft (spect, spectInfo)
     nfft = spectInfo.nfft;
     fs = spectInfo.fs;
     num_freq_bins = spectInfo.num_freq_bins;
+    audio_len_samp = spectInfo.audio_len_samp;
 
     % if spect has a max_freq_bins field, zero-fill back to its original shape
     if isfield(spectInfo, "max_freq_bins") && num_freq_bins < ceil((1+nfft)/2)
@@ -18,6 +19,13 @@ function [x,t] = nss_nmf_istft (spect, spectInfo)
 
     % take the istft
     [x,t] = istft(spect, analwin, synthwin, hop, nfft, fs);
+
+    % zero pad x to match the audio_len_samp
+    if isrow(x)
+        x = [x, zeros(1, audio_len_samp - length(x))];
+    else
+        x = [x; zeros(audio_len_samp - length(x), 1)];
+    end
 
 end
 
