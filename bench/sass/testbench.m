@@ -5,7 +5,7 @@ clear
 CALC = true;
 BENCH = false;
 PLOT = true;
-CALC_SKIP_EXISTING = true;
+CALC_RETHROW = true;
 
 % switches for testdefs
 table_switches = struct();
@@ -13,7 +13,7 @@ table_switches.TESTVECS_TRIOS = false;
 table_switches.TESTVECS_TAKEFIVE = true;
 table_switches.TESTDEFS_HASS = false;
 table_switches.TESTDEFS_HAM = true;
-table_switches.TESTDEFS_SASS = false;
+table_switches.TESTDEFS_SASS = true;
 
 % cd to the folder this script is in
 script_path = mfilename('fullpath');
@@ -29,13 +29,22 @@ PROJECT_PATH = fullfile('../../');
 TRIOS_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/TRIOS');
 PHENICX_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/PHENICX');
 DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');
+USER_FUNCS_PATH = fullfile(PROJECT_PATH, '/source/user');
 run(fullfile(PROJECT_PATH, 'source/scripts/setpaths.m'));
 
 % generate testvector and test definition tables
 [testVectors, testDefs] = gen_tables(table_switches);
 
+% generate tuned functions
+run(fullfile(USER_FUNCS_PATH, "gen_tuned_funcs"));
+
 % CALC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 if CALC
+
+    % start a metadata list
+    metadata = cell(0,0);
 
     % for each testDef ...
     for td_i = 1:length(testDefs)
@@ -83,32 +92,35 @@ if CALC
                 meta.testTime = toc();
                 meta.ranToCompletion = true;
 
+                % write sources to file
+                assert(size(sources,1) < size(sources, 2), "source array probably transposed incorrectly")
+                for i = 1:size(sources, 1)
+                    filepath = test2FilePath(testDef,testVec,i);
+                    audiowrite(filepath, sources(i, :),  fs);
+                end
             catch exception
                 % if theres an exception, just record it and move on
                 meta.testTime = Inf;
                 meta.ranToCompletion = false;
-            end
 
-            % write sources to file
-            assert(size(sources,1) < size(sources, 2), "source array probably transposed incorrectly")
-            for i = 1:size(sources, 1)
-                filepath = test2FilePath(testDef,testVec,i);
-                audiowrite(sources(i, :), filepath);
+                if CALC_RETHROW
+                    rethrow(exception);
+                end
             end
 
             % write metadata to file
-            filepath = test2FilePath(testDef, testVec, -1);
-            save(filepath, 'meta');
+            metadata(end+1, 1:3) = {testDef.name, testVec.name, meta};
+            save("./results/calc_metadata.mat", 'meta');
+
+            fprintf(".")
         end
+        fprintf("#\n")
     end
 end % if CALC
 
 % BENCH %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % NB must check metadata before anything else.
-
-
-
 
 
 function path = test2FilePath (testDef, testVec, id)
@@ -118,7 +130,7 @@ function path = test2FilePath (testDef, testVec, id)
         idStr = "meta";
         ext = "mat";
     else 
-        idStr = num2Str(id);
+        idStr = num2str(id);
         ext = "wav";
     end
 

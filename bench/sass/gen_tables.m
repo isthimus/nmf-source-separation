@@ -38,10 +38,8 @@ function [testvectors, testdefs] = gen_tables(switches)
     DEV_DATA_PATH = fullfile(PROJECT_PATH, '/datasets/development');
     USER_FUNCS_PATH = fullfile(PROJECT_PATH, '/source/user');
 
-    % define the tuned_funcs - ie the "best in class" for each numeric stage
-    run(fullfile(USER_FUNCS_PATH, "gen_tuned_funcs"));
-
 % BUILD TEST VECTORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
     if TESTVECS_TRIOS
 
         % mix - TRIOS brahms
@@ -154,7 +152,7 @@ function [testvectors, testdefs] = gen_tables(switches)
         align_funcs = {@align_tuned, @alignOnset_tuned};
         wlens = {1024, 2048, 4096, 8192};
         tol_funcs = {
-            @(Wm,Hm,si) [Wm,Hm] % just return masks as is with no tol
+            @(Wm,Hm,si) deal(Wm,Hm) % just return masks as is with no tol
             @(Wm,Hm,si) aln_tol_lin(Wm, 0, Hm, 10) % 10 bins of timeTol
         };
 
@@ -207,7 +205,7 @@ function [testvectors, testdefs] = gen_tables(switches)
                 "align_func" , align_func , ...
                 "tol_func"   , tol_func, ...
                 "nmf_func"   , nmf_func, ...
-                "recons_func", @recons_tuned ... 
+                "recons_func", @nss_reconstruct_fromTracks ... 
             );            
         end; end; end; end;
     end
@@ -222,8 +220,8 @@ function [testvectors, testdefs] = gen_tables(switches)
             % dummy functions - just leave notes array unaltered, don't add any tolerance,
             % and don't perform NMF
             align_func_dummy = @(n,a,s,si) n;
-            tol_func_dummy = @(Wm,Hm,si) [Wm,Hm];
-            nmf_func_dummy = @(v,w,h) [w,h];
+            tol_func_dummy = @(Wm,Hm,si) deal(Wm,Hm);
+            nmf_func_dummy = @(v,w,h)deal(w,h);
 
             % build spectInfo
             % NB all tests hardcoded to hop=256 for now
@@ -247,13 +245,13 @@ function [testvectors, testdefs] = gen_tables(switches)
             % create and add to the list of testdefs
             testdefs {end+1} = struct ( ... 
                 "name"       , tdName, ...
-                "warpMidi"   , true, ...
+                "warpMidi"   , false, ...
                 "spectInfo"  , si, ...
                 "spect_func" , @nss_stft , ...
                 "align_func" , align_func_dummy , ...
                 "tol_func"   , tol_func_dummy, ...
                 "nmf_func"   , nmf_func_dummy, ...
-                "recons_func", @recons_tuned ...
+                "recons_func", @nss_reconstruct_fromTracks ...
             );            
         end;
     end
@@ -263,7 +261,7 @@ function [testvectors, testdefs] = gen_tables(switches)
         nmf_funcs = {@nss_nmf_euclidian, @nss_nmf_is, @nss_nmf_kl};
         wlens = {1024, 2048, 4096, 8192};
         tol_funcs = {
-            @(Wm,Hm,si) [Wm,Hm] % just return masks as is with no tol
+            @(Wm,Hm,si) deal(Wm,Hm) % just return masks as is with no tol
             @(Wm,Hm,si) aln_tol_lin(Wm, 0, Hm, 10) % 10 bins of timeTol
         };
 
@@ -315,7 +313,7 @@ function [testvectors, testdefs] = gen_tables(switches)
                 "align_func" , align_func_dummy , ...
                 "tol_func"   , tol_func, ...
                 "nmf_func"   , nmf_func, ...
-                "recons_func", @recons_tuned ... 
+                "recons_func", @nss_reconstruct_fromTracks ... 
             );            
         end; end; end;
     end  

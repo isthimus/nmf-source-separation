@@ -23,10 +23,6 @@ function sources_out = nss_reconstruct_fromTracks (spect, W, H, spectInfo, track
         for j = WH_indices(:).'
             
             % accumulate the STFT magnitudes from each index
-            disp(j);
-            disp(size(H(j,:)));
-            disp(size(W(:,j)));
-            disp(size(source_i_mag));
             source_i_mag = source_i_mag + H(j,:).*W(:,j); 
         end
 
@@ -35,7 +31,7 @@ function sources_out = nss_reconstruct_fromTracks (spect, W, H, spectInfo, track
         source_i_timedomain = nss_istft(source_i_fullspect, spectInfo);
  
         % write into sources_out
-        sources_out(i,:) = source_i_timedomain;
+        sources_out(i,:) = mat_normalise(source_i_timedomain, 1);
     end
 
     %implicit return sources_out

@@ -13,7 +13,9 @@ for posterity: we made it through onset, alignment, source/user, a whole massive
 	- think about error handling for nmf_kl LOL SO ANYWAY X 
 	- editing BSS_EVAL arghhh
 		- see also ARRRGGGHhhggagrhagrthhgarARGHagrhaaaaarhfuckthis
-	- need sooome sort of test run to get a feel. maybe single testvec?
+	- need sooome sort of test run to get a feel. maybe single testvec? X
+		- fix call to recons in sepSources. X 
+		- tuned_funcs folder. ho hum. 
 	- verfy gen_tables by eye X 
 
 - BSS testDefs

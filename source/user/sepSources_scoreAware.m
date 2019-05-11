@@ -8,7 +8,7 @@ function sources_out = sepSources_scoreAware ( ...
     nmf_func,  ...
     recons_func ...
 )
-     % a many-argumented beast which performs the whole SASS pipeline based on 7 partial functions
+    % a many-argumented beast which performs the whole SASS pipeline based on 7 partial functions
     % !!! much more commenting/ explanation to come here...
     % !!! good defaults will make a big difference 
     % !!! clean up mask-making and recovery
@@ -42,8 +42,5 @@ function sources_out = sepSources_scoreAware ( ...
     assert(isequal(size(H_init), size(H_out)), "H_out is the wrong size");
 
     % reconstruct original sources
-    % note-by-note
-    sources_note = recons_func (spect, W_out, H_out, spectInfo);
-    % summed to one source per midi track
-    sources_out = aln_recoverFromMasks(sources_note, trackVec);  
+    sources_out = recons_func (spect, W_out, H_out, spectInfo, trackVec);
 end

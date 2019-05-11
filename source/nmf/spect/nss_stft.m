@@ -1,4 +1,4 @@
-function [spect, spectInfo_out] = num_stft(audio, spectInfo)
+function [spect, spectInfo_out] = nss_stft(audio, spectInfo)
     % performs stft on audio based on the information in spectInfo
     % also updates spectInfo
     % supports spect elision

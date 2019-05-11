@@ -38,7 +38,7 @@ run('../../source/user/gen_tuned_funcs');
 spect_func = @nss_stft;
 tol_func = @(Wm, Hm, si)aln_tol_lin(Wm,1, Hm, 10);
 nmf_func = @nss_nmf_euclidian;
-recons_func = @nss_reconstruct_keepPhase;
+recons_func = @nss_reconstruct_fromTracks;
 
 % do it
 [sources_out, trackVec] = sepSources_scoreAware_plot ( ...
