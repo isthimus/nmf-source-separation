@@ -5,15 +5,18 @@ clear
 CALC = true;
 BENCH = false;
 PLOT = true;
-CALC_RETHROW = true;
+CALC_RETHROW = false;
+CALC_SKIP_EXISTING = true;
+
 
 % switches for testdefs
 table_switches = struct();
-table_switches.TESTVECS_TRIOS = false;
-table_switches.TESTVECS_TAKEFIVE = true;
-table_switches.TESTDEFS_HASS = false;
+table_switches.TESTVECS_TRIOS = true;
+table_switches.TESTVECS_TAKEFIVE = false;
+table_switches.TESTDEFS_HASS = true;
 table_switches.TESTDEFS_HAM = true;
 table_switches.TESTDEFS_SASS = true;
+table_switches.TESTDEFS_LONGWLEN = true;
 
 % cd to the folder this script is in
 script_path = mfilename('fullpath');
@@ -44,16 +47,32 @@ run(fullfile(USER_FUNCS_PATH, "gen_tuned_funcs"));
 if CALC
 
     % start a metadata list
-    metadata = cell(0,0);
+    if CALC_SKIP_EXISTING && isfile("./results/calc_metadata.mat")
+        load("./results/calc_metadata.mat");
+    else
+        metadata = cell(0,0);
+    end
+
+
 
     % for each testDef ...
     for td_i = 1:length(testDefs)
         testDef = testDefs{td_i};
+        fprintf("%s\n", testDef.name);
 
         % ... and each testvector
         for tv_i = 1:length(testVectors)
             testVec = testVectors{tv_i};
+            fprintf("\t%s", testVec.name);
 
+            % if the test we're about to run already happened, skip this iteration
+            if CALC_SKIP_EXISTING && ~isempty(metadata)
+                if ~isempty(find(strcat(string(metadata(:,1)),string(metadata(:,2))) == strcat(testDef.name, testVec.name)))
+                    fprintf('\n');
+                    continue
+                end
+            end
+            
             % seed randomness using current testvec index
             % this ensures its the same for each func being tested
             rng(tv_i * 9999);
@@ -90,6 +109,7 @@ if CALC
                     testDef.recons_func ... 
                 );
                 meta.testTime = toc();
+                fprintf(" %d\n", meta.testTime);
                 meta.ranToCompletion = true;
 
                 % write sources to file
@@ -102,6 +122,7 @@ if CALC
                 % if theres an exception, just record it and move on
                 meta.testTime = Inf;
                 meta.ranToCompletion = false;
+                meta.exception = exception;
 
                 if CALC_RETHROW
                     rethrow(exception);
@@ -110,11 +131,8 @@ if CALC
 
             % write metadata to file
             metadata(end+1, 1:3) = {testDef.name, testVec.name, meta};
-            save("./results/calc_metadata.mat", 'meta');
-
-            fprintf(".")
+            save("./results/calc_metadata.mat", 'metadata');
         end
-        fprintf("#\n")
     end
 end % if CALC
 
@@ -122,6 +140,10 @@ end % if CALC
 
 % NB must check metadata before anything else.
 
+% PLOT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if PLOT
+    disp("nice"); % nice.
+end
 
 function path = test2FilePath (testDef, testVec, id)
     assert(nargin >= 3, "too few args - called by old code perhaps?");
