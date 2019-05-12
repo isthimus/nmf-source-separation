@@ -2,12 +2,11 @@
 clear
 
 % switches for this testbench
-CALC = true;
-BENCH = false;
+CALC = false;
+BENCH = true;
 PLOT = true;
 CALC_RETHROW = false;
 CALC_SKIP_EXISTING = true;
-
 
 % switches for testdefs
 table_switches = struct();
@@ -42,8 +41,6 @@ run(fullfile(PROJECT_PATH, 'source/scripts/setpaths.m'));
 run(fullfile(USER_FUNCS_PATH, "gen_tuned_funcs"));
 
 % CALC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 if CALC
 
     % start a metadata list
@@ -52,8 +49,6 @@ if CALC
     else
         metadata = cell(0,0);
     end
-
-
 
     % for each testDef ...
     for td_i = 1:length(testDefs)
@@ -73,7 +68,7 @@ if CALC
                 end
             end
             
-            % seed randomness using current testvec index
+            % seed domness using current testvec index
             % this ensures its the same for each func being tested
             rng(tv_i * 9999);
 
@@ -137,12 +132,143 @@ if CALC
 end % if CALC
 
 % BENCH %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if BENCH
 
-% NB must check metadata before anything else.
+    disp('benching...');
+
+    % pick up metadata from calc run if not done already
+    if ~CALC
+        load("./results/calc_metadata.mat");
+    end
+
+    % ----------------------------
+    % master results array, ran to completion, and byTest
+    % ----------------------------
+    num_td = length(testDefs);
+    num_tv = length(testVectors);
+
+    % make a cellarray to hold the results
+    % +1 for "header rows" giving names of testdefs/vecs
+    results_master = cell(num_tv+1, num_td+1);  
+    results_master{1,1} = ":)";
+
+    results_ranToCompletion = {"testName", "ranToCompletion"};
+    results_byTest = {"testName", "runtime", "avg SDR", "avg SIR", "avg SAR"};
+
+    % for each testVector
+    for tv_i = 1:num_tv
+        testVec = testVectors{tv_i};
+
+        % write the name of this testVec in the first column of master results
+        results_master{tv_i+1,1} = testVec.name;
+
+        % load the ground truth sources
+        sources_ground = [];
+        for src_i = 1:length(testVec.sourcePaths)
+            sourcePath = testVec.sourcePaths(src_i);
+            sources_ground = [sources_ground; audioread(sourcePath).'];
+        end
+        assert (size(sources_ground, 1) == 3, "bad shape for ground truth sources matrix");
+
+        % for each testDef
+        for td_i = 1:num_td
+            testDef = testDefs{td_i};
+
+            % pick up a combined "test name"
+            testName = sprintf("%s_%s", testDef.name, testVec.name);
+
+            % write the name of this test in the first row
+            % will do it loads of times but whatever
+            results_master{1, td_i+1} = testDef.name;
+
+            % get the metadata struct for this test
+            thisMetaRow = find(string(metadata(:,1)) == testDef.name & string(metadata(:, 2)) == testVec.name);
+            if isempty(thisMetaRow)
+                error(sprintf("failed to find test %s_%s in metadata table", testDef.name, testVec.name));
+            end;
+            meta = metadata{thisMetaRow, 3};
+
+            % store ranToCompletion results in cell array
+            % if this test did not run to completion, dont run BSS_eval
+            results_ranToCompletion(end+1,:) = {testName, meta.ranToCompletion};
+            if ~meta.ranToCompletion
+                results = struct();
+                results.ranToCompletion = false;
+                results_master{tv_i+1, td_i+1} = results;
+                continue;
+            end
+
+            % load the reconstructed sources
+            sources_recons = [];
+            for src_i = 1:length(testVec.sourcePaths)
+                sourcePath = test2FilePath(testDef,testVec,src_i);
+                sources_recons = [sources_recons; audioread(sourcePath).'];
+            end
+            assert (size(sources_recons, 1) == 3, "bad shape for reconstructed sources matrix");
+
+            % run bss_eval, write results to results_master
+            results = struct();
+            results.ranToCompletion = true; % already checked this
+            [results.SDRs, results.SIRs, results.SARs] = ...
+                bss_eval_sources(sources_recons, sources_ground);
+            results.testTime = meta.testTime;
+            results_master{tv_i+1, td_i+1} = results;
+
+            % put an averaged set of results for this test into results_byTest
+            results_byTest(end+1, :) = ... 
+                {testName, results.testTime, mean(results.SDRs), mean(results.SIRs), mean(results.SARs)};
+
+            fprintf('.');
+        end
+        fprintf('#\n');
+    end
+
+    % ---------------------------------
+    % measure source difficulty
+    % ---------------------------------
+
+    % find out which sources were hard, and which easy
+    results_sourceDifficulty = {"source", "avg SDR"};
+    for tv_i = 1:num_tv
+        
+        % get the current testVec struct, 
+        % and pull out the results for this vector from master
+        testVec = testVectors{tv_i};
+        results_thisVec = results_master(tv_i+1, 1:end);
+
+        % for each source in this testdef
+        for i = 1:length(testVec.sourcePaths)
+
+            % get a name for the current source
+            sourceName = sprintf("%s_%d", testVec.name, i);
+
+            % get a vector of SDRS for this vec and this source
+            SDRs = zeros(size(results_thisVec));
+            for j = 1:length(results_thisVec)
+                res = results_thisVec{j};
+                if isfield(res, SDRs)
+                    SDRs(j) = results_thisVec{j}.SDRs(i);
+                end
+            end
+
+            % take the average SDR, write into results_sourceDifficulty
+            meanSDR = mean(SDRs(SDRs~=0));
+            assert(isequal(size(meanSDR), [1,1]), "mean is the wrong size");
+            results_sourceDifficulty(end+1, :) = {sourceName, meanSDR};
+         end
+    end
+
+    % save everything to file
+    save("./results/results_master.mat", "results_master");
+    save("./results/results_ranToCompletion.mat", "results_ranToCompletion");
+    save("./results/results_byTest.mat", "results_byTest");
+    save("./results/results_sourceDifficulty.mat", "results_sourceDifficulty");
+
+end
 
 % PLOT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if PLOT
-    disp("nice"); % nice.
+    fprintf("nice\n"); % nice.
 end
 
 function path = test2FilePath (testDef, testVec, id)

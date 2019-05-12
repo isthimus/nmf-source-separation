@@ -14,8 +14,8 @@ for posterity: we made it through onset, alignment, source/user, a whole massive
 	- editing BSS_EVAL arghhh
 		- see also ARRRGGGHhhggagrhagrthhgarARGHagrhaaaaarhfuckthis
 	- need sooome sort of test run to get a feel. maybe single testvec? X
-		- fix call to recons in sepSources. X 
-		- tuned_funcs folder. ho hum. 
+		- fix call to recons in sepSources.X 
+		- tuned_funcs folder. ho hum. X
 	- verfy gen_tables by eye X 
 
 - BSS testDefs

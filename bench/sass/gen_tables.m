@@ -15,6 +15,7 @@ function [testvectors, testdefs] = gen_tables(switches)
         TESTDEFS_HAM = switches.TESTDEFS_HAM;
         % score aligned source separaion - full pipeline
         TESTDEFS_SASS = switches.TESTDEFS_SASS;
+        TESTDEFS_LONGWLEN = switches.TESTDEFS_LONGWLEN;
     else 
         % when in doubt define everything
         TESTVECS_TRIOS = true;
@@ -23,6 +24,9 @@ function [testvectors, testdefs] = gen_tables(switches)
         TESTDEFS_HASS = true;
         TESTDEFS_HAM = true;
         TESTDEFS_SASS = true;
+
+        % except the very long window lengths
+        TESTDEFS_LONGWLEN = false;        
     end
 
     % make empty testvectors/testdefs
@@ -149,12 +153,17 @@ function [testvectors, testdefs] = gen_tables(switches)
     if TESTDEFS_SASS
         % the parameters of the test series
         nmf_funcs = {@nss_nmf_euclidian, @nss_nmf_is, @nss_nmf_kl};
-        align_funcs = {@align_tuned, @alignOnset_tuned};
-        wlens = {1024, 2048, 4096, 8192};
+        align_funcs = {@align_tuned, @alignOnset_tuned};   
         tol_funcs = {
             @(Wm,Hm,si) deal(Wm,Hm) % just return masks as is with no tol
             @(Wm,Hm,si) aln_tol_lin(Wm, 0, Hm, 10) % 10 bins of timeTol
         };
+
+        if TESTDEFS_LONGWLEN
+            wlens = {1024, 2048, 4096, 8192};
+        else
+            wlens = {4096};
+        end
 
         % corresponding strings to name the generated testdefs with
         nmf_names = {"Euclid", "IS", "KL"};
@@ -211,7 +220,11 @@ function [testvectors, testdefs] = gen_tables(switches)
     end
     
     if TESTDEFS_HAM    
-        wlens = {1024, 2048, 4096, 8192};
+        if TESTDEFS_LONGWLEN
+            wlens = {1024, 2048, 4096, 8192};
+        else
+            wlens = {4096};
+        end
 
         for i = 1:length(wlens)
             % extract the current test params
@@ -259,7 +272,11 @@ function [testvectors, testdefs] = gen_tables(switches)
     if TESTDEFS_HASS
         % the parameters of the test series
         nmf_funcs = {@nss_nmf_euclidian, @nss_nmf_is, @nss_nmf_kl};
-        wlens = {1024, 2048, 4096, 8192};
+        if TESTDEFS_LONGWLEN
+            wlens = {1024, 2048, 4096, 8192};
+        else
+            wlens = {4096};
+        end
         tol_funcs = {
             @(Wm,Hm,si) deal(Wm,Hm) % just return masks as is with no tol
             @(Wm,Hm,si) aln_tol_lin(Wm, 0, Hm, 10) % 10 bins of timeTol

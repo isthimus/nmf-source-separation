@@ -18,7 +18,7 @@ function [sources_out, trackVec] = sepSources_scoreAware_plot ( ...
 
     % take spect, update spectInfo
     [spect, spectInfo] = spect_func(audio, spectInfo);
-    assert(checkSpectInfo(spectInfo), "missing values in return value for spectInfo!")
+    assert(checkSpectInfo(spectInfo), "error in spect_func: missing values in return value for spectInfo!")
 
     % plot spectrogram
     figure(1)
@@ -86,19 +86,19 @@ function [sources_out, trackVec] = sepSources_scoreAware_plot ( ...
     close all;
 
     % initialise nmf matrices and mask them with W_mask, H_mask
-    assert(size(W_mask,2) == size(H_mask,1), "W_mask and H_mask not multipliable");
+    assert(size(W_mask,2) == size(H_mask,1), "error in tol_func: W_mask and H_mask not multipliable");
     k = size(W_mask,2);
     [W_init, H_init] = nss_init_rand(spectInfo, k, 10);
-    assert(all(size(W_mask) == size(W_init)), "size of W mask does not match W_init!");
-    assert(all(size(H_mask) == size(H_init)), "size of H mask does not match H_init!");
+    assert(all(size(W_mask) == size(W_init)), "error in nmf_init_func: size of W mask does not match W_init!");
+    assert(all(size(H_mask) == size(H_init)), "error in nmf_init_func: size of H mask does not match H_init!");
     W_masked = W_init .* W_mask;
     H_masked = H_init .* H_mask;
 
     % perform nmf
     spect_mag = abs(spect);
     [W_out, H_out] = nmf_func (spect_mag, W_masked, H_masked);
-    assert(isequal(size(W_init), size(W_out)), "W_out is the wrong size");
-    assert(isequal(size(H_init), size(H_out)), "H_out is the wrong size");
+    assert(isequal(size(W_init), size(W_out)), "error in nmf_func: W_out is the wrong size");
+    assert(isequal(size(H_init), size(H_out)), "error in nmf_func: H_out is the wrong size");
     figure(1); 
     imagesc(W_out);
     title("W\_out");
