@@ -8,7 +8,41 @@ function notes_aligned = aln_align_dtw_onset (...
     use_vel, ...
     midiOnset_useRoot ...
 )
-    
+% ALN_ALIGN_DTW_ONSET - align a midi score to an audio vector using chroma and onset based dtw
+%
+%   arguments:
+%       notes - an array representing the midi score, in the format produced by midiInfo(readmidi(...))  
+%       audio - the audio vector
+%       spect - the mixture spectrogram
+%       spectInfo - a struct containing the following parameters
+%           synthwin - synthesis window   
+%           analwin - analysis window
+%           hop - hop size
+%           nfft - fft length
+%           fs - sampling frequency
+%           num_freq_bins - number of frequency bins in the spectrogram
+%           num_time_bins - number of time bins in the spectrogram
+%           audio_len_samp - lenght of the original audio
+%      onset_func - a handle to the onset detecting function to use
+%               interface - onset_features = onset_func(spect, spectInfo)
+%               the onset_features array should be a 1D array at timeBin-rate
+%      chroma_onset_ratio - the weighting (from 0 to 1) between chroma and onset features. 
+%           0 = all chroma
+%           1 = all onset
+%      use_vel - a flag indicating whether MIDI velocity should be incorporated or ignored
+%      midiOnset_useRoot - 
+%           0 = use a root-based smoothing kernel
+%           1 = use an exponential smoothing kernel
+%
+%   return values:
+%       notes_aligned - the realigned MIDI score, in the same format as "notes"
+%
+%   description:
+%       This function extracts chromagrams from both the MIDI score in notes and the audio in audio,
+%       then uses DTW (dynamic time warping) to align the MIDI chromagram to the audio chromagram
+%       it then propogates this information to the original notes array, producing a realigned
+%       MIDI score in notes_aligned.
+   
     % default args
     if nargin < 6
         chroma_onset_ratio = 0.5; % 1 => all chroma, 0 => all onset.

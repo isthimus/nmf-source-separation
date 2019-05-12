@@ -1,31 +1,44 @@
 function [W_out, H_out, final_error, iterations] = nss_nmf_euclidian_norm (V, W, H, varargin)
-%{    
-non-negative matrix factorization algorithm - repeatedly updates W and H
-using a pair of update rules until th normed square euclidian distance 
-between V and W * H is below "threshold", then returns them as W_out, H_out. 
-note that the update is multiplicative - elements of W and H which start at 
-zero will remain so.
+% NSS_NMF_EUCLIDIAN_NORM - perform NMF using update rules based on the normed, squared euclidian distance
+%
+%   arguments:
+%       V - the matrix to be approximated
+%       W - initial value for the W matrix (template vectors)
+%       H - initial value for the H matrix (activation vectors)
+% 
+%   optional arguments with varargin:
+%       1st - stationary point detection threshold (as a ratio per 1000 iterations)
+%       2nd - maximum number of iterations
+%       3rd - absolute completion threshold
+%
+%   return values:
+%       W_out - the matrix W after convergence by the nmf algorithm
+%       H_out - the matrix H after convergence by the nmf algorithm
+%       final_error - squared euclidian distance between W_out * H_out and V, after convergence
+%       iterations - total number of applications of the update rules
+%
+%   description:
+%       non-negative matrix factorization algorithm - repeatedly updates "W" and "H"
+%       using a pair of update rules until the normed square euclidian distance between "V"
+%       and W * H is small enough (see args below), then returns them as "W_out", "H_out". note
+%       that the update is multiplicative - elements of "W" and "H" which start at zero
+%       will remain so.
+% 
+%       note that this function is equivalent to nss_nmf_euclidian unless using absolute
+%       completion threshold (vararg #3)
+%
+%       The fourth arg, if supplied, is the stationary point detection threshold. 
+%           - if arg5 = 0.01 we need an improvement of 1% every 1000 iterations.
+%           - default 0.0001 ie 0.01% 
+%       
+%       The fifth arg, if supplied, is a max number of iterations.
+%           - default 1'000'000
+%       
+%       The sixth arg, if supplied, is a completion threshold - if the function gets 
+%       within this threshold it will immediately return the values it has for W,H.
+%           - normally not useful because stationary point detection covers most things
+%           - default 0 - i.e. default is to only use convergence detection
 
-The fourth arg, if supplied, is the stationary point detection threshold. 
-    - if arg5 = 0.01 we need an improvement of 1% every 1000 iterations.
-    - default 0.0001 ie 0.01% 
-
-The fifth arg, if supplied, is a max number of iterations.
-    - default 1'000'000
-
-The sixth arg, if supplied, is a completion threshold - if the function gets 
-within this threshold it will immediately return the values it has for W,H.
-    - normally not useful because stationary point detection covers most things
-    - default 0 - i.e. default is to only use convergence detection
-
-Other args will be ignored (silently!)
-
-return values:
-    "W_out", "H_out" are the results of the NMF calculation.
-    "final_error" gives the square euclidian distance between V and (W_out * H_out)
-    "iterations"  gives the number of update steps
-
-%}
 
     SUPPRESS_PRINT=0;
 

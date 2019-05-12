@@ -1,7 +1,29 @@
 function [W_mask, H_mask, trackVec] = aln_makeMasks_midi (notes, spectInfo)
+% ALN_MAKEMASKS_MIDI given a midi representation of the notes in a piece of audio, build masks for W and H
+%                    to allow score - aware initialisation
+%
+%   arguments: 
+%       notes - an array representing the midi score, in the format produced by midiInfo(readmidi(...))  
+%       spectInfo - a struct containing the following parameters
+%           wlen - window length
+%           audio_len_samp - lenght of the original audio
+%           hop - hop size
+%           nfft - fft length
+%           fs - sampling frequency
+%           max_freq_bins (optional) - remove frequency bins above this point]
+%
+%   return values:
+%       W_mask - the mask for initialisation of W in the NMF algorithm 
+%       H_mask - the mask for initialisation of H in the NMF algorithm 
+%       trackVec - a one-dimensional vector indicating which columns of W or 
+%           rows of H correspond to which MIDI track
+%
+%   description:
+%       given a midi representation of the notes in a piece of audio, this function builds masks for W and H
+%       to allow score - aware initialisation. 
+
     % given a midi representation of the notes in a piece of audio, builds masks for W and H
     % to allow score - aware initialisation.
-    % audio_len_samp can be optionally derived from the midi information - leave as []
     % NB if there is silence at the end of the audio then audio_len_samp MUST be provided
 
     % supress silly matlab warnings about semicolons
