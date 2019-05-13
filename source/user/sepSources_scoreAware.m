@@ -6,7 +6,9 @@ function sources_out = sepSources_scoreAware ( ...
     align_func,  ...
     tol_func,  ...
     nmf_func,  ...
-    recons_func ...
+    recons_func, ...
+    makeMasks_func, ...
+    nmf_saInit_func ...
 )
     % a many-argumented beast which performs the whole SASS pipeline based on 7 partial functions
     % !!! much more commenting/ explanation to come here...
@@ -31,6 +33,12 @@ function sources_out = sepSources_scoreAware ( ...
     end
     if nargin < 8 || isempty (recons_func)
         recons_func = @recons_tuned_SASS;
+    end    
+    if nargin < 9 || isempty (makeMasks_func)
+        makeMasks_func = @aln_makeMasks_midi;
+    end    
+    if nargin < 10 || isempty (nmf_saInit_func)
+        nmf_saInit_func = @nss_init_zeroMask;    
     end
 
     % take spect, update spectInfo
@@ -41,23 +49,19 @@ function sources_out = sepSources_scoreAware ( ...
     notes_aligned = align_func(notes, audio, spect, spectInfo);
 
     % build W and H masks
-    [W_mask, H_mask, trackVec] = aln_makeMasks_midi(notes_aligned, spectInfo);
+    [W_mask, H_mask, trackVec] = makeMasks_func(notes_aligned, spectInfo);
     
     % apply tolerance to W and H
     [W_mask, H_mask] = tol_func(W_mask, H_mask, spectInfo);
 
-    % initialise nmf matrices and mask them with W_mask, H_mask
-    assert(size(W_mask,2) == size(H_mask,1), "error in tol_func: W_mask and H_mask not multipliable");
-    k = size(W_mask,2);
-    [W_init, H_init] = nss_init_rand(spectInfo, k, 10);
-    assert(all(size(W_mask) == size(W_init)), "error in nmf_init_func: size of W mask does not match W_init!");
-    assert(all(size(H_mask) == size(H_init)), "error in nmf_init_func: size of H mask does not match H_init!");
-    W_masked = W_init .* W_mask;
-    H_masked = H_init .* H_mask;
+    % initialise nmf matrices using masking information
+    [W_init, H_init] = nmf_saInit_func(W_mask, H_mask, spectInfo);
+    assert(all(size(W_mask) == size(W_init)), "error in nmf_saInit_func: size of W mask does not match W_init!");
+    assert(all(size(H_mask) == size(H_init)), "error in nmf_saInit_func: size of H mask does not match H_init!");
 
     % perform nmf
     spect_mag = abs(spect);
-    [W_out, H_out] = nmf_func (spect_mag, W_masked, H_masked);
+    [W_out, H_out] = nmf_func (spect_mag, W_init, H_init);
     assert(isequal(size(W_init), size(W_out)), "error in nmf_func: W_out is the wrong size");
     assert(isequal(size(H_init), size(H_out)), "error in nmf_func: H_out is the wrong size");
 

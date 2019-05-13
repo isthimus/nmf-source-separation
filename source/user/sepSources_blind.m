@@ -34,7 +34,6 @@ function sources_out = sepSources_blind ( ...
         reconstruct_func = @recons_tuned_BSS;
     end
 
-
     % take spect
     [spect, spectInfo] = spect_func(audio, spectInfo);
     assert(checkSpectInfo(spectInfo), "missing values in return value for spectInfo!");
