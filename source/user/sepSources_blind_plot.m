@@ -28,6 +28,22 @@ function sources_out = sepSources_blind_plot ( ...
     % nmf_en_partial = @(V, W, H) nss_nmf_euclidian_norm(V, W, H, myThreshold, myMaxIter)
     % nss_separate_sources(nmf_en_partial, <some>, <other>, <args>, ...)
     
+    % default args
+    % supply [] to skip an arg
+    if nargin < 4 || isempty(spect_func)
+        spect_func = @nss_stft;
+    end
+    if nargin < 5 || isempty(nmf_init_func)
+        nmf_init_func = @nmf_init_tuned;
+    end
+    if nargin < 6 || isempty(nmf_func)
+        nmf_func = @nmf_tuned;
+    end
+    if nargin < 7 || isempty(reconstruct_func)
+        reconstruct_func = @recons_tuned_BSS;
+    end
+
+    
     % take spect and initialise
     [spect, spectInfo] = spect_func(audio, spectInfo);
     assert(checkSpectInfo(spectInfo), "missing values in return value for spectInfo!");

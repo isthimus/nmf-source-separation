@@ -13,6 +13,26 @@ function sources_out = sepSources_scoreAware ( ...
     % !!! good defaults will make a big difference 
     % !!! clean up mask-making and recovery
 
+    % default args. supply [] to skip an argument
+    if nargin < 3 || isempty(spectInfo)
+        spectInfo = spectInfo_tuned();
+    end
+    if nargin < 4 || isempty (spect_func)
+        spect_func = @nss_stft;
+    end
+    if nargin < 5 || isempty (align_func)
+        align_func = @alignOnset_tuned;
+    end
+    if nargin < 6 || isempty (tol_func)
+        tol_func = @tol_tuned;
+    end
+    if nargin < 7 || isempty (nmf_func)
+        nmf_func = @nmf_tuned;
+    end
+    if nargin < 8 || isempty (recons_func)
+        recons_func = @recons_tuned_SASS;
+    end
+
     % take spect, update spectInfo
     [spect, spectInfo] = spect_func(audio, spectInfo);
     assert(checkSpectInfo(spectInfo), "error in spect_func: missing values in return value for spectInfo!")
