@@ -17,7 +17,7 @@ function [testvectors, testdefs] = gen_tables(switches)
         TESTDEFS_SASS = switches.TESTDEFS_SASS;
         TESTDEFS_LONGWLEN = switches.TESTDEFS_LONGWLEN;
     else 
-        % when in doubt define everything
+        % when in doubt define everything...
         TESTVECS_TRIOS = true;
         TESTVECS_TAKEFIVE = true;
 
@@ -25,7 +25,7 @@ function [testvectors, testdefs] = gen_tables(switches)
         TESTDEFS_HAM = true;
         TESTDEFS_SASS = true;
 
-        % except the very long window lengths
+        % ...except the very long window lengths
         TESTDEFS_LONGWLEN = false;        
     end
 
