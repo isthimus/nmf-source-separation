@@ -129,7 +129,7 @@ function [testvectors, testdefs] = gen_tables(switches);
             "midiPath"  , "./tmp/triosTakeFiveMix.mid" ... 
         );
 
-        % !!! NB not using PHENICX at the moment as no "mix.wav" is provided. not to 
+        % !!! NB not using PHENICX at the moment as no "mix.wav" is provided. not too
         % hard to hack together midi files but audio is a different matter
         % (gain settings, etc).
         % maybe will come back to it.

@@ -1,4 +1,4 @@
-% full benchmark for alignment
+% full benchmark for source separation
 clear
 
 % switches for this testbench
@@ -37,9 +37,6 @@ run(fullfile(PROJECT_PATH, 'source/scripts/setpaths.m'));
 
 % generate testvector and test definition tables
 [testVectors, testDefs] = gen_tables(table_switches);
-
-% generate tuned functions
-run(fullfile(USER_FUNCS_PATH, "gen_tuned_funcs"));
 
 % CALC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if CALC

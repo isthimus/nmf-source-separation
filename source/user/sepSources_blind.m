@@ -7,18 +7,46 @@ function sources_out = sepSources_blind ( ...
     nmf_func, ...
     reconstruct_func ...
 )
-    % performs source separation using one of a range of nmf functions.
-    % returns a matrix where each row is one separated out source.
-    %
-    % "audio" is a vector containing the audio to be worked on.
-    % k is the expected totl number of distinct notes across all instruments
-    % all other inputs are function handles with prototypes as below
-    % use partial application to make them match if necessary
-    %
-    % !!! add the partial function interfaces
-    %
-    % !!! new partial function example
-    
+% SEPSOURCES_BLIND - performs the whole blind source separation pipeline, based on a 
+% single mixture audio file. Function handles may be provided for the 
+% numerical blocks - otherwise the funtion will use the pretuned functions in user/tuned funcs.
+%
+%   arguments:
+%      audio - the mixture audio, as a 1D vector
+%
+%      spectInfo - a struct containing the following parameters
+%               synthwin - synthesis window   
+%               analwin - analysis window
+%               hop - hop size
+%               nfft - fft length
+%               fs - sampling frequency
+%               num_freq_bins - number of frequency bins in the spectrogram
+%               num_time_bins - number of time bins in the spectrogram
+%               audio_len_samp - length of the original audio
+%
+%      k - the expected number of distinct note-instrument pairs in the audio
+%          this parameter sets the number of columns in W and number of rows in H
+%
+%       spect_func (optional - omit or supply [] to skip)
+%               The function with which to take the spectrogram
+%               interface: [spect, spectInfo] = spect_func(audio, spectInfo);
+%
+%       nmf_Init_func (optional - omit or supply [] to skip)
+%               The function with which to initialise the W and H matrices before NMF
+%               interface: [W_init, H_init] = nmf_init_func(spectInfo, k);
+%
+%       nmf_func (optional - omit or supply [] to skip)
+%               The function with which to perform NMF 
+%               interface: [W_out,H_out] = nmf_func(spect_mag, W_init, H_init);
+%
+%       recons_func (optional - omit or supply [] to skip)
+%               The reconstruction function to find time-domain sources from W and H
+%               after convergence                
+%               interface: sources_out = recons_func (spect, W_out, H_out, spectInfo);
+%
+%       return values:
+%               sources_out - a matrix in which each row is one separated out source    
+
     % default args
     % supply [] to skip an arg
     if nargin < 4 || isempty(spect_func)

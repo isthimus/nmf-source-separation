@@ -10,13 +10,59 @@ function [sources_out, trackVec] = sepSources_scoreAware_plot ( ...
     makeMasks_func, ...
     nmf_saInit_func ...
 )
-    % a many-argumented beast which performs the whole SASS pipeline based on 7 partial functions
-    % !!! much more commenting/ explanation to come here...
-    % !!! good defaults will make a big difference 
-    % !!! clean up mask-making and recovery
+% SEPSOURCES_SCOREAWARE_PLOT - performs the whole score-aware source separation pipeline
+% on an audio mixture file and corresponding MIDI score, plotting results at every stage.
+% This function exactly matches sepSources_scoreAware apart from the plotting. 
+% 
+%   arguments:
+%       notes - the (unaligned) MIDI representation of the musical score,
+%               in the format produced by midiInfo(readmidi(...))  
+%
+%       audio - the mixture audio, as a 1D vector
+%
+%       spectInfo - a struct containing the following parameters
+%               synthwin - synthesis window   
+%               analwin - analysis window
+%               hop - hop size
+%               nfft - fft length
+%               fs - sampling frequency
+%               num_freq_bins - number of frequency bins in the spectrogram
+%               num_time_bins - number of time bins in the spectrogram
+%               audio_len_samp - length of the original audio
+%
+%       spect_func (optional - omit or supply [] to skip)
+%               The function with which to take the spectrogram
+%               interface: [spect, spectInfo] = spect_func(audio, spectInfo);
+%
+%       align_func (optional - omit or supply [] to skip)
+%               The function with which to perform score alignment
+%               interface: notes_aligned = align_func(notes, audio, spect, spectInfo);
+%
+%       tol_func (optional - omit or supply [] to skip)
+%               The function with which to add tolerance to the W and H matrices after masking
+%               interface: [W_mask, H_mask] = tol_func(W_mask, H_mask, spectInfo);
+%
+%       nmf_func (optional - omit or supply [] to skip)
+%               The function with which to perform NMF 
+%               interface: [W_out, H_out] = nmf_func (spect_mag, W_init, H_init);
+%
+%       recons_func (optional - omit or supply [] to skip)
+%               The reconstruction function to find time-domain sources from W and H
+%               after convergence                
+%               interface: sources_out = recons_func (spect, W_out, H_out, spectInfo, trackVec);
+%
+%       makeMasks_func (optional - omit or supply [] to skip)
+%               The function with which to make W and H masks from aligned MIDI
+%               interface: [W_mask, H_mask, trackVec] = makeMasks_func(notes_aligned, spectInfo);
+%
+%       nmf_saInit_func (optional - omit or supply [] to skip)
+%               The function with which to initialise the W and H matrices before NMF
+%               based on W and H masks.
+%               interface: [W_init, H_init] = nmf_saInit_func(W_mask, H_mask, spectInfo);
+%
+%       return values:
+%               sources_out - a matrix in which each row is one separated out source    
 
-    % this is the same as nss_sepSources_scoreAware 
-    % except it plots intermediate values at every stage
 
     % default args. supply [] to skip an argument.
     if nargin < 3 || isempty(spectInfo)

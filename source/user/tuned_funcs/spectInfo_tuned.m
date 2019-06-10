@@ -1,6 +1,7 @@
 function si = spectInfo_tuned
     % returns the best-performing spectInfo found during testing
-    % note - parameter specific to a given audio file, like Fs and audio_len_samp, are not provided
+    % no input arguments
+    % note - parameters specific to a given audio file (e.g. fs) are not provided
 
     wlen = 1024;
     si = struct( ... 

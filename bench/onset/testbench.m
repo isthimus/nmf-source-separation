@@ -3,9 +3,9 @@ tic
 clear
 
 % switches for this testbench
-CALC = true;
-BENCH = true;
-PLOT = false;
+CALC = false;
+BENCH = false;
+PLOT = true;
 
 % switches for gen_tables
 table_switches = struct();
@@ -14,7 +14,7 @@ table_switches.TESTVECS_MIX = false;
 table_switches.TESTDEFS_MAIN = true;
 table_switches.TESTDEFS_NORMLEN = false;
 table_switches.TESTDEFS_SPECTINFO = false;
-table_switches.TESTDEFS_AGRESSION = false;
+table_switches.TESTDEFS_AGRESSION = true;
 
 % cd to the folder this script is in
 script_path = mfilename('fullpath');
@@ -184,6 +184,8 @@ if PLOT
         s2_indices = startsWith(testNames, "ATaxiTol10Drop");
         s2 = avg_results(s2_indices, [2,4]) ;% cols 2 and 4 are false pos and false neg
         s2 = cell2mat(s2); 
+        [~, I] = sort(s2(:,2));
+        s2 = s2(I,:);
 
         % find the tests in the "ARectTol1DropXXX" series, put in s3
         s3_indices = startsWith(testNames, "ARectTol1Drop");
@@ -196,15 +198,23 @@ if PLOT
         s4 = cell2mat(s4); 
 
         % plot them all against each other
+        %{
         scatter(s1(:,2), s1(:,1));
         hold on;
         scatter(s2(:,2), s2(:,1));
         scatter(s3(:,2), s3(:,1));
         scatter(s4(:,2), s4(:,1));
-        legend('Taxi - Tol 1', 'Taxi Tol - 10', 'Rect - Tol1', 'Rect - Tol10');
-        title("agression levels");
-        xlabel("false negative rate");
-        ylabel("false positive rate");
+        %}
+        plot(s1(:,2), s1(:,1), '-o');
+        hold on;
+        plot(s2(:,2), s2(:,1), '-o');
+        plot(s3(:,2), s3(:,1), '-o');
+        plot(s4(:,2), s4(:,1), '-o');
+
+        legend('Taxi - Tol 1', 'Taxi - Tol 10', 'Rect - Tol 1', 'Rect - Tol 10');
+        title("agression tradeoff based on dropout threshold");
+        xlabel("num missed onsets (%)");
+        ylabel("false positive time (%)");
         wait_returnKey();  
     end
 
@@ -261,6 +271,7 @@ if PLOT
         first_pRoll_index = find( vtt > (sound_start_sec) ,1);
         last_pRoll_index = find( vtt < (sound_start_sec+10) ,1 , 'last');
 
+        %{
         % plot
         figure(1);
         subplot(numMethods + 2, 1, 1);
@@ -272,26 +283,65 @@ if PLOT
              thisWav = method_wavs_viola{i};
              plot(thisWav(chunk(1):chunk(2)));
         end
+        %}
 
         % ---- mix plotting ---- %
 
         % choose a chunk of audio to look at
         chunk = [1, 220000];
 
+        % <hack>
+        si = spectInfo_tuned();
+        si.fs = fs;
+        si.audio_len_samp = length(mix_audio);
+        onsets = aln_getOnset_midi(mix_notes, si);
+        lastTb = aln_samps2TimeBin(chunk(2),si);
+        onsets = onsets(1:lastTb);
+        onsets = [zeros(5,1);onsets];
+        % </hack>
+
         % find the corresponding endpoint in the midi file
         first_pRoll_index = find( mtt >= 0,1);
-        last_pRoll_index = find( mtt < 5,1 , 'last');
+        last_pRoll_index = find( mtt < 220000/44100, 1, 'last');
 
+
+        %{
+        % plot        
+        close all;
+        figure(1);
+        plot(mix_audio(chunk(1):chunk(2)));
+
+
+        wait_returnKey();
+        close all;
+        %}
+
+        
         % plot
         figure(2);
         subplot(numMethods + 2, 1, 1);
          plot(mix_audio(chunk(1):chunk(2)));
+         xlim([1,220000]);
+         set(gca, "XTickLabel", []);
+         title("A")
         subplot(numMethods + 2, 1, 2);
-         imagesc(mix_pRoll(:, first_pRoll_index:last_pRoll_index));
+        % <hack>
+         plot(onsets, '-', 'color', 'red');
+         xlim([0,857]);
+         set(gca, "XTickLabel", []);
+         title("B")
+        % </hack>
+        %imagesc(mix_pRoll(:, first_pRoll_index:last_pRoll_index));
+        titles = ["C", "D", "E", "F", "G", "H", "I", "HELPIMSTUCKINATITLEFACTORY"]; 
         for i = 1:numMethods
             subplot(numMethods + 2, 1, i + 2);
              thisWav = method_wavs_mix{i};
              plot(thisWav(chunk(1):chunk(2)));
+             xlim([1, 220000]);
+             title(titles(i));
+             if i ~= numMethods
+                set(gca, "XTickLabel", []);
+             end
         end
 
         % ------------------------- %

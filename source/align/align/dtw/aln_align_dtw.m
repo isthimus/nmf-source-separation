@@ -12,7 +12,7 @@ function notes_aligned = aln_align_dtw (notes, audio, spectInfo, use_vel)
 %           fs - sampling frequency
 %           num_freq_bins - number of frequency bins in the spectrogram
 %           num_time_bins - number of time bins in the spectrogram
-%           audio_len_samp - lenght of the original audio
+%           audio_len_samp - length of the original audio
 %      use_vel - a flag indicating whether MIDI velocity should be incorporated or ignored
 %
 %   return values:
